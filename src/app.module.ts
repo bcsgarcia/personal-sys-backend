@@ -19,8 +19,13 @@ import { RecordsController } from './records/records.controller';
 // TypeOrmModule.forRoot(connectionOptions),
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [
+    DatabaseModule,
+  ],
   controllers: [AppController, RecordsController],
   providers: [AppService, DatabaseService],
 })
-export class AppModule {}
+
+
+
+export class AppModule { }

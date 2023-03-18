@@ -79,3 +79,5 @@ Nest is [MIT licensed](LICENSE).
 http://localhost:3000/records/:tableName
 
 ex: http://localhost:3000/records/company
+
+swagger: http://localhost:3000/api
