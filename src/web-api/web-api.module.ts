@@ -24,4 +24,4 @@ import { CompanyModule } from './company/company.module';
     ClientModule,
   ],
 })
-export class WebModule {}
+export class WebApiModule {}

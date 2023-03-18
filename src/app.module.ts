@@ -4,10 +4,10 @@ import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
 import { DatabaseService } from './database/database.service';
 import { RecordsController } from './records/records.controller';
-import { WebModule } from './web/web.module';
+import { WebApiModule } from './web-api/web-api.module';
 
 @Module({
-  imports: [DatabaseModule, WebModule],
+  imports: [DatabaseModule, WebApiModule],
   controllers: [AppController, RecordsController],
   providers: [AppService, DatabaseService],
   exports: [DatabaseService],
