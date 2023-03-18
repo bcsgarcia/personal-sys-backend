@@ -11,10 +11,10 @@ export class DatabaseService {
 
   async connect() {
     this.connection = await mysql.createConnection({
-      host: '127.0.0.1',
-      user: 'root',
-      password: 'ca7ff61c-c395-11ed-afa1-0242ac120002',
-      database: 'u408558298_personal_sys',
+      host: process.env.DATABASE_HOST,
+      user: process.env.DATABASE_USERNAME,
+      password: process.env.DATABASE_PASSWORD,
+      database: process.env.DATABASE_NAME,
     });
   }
 
