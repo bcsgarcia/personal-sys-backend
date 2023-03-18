@@ -18,8 +18,23 @@ export class DatabaseService {
     });
   }
 
-  async getAllRecords(tableName: string): Promise<any> {
-    const [rows] = await this.connection.execute(`SELECT * FROM ${tableName}`);
+  async executeQuery(sql: string): Promise<any> {
+    const [rows] = await this.connection.execute(sql);
     return rows;
+  }
+
+  async executeMultipleQueries(sqlList: string[]): Promise<any> {
+    this.connection.beginTransaction();
+
+    try {
+      sqlList.forEach(async (sql) => {
+        await this.connection.query(sql);
+      });
+
+      this.connection.commit();
+    } catch (error) {
+      this.connection.rollback();
+      throw error;
+    }
   }
 }
