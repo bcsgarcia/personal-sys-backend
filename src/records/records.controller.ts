@@ -7,8 +7,6 @@ export class RecordsController {
 
   @Get(':tableName')
   async getAllRecords(@Param('tableName') tableName: string): Promise<any> {
-    return await this.databaseService.executeQuery(
-      `SELECT * FROM ${tableName}`,
-    );
+    return await this.databaseService.execute(`SELECT * FROM ${tableName}`);
   }
 }

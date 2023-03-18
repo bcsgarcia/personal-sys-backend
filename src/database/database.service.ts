@@ -18,12 +18,12 @@ export class DatabaseService {
     });
   }
 
-  async executeQuery(sql: string): Promise<any> {
-    const [rows] = await this.connection.execute(sql);
+  async execute(sql: string, _params?: any | null): Promise<any> {
+    const [rows] = await this.connection.execute(sql, _params);
     return rows;
   }
 
-  async executeMultipleQueries(sqlList: string[]): Promise<any> {
+  async executeMultiple(sqlList: string[]): Promise<any> {
     this.connection.beginTransaction();
 
     try {
