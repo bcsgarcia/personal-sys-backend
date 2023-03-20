@@ -10,10 +10,12 @@ import {
 import { WorkoutsheetService } from './workoutsheet.service';
 import { CreateWorkoutsheetDto } from './dto/create-workoutsheet.dto';
 import { UpdateWorkoutsheetDto } from './dto/update-workoutsheet.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('workoutsheet')
 @Controller('web/workoutsheet')
 export class WorkoutsheetController {
-  constructor(private readonly workoutsheetService: WorkoutsheetService) {}
+  constructor(private readonly workoutsheetService: WorkoutsheetService) { }
 
   @Post()
   create(@Body() createWorkoutsheetDto: CreateWorkoutsheetDto) {
