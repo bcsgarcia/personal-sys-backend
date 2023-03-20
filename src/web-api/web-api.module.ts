@@ -6,6 +6,7 @@ import { WorkoutsheetModule } from './workoutsheet/workoutsheet.module';
 import { AppointmentModule } from './appointment/appointment.module';
 import { ClientModule } from './client/client.module';
 import { CompanyModule } from './company/company.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { CompanyModule } from './company/company.module';
     AppointmentModule,
     ClientModule,
     CompanyModule,
+    AuthModule,
   ],
   exports: [
     NotificationModule,
