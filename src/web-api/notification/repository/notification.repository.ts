@@ -66,17 +66,6 @@ export class NotificationRepository {
 
     }
 
-
-    async updateDateReadAllNotificationByIdClient(idClient: string, idCompany: string): Promise<void> {
-        try {
-
-
-
-        } catch (error) {
-            throw error;
-        }
-    }
-
     async createReadNotification(idNotification: string, idClient: string): Promise<void> {
         try {
 
