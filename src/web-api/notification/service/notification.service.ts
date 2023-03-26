@@ -43,8 +43,6 @@ export class NotificationService {
   }
 
   async updateUnreadNotifications(idClient: string, idCompany: string): Promise<void> {
-    // pegar todas notifications do client
-    // fazer insert na tabela de read com a data now
     try {
 
       const allNotifications = await this.notificationRepository.findAllByIdClient(idClient, idCompany);
