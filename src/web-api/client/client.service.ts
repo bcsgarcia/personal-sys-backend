@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { CreateClientDto } from './dto/create-client.dto';
+import { ClientDto } from './dto/client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 
 @Injectable()
 export class ClientService {
-  create(createClientDto: CreateClientDto) {
+  create(createClientDto: ClientDto) {
     return 'This action adds a new client';
   }
 

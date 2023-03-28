@@ -15,7 +15,7 @@ import { UpdateAppointmentDto } from './dto/update-appointment.dto';
 @ApiTags('appointment')
 @Controller('web/appointment')
 export class AppointmentController {
-  constructor(private readonly appointmentService: AppointmentService) { }
+  constructor(private readonly appointmentService: AppointmentService) {}
 
   @Post()
   create(@Body() createAppointmentDto: CreateAppointmentDto) {

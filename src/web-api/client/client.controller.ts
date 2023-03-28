@@ -8,7 +8,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import { ClientService } from './client.service';
-import { CreateClientDto } from './dto/create-client.dto';
+import { ClientDto } from './dto/client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 
 @Controller('web/client')
@@ -16,7 +16,7 @@ export class ClientController {
   constructor(private readonly clientService: ClientService) {}
 
   @Post()
-  create(@Body() createClientDto: CreateClientDto) {
+  create(@Body() createClientDto: ClientDto) {
     return this.clientService.create(createClientDto);
   }
 
