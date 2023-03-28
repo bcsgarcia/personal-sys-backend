@@ -1,9 +1,20 @@
 import { Module } from '@nestjs/common';
-import { WorkoutsheetService } from './workoutsheet.service';
-import { WorkoutsheetController } from './workoutsheet.controller';
+import { WorkoutsheetService } from './service/workoutsheet.service';
+import { WorkoutsheetController } from './controller/workoutsheet.controller';
+import { DatabaseService } from 'src/database/database.service';
+import { WorkoutsheetRepository } from './respository/workoutsheet.repository';
 
 @Module({
   controllers: [WorkoutsheetController],
-  providers: [WorkoutsheetService]
+  providers: [
+    WorkoutsheetService,
+    DatabaseService,
+    {
+      provide: WorkoutsheetRepository,
+      useFactory: (db: DatabaseService) => new WorkoutsheetRepository(db),
+      inject: [DatabaseService],
+    }
+
+  ]
 })
-export class WorkoutsheetModule {}
+export class WorkoutsheetModule { }
