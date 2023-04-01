@@ -16,4 +16,4 @@ import { WorkoutsheetRepository } from './respository/workoutsheet.repository';
     },
   ],
 })
-export class WorkoutsheetModule {}
+export class WorkoutsheetModule { }

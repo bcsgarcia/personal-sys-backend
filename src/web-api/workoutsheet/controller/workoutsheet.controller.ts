@@ -132,6 +132,7 @@ export class WorkoutsheetController {
       validateHeaderApi(request);
 
       return this.workoutsheetService.deleteWorkoutSheetDefault(id);
+
     } catch (error) {
       throw error;
     }

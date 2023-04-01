@@ -17,4 +17,4 @@ import { WorkoutRepository } from './repository/workout.repository';
     },
   ],
 })
-export class WorkoutModule {}
+export class WorkoutModule { }

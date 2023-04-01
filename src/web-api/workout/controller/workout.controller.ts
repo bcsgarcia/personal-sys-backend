@@ -29,6 +29,7 @@ import { Request } from 'express';
 })
 @Controller('web/workout')
 export class WorkoutController {
+
   constructor(private readonly workoutService: WorkoutService) {}
 
   @Post()
@@ -66,6 +67,7 @@ export class WorkoutController {
     @Param('idWorkout') idWorkout: string,
     @Body() updateWorkoutDto: UpdateWorkoutDto,
   ) {
+
     try {
       validateHeaderApi(request);
 
@@ -73,16 +75,19 @@ export class WorkoutController {
     } catch (error) {
       throw error;
     }
+
   }
 
   @Get('all')
   findAll(@Req() request: Request) {
     try {
+
       validateHeaderApi(request);
 
       const idCompany = request.headers['idcompany'] as string;
 
       return this.workoutService.findAll(idCompany);
+
     } catch (error) {
       throw error;
     }
@@ -101,6 +106,7 @@ export class WorkoutController {
   })
   remove(@Req() request: Request, @Param('idWorkout') idWorkout: string) {
     try {
+
       validateHeaderApi(request);
 
       return this.workoutService.remove(idWorkout);

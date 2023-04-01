@@ -55,3 +55,4 @@ export class CreateWorkoutDto {
     this.imageUrl = workout.imageUrl;
   }
 }
+

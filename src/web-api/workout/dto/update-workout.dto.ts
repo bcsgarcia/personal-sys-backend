@@ -42,3 +42,4 @@ export class UpdateWorkoutDto {
   @IsOptional()
   imageUrl: string;
 }
+

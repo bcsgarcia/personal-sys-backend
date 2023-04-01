@@ -97,7 +97,7 @@ export class WorkoutsheetService {
           videoUrl: item.wVideoUrl,
           imageUrl: item.wImageUrl,
         });
-
+        
         acc[item.wsdId].workouts.push(workout);
         return acc;
       }, {});
@@ -105,7 +105,6 @@ export class WorkoutsheetService {
       const result = Object.values(
         groupedByWorkousheetDefaultId,
       ) as GetAllWorkoutSheetDefaultDto[];
-
       return result;
     } catch (error) {
       throw error;
