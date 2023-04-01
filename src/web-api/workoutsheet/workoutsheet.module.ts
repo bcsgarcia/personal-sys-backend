@@ -13,8 +13,7 @@ import { WorkoutsheetRepository } from './respository/workoutsheet.repository';
       provide: WorkoutsheetRepository,
       useFactory: (db: DatabaseService) => new WorkoutsheetRepository(db),
       inject: [DatabaseService],
-    }
-
-  ]
+    },
+  ],
 })
-export class WorkoutsheetModule { }
+export class WorkoutsheetModule {}
