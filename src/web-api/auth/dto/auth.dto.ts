@@ -29,11 +29,13 @@ export class AuthDto {
   @ApiHideProperty()
   isAdmin: boolean;
 
-  constructor(auth: Auth) {
-    this.id = auth.id;
-    this.idCompany = auth.idCompany;
-    this.email = auth.email;
-    this.pass = auth.pass;
-    this.isAdmin = auth.isAdmin;
+  constructor(auth?: Auth) {
+    if (auth != null) {
+      this.id = auth.id;
+      this.idCompany = auth.idCompany;
+      this.email = auth.email;
+      this.pass = auth.pass;
+      this.isAdmin = auth.isAdmin;
+    }
   }
 }

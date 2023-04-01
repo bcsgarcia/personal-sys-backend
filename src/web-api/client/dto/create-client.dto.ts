@@ -1,7 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
-export class UpdateClientDto {
+export class CreateClientDto {
   @ApiProperty({
     description: 'The name of the client',
     example: 'Bob Esponja',
@@ -42,14 +42,17 @@ export class UpdateClientDto {
     example: '99999999999',
     type: String,
   })
+  @IsString()
   phone: string;
 
   @ApiProperty({
-    description: 'Client`s activate status',
-    example: 'true',
-    type: Boolean,
+    description: 'Client`s temporary password',
+    example: 'hamburgerDeSiri*',
+    type: String,
   })
-  isActive: string;
+  @IsNotEmpty()
+  @IsString()
+  pass: string;
 
   @ApiProperty({
     description: 'Client`s photo url',
@@ -58,4 +61,10 @@ export class UpdateClientDto {
   })
   @IsString()
   photoUrl: string;
+
+  @ApiHideProperty()
+  id: string;
+
+  @ApiHideProperty()
+  idCompany: string;
 }
