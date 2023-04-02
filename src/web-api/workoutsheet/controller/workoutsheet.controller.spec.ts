@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
+import { WorkoutsheetService } from '../service/workoutsheet.service';
 import { WorkoutsheetController } from './workoutsheet.controller';
-import { WorkoutsheetService } from './workoutsheet.service';
 
 describe('WorkoutsheetController', () => {
   let controller: WorkoutsheetController;

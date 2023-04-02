@@ -11,10 +11,10 @@ import { WorkoutRepository } from './repository/workout.repository';
     DatabaseService,
     {
       provide: WorkoutRepository,
-      useFactory: (databaseService: DatabaseService) => new WorkoutRepository(databaseService),
+      useFactory: (databaseService: DatabaseService) =>
+        new WorkoutRepository(databaseService),
       inject: [DatabaseService],
-    }
-
-  ]
+    },
+  ],
 })
 export class WorkoutModule { }

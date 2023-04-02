@@ -4,8 +4,6 @@ import { CreateNotificationDto } from "../dto/create-notification.dto";
 import { convertDateToTimestamp } from '../../utils/utils';
 import { Notification } from "src/models/notification.model";
 
-
-
 @Injectable()
 export class NotificationRepository {
     constructor(private databaseService: DatabaseService) { }
@@ -57,7 +55,6 @@ export class NotificationRepository {
                         AND isActive = 1
                     ORDER BY date desc`;
 
-
             return await this.databaseService.execute(query);
 
         } catch (error) {
@@ -95,4 +92,3 @@ export class NotificationRepository {
         )
     }
 }
-

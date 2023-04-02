@@ -1,7 +1,21 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsDate,
+  isDate,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+} from 'class-validator';
+import { convertTimestampToDate } from 'src/web-api/utils/timestamp-to-date';
 
-export class CreateClientDto {
+export class ClientDto {
+  @ApiHideProperty()
+  id: string;
+
+  @ApiHideProperty()
+  idCompany: string;
+
   @ApiProperty({
     description: 'The name of the client',
     example: 'Bob Esponja',
@@ -13,11 +27,11 @@ export class CreateClientDto {
 
   @ApiProperty({
     description: 'Client`s birthday date',
-    example: '492044400000',
-    type: Number,
+    example: 'date',
+    type: Date,
   })
   @IsNumber()
-  birthday: number;
+  birthday: Date;
 
   @ApiProperty({
     description: 'Client`s gender',
@@ -46,13 +60,12 @@ export class CreateClientDto {
   phone: string;
 
   @ApiProperty({
-    description: 'Client`s temporary password',
-    example: 'hamburgerDeSiri*',
-    type: String,
+    description: 'Client`s active status',
+    example: 'true',
+    type: Boolean,
   })
-  @IsNotEmpty()
-  @IsString()
-  pass: string;
+  @IsBoolean()
+  isActive: string;
 
   @ApiProperty({
     description: 'Client`s photo url',
@@ -62,9 +75,15 @@ export class CreateClientDto {
   @IsString()
   photoUrl: string;
 
-  @ApiHideProperty()
-  id: string;
-
-  @ApiHideProperty()
-  idCompany: string;
+  constructor(data: any | null) {
+    this.id = data.id;
+    this.idCompany = data.idCompany;
+    this.name = data.name;
+    this.birthday = new Date(data.birthday);
+    this.gender = data.gender;
+    this.email = data.email;
+    this.phone = data.phone;
+    this.photoUrl = data.photoUrl;
+    this.isActive = data.isActive;
+  }
 }

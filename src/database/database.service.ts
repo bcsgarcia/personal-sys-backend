@@ -19,8 +19,12 @@ export class DatabaseService {
   }
 
   async execute(sql: string, _params?: any | null): Promise<any> {
-    const [rows] = await this.connection.execute(sql, _params);
-    return rows;
+    try {
+      const [rows] = await this.connection.execute(sql, _params);
+      return rows;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async executeMultiple(sqlList: string[]): Promise<any> {

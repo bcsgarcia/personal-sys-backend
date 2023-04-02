@@ -9,7 +9,6 @@ export class Workout {
     videoUrl: string | null;
     imageUrl: string | null;
 
-
     constructor(data: any) {
         this.id = data.id;
         this.isActive = data.isActive;

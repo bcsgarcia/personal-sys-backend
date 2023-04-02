@@ -1,4 +1,9 @@
-import { BadRequestException, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { Workout } from 'src/models/workout.model';
 import { DomainError } from 'src/web-api/utils/domain.error';
 import { hasDuplicates } from 'src/web-api/utils/has.duplicates';
@@ -9,53 +14,68 @@ import { WorkoutsheetRepository } from '../respository/workoutsheet.repository';
 
 @Injectable()
 export class WorkoutsheetService {
+  constructor(
+    private readonly workoutSheetRepository: WorkoutsheetRepository,
+  ) {}
 
-  constructor(private readonly workoutSheetRepository: WorkoutsheetRepository) { }
-
-
-  async createWorkoutSheetDefault(createWorkoutsheetDefaultDto: CreateWorkoutsheetDefaultDto): Promise<void> {
+  async createWorkoutSheetDefault(
+    createWorkoutsheetDefaultDto: CreateWorkoutsheetDefaultDto,
+  ): Promise<void> {
     try {
-
       if (hasDuplicates(createWorkoutsheetDefaultDto.workouts)) {
-        throw new HttpException(DomainError.DUPLICATE_ITEMS, HttpStatus.BAD_REQUEST);
+        throw new HttpException(
+          DomainError.DUPLICATE_ITEMS,
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       const title = createWorkoutsheetDefaultDto.title;
       const idCompany = createWorkoutsheetDefaultDto.idCompany;
 
-      const idWorkoutSheetDefault = await this.workoutSheetRepository.createWorkoutSheetDefault(title, idCompany);
+      const idWorkoutSheetDefault =
+        await this.workoutSheetRepository.createWorkoutSheetDefault(
+          title,
+          idCompany,
+        );
 
-
-      await this._createWorkoutSheetDefaultWorkout(idWorkoutSheetDefault, createWorkoutsheetDefaultDto.workouts);
-
+      await this._createWorkoutSheetDefaultWorkout(
+        idWorkoutSheetDefault,
+        createWorkoutsheetDefaultDto.workouts,
+      );
     } catch (error) {
       throw error;
     }
   }
 
-  async updateWorkoutSheetDefaultWorkout(updateWorkoutsheetDefaultDto: UpdateWorkoutsheetDefaultDto): Promise<void> {
+  async updateWorkoutSheetDefaultWorkout(
+    updateWorkoutsheetDefaultDto: UpdateWorkoutsheetDefaultDto,
+  ): Promise<void> {
     try {
-
-      const idWorkoutSheetDefault = updateWorkoutsheetDefaultDto.idWorkoutSheetDefault;
+      const idWorkoutSheetDefault =
+        updateWorkoutsheetDefaultDto.idWorkoutSheetDefault;
       const workouts = updateWorkoutsheetDefaultDto.workouts;
 
-      await this.workoutSheetRepository.deleteWorkoutSheetDefaultWorkout(updateWorkoutsheetDefaultDto.idWorkoutSheetDefault);
+      await this.workoutSheetRepository.deleteWorkoutSheetDefaultWorkout(
+        updateWorkoutsheetDefaultDto.idWorkoutSheetDefault,
+      );
 
-      await this._createWorkoutSheetDefaultWorkout(idWorkoutSheetDefault, workouts);
-
+      await this._createWorkoutSheetDefaultWorkout(
+        idWorkoutSheetDefault,
+        workouts,
+      );
     } catch (error) {
       throw error;
     }
   }
 
-  async getAllWorkoutSheetDefaultByIdCompany(idCompany: string): Promise<GetAllWorkoutSheetDefaultDto[]> {
+  async getAllWorkoutSheetDefaultByIdCompany(
+    idCompany: string,
+  ): Promise<GetAllWorkoutSheetDefaultDto[]> {
     try {
-
-      const rows = await this.workoutSheetRepository.getAllWorkoutSheetDefaultByIdCompany(idCompany);
-
-      console.log(rows);
-
-      const dtoList: GetAllWorkoutSheetDefaultDto[] = [];
+      const rows =
+        await this.workoutSheetRepository.getAllWorkoutSheetDefaultByIdCompany(
+          idCompany,
+        );
 
       const groupedByWorkousheetDefaultId = rows.reduce((acc, item) => {
         if (!acc[item.wsdId]) {
@@ -77,46 +97,50 @@ export class WorkoutsheetService {
           videoUrl: item.wVideoUrl,
           imageUrl: item.wImageUrl,
         });
-
-
+        
         acc[item.wsdId].workouts.push(workout);
         return acc;
       }, {});
 
-
-      const result = Object.values(groupedByWorkousheetDefaultId) as GetAllWorkoutSheetDefaultDto[];
-
+      const result = Object.values(
+        groupedByWorkousheetDefaultId,
+      ) as GetAllWorkoutSheetDefaultDto[];
       return result;
     } catch (error) {
       throw error;
     }
-
   }
 
-  async deleteWorkoutSheetDefault(idWorkoutSheetDefault: string): Promise<void> {
+  async deleteWorkoutSheetDefault(
+    idWorkoutSheetDefault: string,
+  ): Promise<void> {
     try {
-
-      await this.workoutSheetRepository.deleteWorkoutSheetDefaultWorkout(idWorkoutSheetDefault);
+      await this.workoutSheetRepository.deleteWorkoutSheetDefaultWorkout(
+        idWorkoutSheetDefault,
+      );
 
       await this.workoutSheetRepository.deleteById(idWorkoutSheetDefault);
-
     } catch (error) {
-      throw new HttpException(DomainError.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        DomainError.INTERNAL_SERVER_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
-  async _createWorkoutSheetDefaultWorkout(idWorkoutSheetDefault: string, workouts: string[]): Promise<void> {
+  async _createWorkoutSheetDefaultWorkout(
+    idWorkoutSheetDefault: string,
+    workouts: string[],
+  ): Promise<void> {
     try {
-
       for (const item of workouts) {
-        await this.workoutSheetRepository.createWorkoutSheetDefaultWorkout(idWorkoutSheetDefault, item);
+        await this.workoutSheetRepository.createWorkoutSheetDefaultWorkout(
+          idWorkoutSheetDefault,
+          item,
+        );
       }
-
     } catch (error) {
       throw error;
     }
   }
-
-
-
 }

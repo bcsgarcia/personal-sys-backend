@@ -3,7 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
   Param,
   Delete,
   Req,
@@ -12,7 +11,13 @@ import {
 import { WorkoutService } from '../service/workout.service';
 import { CreateWorkoutDto } from '../dto/create-workout.dto';
 import { UpdateWorkoutDto } from '../dto/update-workout.dto';
-import { ApiBadRequestResponse, ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiHeader,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { validateHeaderApi } from 'src/web-api/utils/utils';
 import { Request } from 'express';
 
@@ -24,15 +29,20 @@ import { Request } from 'express';
 })
 @Controller('web/workout')
 export class WorkoutController {
-  constructor(private readonly workoutService: WorkoutService) { }
+
+  constructor(private readonly workoutService: WorkoutService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new workout' })
-  @ApiResponse({ status: 201, description: 'The workout has been successfully created.' })
-  @ApiBadRequestResponse({ description: 'Invalid or missing data in the header/request.' })
+  @ApiResponse({
+    status: 201,
+    description: 'The workout has been successfully created.',
+  })
+  @ApiBadRequestResponse({
+    description: 'Invalid or missing data in the header/request.',
+  })
   create(@Body() createWorkoutDto: CreateWorkoutDto, @Req() request: Request) {
     try {
-
       validateHeaderApi(request);
 
       createWorkoutDto.idCompany = request.headers['idcompany'] as string;
@@ -45,12 +55,19 @@ export class WorkoutController {
 
   @Put(':idWorkout')
   @ApiOperation({ summary: 'Update an existing workout' })
-  @ApiResponse({ status: 200, description: 'The workout has been successfully updated.' })
-  @ApiBadRequestResponse({ description: 'Invalid or missing data in the request.' })
+  @ApiResponse({
+    status: 200,
+    description: 'The workout has been successfully updated.',
+  })
+  @ApiBadRequestResponse({
+    description: 'Invalid or missing data in the request.',
+  })
   update(
     @Req() request: Request,
     @Param('idWorkout') idWorkout: string,
-    @Body() updateWorkoutDto: UpdateWorkoutDto) {
+    @Body() updateWorkoutDto: UpdateWorkoutDto,
+  ) {
+
     try {
       validateHeaderApi(request);
 
@@ -62,10 +79,7 @@ export class WorkoutController {
   }
 
   @Get('all')
-  findAll(
-    @Req() request: Request
-  ) {
-
+  findAll(@Req() request: Request) {
     try {
 
       validateHeaderApi(request);
@@ -79,15 +93,18 @@ export class WorkoutController {
     }
   }
 
-
   @Delete(':idWorkout')
-  @ApiOperation({ summary: 'Deactivate a workout by setting isActive to false' })
-  @ApiResponse({ status: 200, description: 'The workout has been successfully deactivated.' })
-  @ApiBadRequestResponse({ description: 'Invalid or missing data in the request.' })
-  remove(
-    @Req() request: Request,
-    @Param('idWorkout') idWorkout: string) {
-
+  @ApiOperation({
+    summary: 'Deactivate a workout by setting isActive to false',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'The workout has been successfully deactivated.',
+  })
+  @ApiBadRequestResponse({
+    description: 'Invalid or missing data in the request.',
+  })
+  remove(@Req() request: Request, @Param('idWorkout') idWorkout: string) {
     try {
 
       validateHeaderApi(request);
