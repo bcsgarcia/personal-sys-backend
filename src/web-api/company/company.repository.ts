@@ -5,7 +5,7 @@ import { CompanyDTO } from './dto/company.dto';
 
 @Injectable()
 export class CompanyRepository {
-  constructor(private databaseService: DatabaseService) {}
+  constructor(private databaseService: DatabaseService) { }
 
   async findById(id: string): Promise<Company> {
     const [rows] = await this.databaseService.execute(

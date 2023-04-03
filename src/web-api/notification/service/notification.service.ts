@@ -2,7 +2,6 @@ import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { Notification } from 'src/models/notification.model';
 import { CreateNotificationDto } from '../dto/create-notification.dto';
 import { GetNotificationDto } from '../dto/get-notification.dto';
-import { UpdateNotificationDto } from '../dto/update-notification.dto';
 import { NotificationRepository } from '../repository/notification.repository';
 
 @Injectable()

@@ -2,7 +2,6 @@ import { Injectable, InternalServerErrorException } from "@nestjs/common";
 import { DatabaseService } from "src/database/database.service";
 import { CreateNotificationDto } from "../dto/create-notification.dto";
 import { convertDateToTimestamp } from '../../utils/utils';
-import { Notification } from "src/models/notification.model";
 
 @Injectable()
 export class NotificationRepository {
@@ -11,11 +10,14 @@ export class NotificationRepository {
     async create(notification: CreateNotificationDto): Promise<void> {
         try {
             const createQuery =
-                'INSERT INTO notification (description, date, idClient, idCompany) VALUES (?, ?, ?, ?)'
+                'INSERT INTO notification (title, description, notificationDate, appointmentStartDate, appointmentEndDate, idClient, idCompany) VALUES (?, ?, ?, ?, ?, ?, ?)'
 
             await this.databaseService.execute(createQuery, [
+                notification.title,
                 notification.description,
-                convertDateToTimestamp(notification.date),
+                notification.notificationDate == undefined ? null : convertDateToTimestamp(notification.notificationDate),
+                notification.appointmentStartDate == undefined ? null : convertDateToTimestamp(notification.appointmentStartDate),
+                notification.appointmentEndDate == undefined ? null : convertDateToTimestamp(notification.appointmentEndDate),
                 notification.idClient === undefined ? null : notification.idClient,
                 notification.idCompany,
             ]);

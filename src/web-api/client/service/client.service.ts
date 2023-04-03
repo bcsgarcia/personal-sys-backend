@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Auth } from 'src/models/auth.model';
 import { AuthDto } from 'src/web-api/auth/dto/auth.dto';
 import { AuthService } from 'src/web-api/auth/service/auth.service';
@@ -12,7 +12,7 @@ export class ClientService {
   constructor(
     private readonly clientRepository: ClientRepository,
     private readonly authService: AuthService,
-  ) {}
+  ) { }
 
   async create(createClientDto: CreateClientDto) {
     try {
@@ -22,7 +22,10 @@ export class ClientService {
           createClientDto.idCompany,
         )
       ) {
-        throw new Error('Email already exists');
+        throw new HttpException(
+          `SQL error: 'Email already exists'`,
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       const auth = await this.createAuth(createClientDto);

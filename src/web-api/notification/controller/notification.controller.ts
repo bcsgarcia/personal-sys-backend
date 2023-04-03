@@ -40,7 +40,9 @@ export class NotificationController {
       validateHeaderApi(request);
 
       createNotificationDto.idCompany = request.headers['idcompany'] as string;
-      createNotificationDto.date = new Date;
+      createNotificationDto.notificationDate = new Date;
+      createNotificationDto.appointmentStartDate = createNotificationDto.appointmentStartDate == undefined ? null : new Date(createNotificationDto.appointmentStartDate);
+      createNotificationDto.appointmentEndDate = createNotificationDto.appointmentEndDate == undefined ? null : new Date(createNotificationDto.appointmentEndDate);
 
       return this.notificationService.create(createNotificationDto);
 
@@ -63,8 +65,9 @@ export class NotificationController {
       validateHeaderApi(request);
 
       const createNotification: CreateNotificationDto = {
-        date: new Date,
+        title: createWarningDto.title,
         description: createWarningDto.description,
+        notificationDate: new Date,
         idCompany: request.headers['idcompany'] as string,
       };
 

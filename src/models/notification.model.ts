@@ -2,8 +2,11 @@ export class Notification {
     id: string;
     isActive: boolean;
     lastUpdate: Date;
+    title: string;
     description: string;
-    date: Date;
+    notificationDate: Date;
+    appointmentStartDate: Date | null;
+    appointmentEndDate: Date | null;
     idCompany: string;
     idClient: string | null;
 
@@ -12,7 +15,9 @@ export class Notification {
         this.isActive = data.isActive;
         this.lastUpdate = data.lastUpdate;
         this.description = data.description;
-        this.date = data.date;
+        this.notificationDate = data.notificationDate;
+        this.appointmentStartDate = data.appointmentStartDate;
+        this.appointmentEndDate = data.appointmentEndDate;
         this.idCompany = data.idCompany;
         this.idClient = data.idClient;
     }

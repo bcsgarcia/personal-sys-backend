@@ -5,7 +5,7 @@ import { AuthRepository } from '../repository/auth.repository';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly authRepository: AuthRepository) {}
+  constructor(private readonly authRepository: AuthRepository) { }
 
   async create(authDto: AuthDto): Promise<Auth> {
     try {
@@ -42,7 +42,11 @@ export class AuthService {
         idCompany,
       );
 
-      return rows != undefined;
+      if (rows.length > 0) {
+        return true;
+      }
+
+      return false;
     } catch (error) {
       throw error;
     }

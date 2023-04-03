@@ -4,6 +4,13 @@ import { Notification } from '../../../models/notification.model';
 export class CreateNotificationDto {
 
     @ApiProperty({
+        description: 'The title of the notification',
+        example: 'Schedulle',
+        type: String,
+    })
+    title: string;
+
+    @ApiProperty({
         description: 'The description of the notification',
         example: 'Your order has been shipped',
         type: String,
@@ -11,7 +18,21 @@ export class CreateNotificationDto {
     description: string;
 
     @ApiHideProperty()
-    date: Date;
+    notificationDate: Date;
+
+    @ApiProperty({
+        description: 'The date of the appointment',
+        example: '2020-09-12 12:00',
+        type: Date,
+    })
+    appointmentStartDate?: Date | null;
+
+    @ApiProperty({
+        description: 'The end date of the appointment',
+        example: '2020-09-12 13:00',
+        type: Date,
+    })
+    appointmentEndDate?: Date | null;
 
     @ApiHideProperty()
     idCompany: string;
@@ -27,8 +48,11 @@ export class CreateNotificationDto {
 
 
     constructor(notification: Notification) {
-        this.date = notification.date;
+        this.title = notification.title;
         this.description = notification.description;
+        this.notificationDate = notification.notificationDate;
+        this.appointmentStartDate = notification.appointmentStartDate;
+        this.appointmentEndDate = notification.appointmentEndDate;
         this.idCompany = notification.idCompany;
         this.idClient = notification.idClient;
     }
