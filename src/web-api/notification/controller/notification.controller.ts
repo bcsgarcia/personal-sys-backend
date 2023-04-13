@@ -38,11 +38,7 @@ export class NotificationController {
   create(@Body() createNotificationDto: CreateNotificationDto, @Req() request: Request) {
     try {
       validateHeaderApi(request);
-
       createNotificationDto.idCompany = request.headers['idcompany'] as string;
-      createNotificationDto.notificationDate = new Date;
-      createNotificationDto.appointmentStartDate = createNotificationDto.appointmentStartDate == undefined ? null : new Date(createNotificationDto.appointmentStartDate);
-      createNotificationDto.appointmentEndDate = createNotificationDto.appointmentEndDate == undefined ? null : new Date(createNotificationDto.appointmentEndDate);
 
       return this.notificationService.create(createNotificationDto);
 
