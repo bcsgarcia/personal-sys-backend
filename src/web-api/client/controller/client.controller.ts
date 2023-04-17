@@ -35,7 +35,7 @@ import { ClientDto } from '../dto/client.dto';
 @ApiTags('client')
 @Controller('web/client')
 export class ClientController {
-  constructor(private readonly clientService: ClientService) {}
+  constructor(private readonly clientService: ClientService) { }
 
   @Post()
   @ApiOperation({ summary: 'Create a new client' })
