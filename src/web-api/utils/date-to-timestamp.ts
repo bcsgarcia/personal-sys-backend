@@ -1,4 +1,7 @@
-export function convertDateToTimestamp(date: Date) {
+export function convertDateToTimestamp(date: Date | null) {
+    if (date == undefined || date == null) {
+        return null;
+    }
     let year = date.getFullYear();
     let month = ("0" + (date.getMonth() + 1)).slice(-2);
     let day = ("0" + date.getDate()).slice(-2);
