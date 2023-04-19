@@ -4,12 +4,21 @@ import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
 import { DatabaseService } from './database/database.service';
 import { RecordsController } from './records/records.controller';
-import { WebApiModule } from './web-api/web-api.module';
+import { WebApiModule } from './api/web-api.module';
+import { APP_GUARD } from '@nestjs/core';
+import { AuthGuard } from './api/auth/auth.guard';
 
 @Module({
   imports: [DatabaseModule, WebApiModule],
   controllers: [AppController, RecordsController],
-  providers: [AppService, DatabaseService],
+  providers: [
+    AppService,
+    DatabaseService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
   exports: [DatabaseService],
 })
-export class AppModule {}
+export class AppModule { }
