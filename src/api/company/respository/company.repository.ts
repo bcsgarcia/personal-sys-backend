@@ -6,23 +6,18 @@ import { CreateCompanyMainInformationDto } from '../dto/request/create-company-m
 import { UpdateCompanyMainInformationDto } from '../dto/request/update-company-main-information.dto';
 import { CreatePosturalPatternDto } from '../dto/request/create-company-postural-pattern.dto';
 import { UpdatePosturalPatternDto } from '../dto/request/update-company-postural-pattern.dto';
-import { CompanyMainInformationDto } from '../dto/response/company-main-information.dto';
 
 @Injectable()
 export class CompanyRepository {
   constructor(private databaseService: DatabaseService) { }
 
-  async findById(id: string): Promise<Company> {
-    const [rows] = await this.databaseService.execute(
+  async findById(id: string): Promise<any> {
+    const row = await this.databaseService.execute(
       'SELECT * FROM company WHERE id = ?',
       [id],
     );
-    if (rows.length === 0) {
-      return null;
-    }
-    const row = rows[0];
-    const company = new Company(row);
-    return company;
+
+    return row[0];
   }
 
   async findAll(): Promise<Company[]> {
@@ -174,6 +169,61 @@ export class CompanyRepository {
       throw error;
     }
   }
+
+  async getMeetAppScreen(idCompany: string): Promise<any> {
+    try {
+
+      const querie = `
+        SELECT
+            c.about AS aboutCompany_description,
+            c.photo AS aboutCompany_imageUrl,
+            c.video AS aboutCompany_videoUrl,
+            t.name AS testimonies_name,
+            t.description AS testimonies_description,
+            t.imageUrl AS testimonies_imageUrl,
+            pba.imageUrl AS photosBeforeAndAfter_imageUrl
+        FROM
+            company c
+        LEFT JOIN testimony t ON c.id = t.idCompany
+        LEFT JOIN photosBeforeAndAfter pba ON c.id = pba.idCompany
+        WHERE
+            c.id = '${idCompany}';`;
+
+      return await this.databaseService.execute(querie);
+
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getTestimonyByIdCompany(idCompany: string): Promise<any> {
+    const query = `
+    SELECT
+      name,
+      description, 
+      imageUrl
+    FROM
+      testimony
+    WHERE
+      idCompany = '${idCompany}'
+    `;
+
+    return await this.databaseService.execute(query);
+  }
+
+  async getPhotosBeforeAndAfterByIdCompany(idCompany: string): Promise<any> {
+    const query = `
+    SELECT
+      imageUrl
+    FROM
+    photosBeforeAndAfter
+    WHERE
+      idCompany = '${idCompany}'
+    `;
+
+    return await this.databaseService.execute(query);
+  }
+
 }
 
 

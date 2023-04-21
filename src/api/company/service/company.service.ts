@@ -8,6 +8,9 @@ import { UpdateCompanyMainInformationDto } from '../dto/request/update-company-m
 import { CreatePosturalPatternDto } from '../dto/request/create-company-postural-pattern.dto';
 import { PosturalPatternDto } from '../dto/response/company-postural-pattern.dto';
 import { UpdatePosturalPatternDto } from '../dto/request/update-company-postural-pattern.dto';
+import { mapperSqlResultToResponseObject } from '../mappers/mappers';
+import { GetMeetAppScreenResponseDto, TestimonyDto } from '../dto/response/response';
+import { Company } from 'src/models/company.model';
 
 @Injectable()
 export class CompanyService {
@@ -23,8 +26,10 @@ export class CompanyService {
     return companyList.map((company) => new CompanyDTO(company));
   }
 
-  findOne(id: string) {
-    return this.companyRepository.findById(id);
+  async findOne(id: string): Promise<Company> {
+    const company = await this.companyRepository.findById(id);
+
+    return new Company(company);
   }
 
   update(id: string, updateCompanyDto: CompanyDTO) {
@@ -106,6 +111,39 @@ export class CompanyService {
     }
   }
 
+  async getMeetAppScreen(idCompany: string): Promise<GetMeetAppScreenResponseDto> {
+    try {
+
+      let response: GetMeetAppScreenResponseDto = {
+        aboutCompany: {
+          imageUrl: "",
+          description: "",
+          videoUrl: "",
+        },
+        testemonies: [],
+        photosBeforeAndAfter: [],
+      }
+
+      const company = await this.findOne(idCompany);
+
+      const rowsTestimonies = await this.companyRepository.getTestimonyByIdCompany(idCompany);
+
+      const rowsPhotos = await this.companyRepository.getPhotosBeforeAndAfterByIdCompany(idCompany);
+
+      response.aboutCompany.description = company.about;
+      response.aboutCompany.imageUrl = company.photo;
+      response.aboutCompany.videoUrl = company.video;
+
+      response.testemonies = rowsTestimonies.map((item) => new TestimonyDto(item))
+
+      response.photosBeforeAndAfter = rowsPhotos.map((item) => item);
+
+      return response;
+
+    } catch (error) {
+      throw error;
+    }
+  }
 
 }
 

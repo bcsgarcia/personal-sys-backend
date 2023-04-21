@@ -96,7 +96,7 @@ export class AuthService {
       if (rows.length === 0) {
         throw new HttpException(
           `user/pass not found`,
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.NOT_FOUND,
         );
       }
 

@@ -22,13 +22,10 @@ import { UpdateCompanyMainInformationDto } from '../dto/request/update-company-m
 import { CreatePosturalPatternDto } from '../dto/request/create-company-postural-pattern.dto';
 import { PosturalPatternDto } from '../dto/response/company-postural-pattern.dto';
 import { UpdatePosturalPatternDto } from '../dto/request/update-company-postural-pattern.dto';
+import { AccessTokenModel } from 'src/models/access-token-user.model';
+import { GetMeetAppScreenResponseDto } from '../dto/response/get-meet-app-screen-response.dto';
 
 
-@ApiHeader({
-  name: 'idCompany',
-  description: 'The unique identifier of the company',
-  example: '4e4d8d1e-7d4b-4ec7-a0f8-8c35647bb70c',
-})
 @ApiTags('company')
 @Controller('company')
 export class CompanyController {
@@ -36,44 +33,57 @@ export class CompanyController {
 
   @Post()
   @ApiBearerAuth()
-
   create(@Body() companyDto: CompanyDTO) {
     return this.companyService.create(companyDto);
   }
 
   @Get()
   @ApiBearerAuth()
-
   findAll() {
     return this.companyService.findAll();
   }
 
   @Get(':id')
   @ApiBearerAuth()
-
   findOne(@Param('id') id: string) {
     return this.companyService.findOne(id);
   }
 
   @Patch(':id')
   @ApiBearerAuth()
-
   update(@Param('id') id: string, @Body() companyDto: CompanyDTO) {
     return this.companyService.update(id, companyDto);
   }
 
   @Delete(':id')
   @ApiBearerAuth()
-
   remove(@Param('id') id: string) {
     return this.companyService.remove(id);
+  }
+
+  @Get('/screen/get-meet-app')
+  @ApiOperation({ summary: 'Get Meet App Screen information' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successful request with Meet App Screen information',
+    type: GetMeetAppScreenResponseDto,
+  })
+  async getMeetAppScreen(
+    @Req() request: Request
+  ) {
+    try {
+      const user = new AccessTokenModel(request['user']);
+
+      return await this.companyService.getMeetAppScreen(user.clientIdCompany);
+    } catch (error) {
+      throw error;
+    }
   }
 
   // main information
 
   @Post('/main-information')
   @ApiBearerAuth()
-
   @ApiOperation({ summary: 'create new main information' })
   @ApiBody({ type: CreateCompanyMainInformationDto })
   @ApiResponse({
@@ -85,9 +95,9 @@ export class CompanyController {
     @Req() request: Request,
   ) {
     try {
-      validateHeaderApi(request);
+      const user = new AccessTokenModel(request['user']);
 
-      companyMainInformationDto.idCompany = request.headers['idcompany'] as string;
+      companyMainInformationDto.idCompany = user.clientIdCompany;
 
       return this.companyService.createCompanyInformation(companyMainInformationDto);
     } catch (error) {
@@ -98,7 +108,6 @@ export class CompanyController {
 
   @Get('/company-main-information/all')
   @ApiBearerAuth()
-
   @ApiOperation({ summary: 'Get all main information that the company configured' })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -110,11 +119,9 @@ export class CompanyController {
     @Req() request: Request,
   ) {
     try {
-      validateHeaderApi(request);
+      const user = new AccessTokenModel(request['user']);
 
-      const idCompany = request.headers['idcompany'] as string;
-
-      return this.companyService.findAllCompanyMainInformation(idCompany);
+      return this.companyService.findAllCompanyMainInformation(user.clientIdCompany);
 
     } catch (error) {
       throw error;
@@ -124,16 +131,11 @@ export class CompanyController {
 
   @Delete('/main-information/:id')
   @ApiBearerAuth()
-
   removeMainInformationById(
     @Param('id') id: string,
-    @Req() request: Request,
   ) {
     try {
-      validateHeaderApi(request);
-
       return this.companyService.deleteCompanyMainInformation(id);
-
     } catch (error) {
       throw error;
     }
@@ -148,7 +150,9 @@ export class CompanyController {
     @Body() updateCompanyMainInformation: UpdateCompanyMainInformationDto,
   ) {
     try {
-      validateHeaderApi(request);
+
+      const user = new AccessTokenModel(request['user']);
+      updateCompanyMainInformation.idCompanyMainInformation = user.clientIdCompany;
 
       return this.companyService.updateCompanyMainInformation(updateCompanyMainInformation);
 
@@ -161,7 +165,6 @@ export class CompanyController {
 
   @Post('/postural-pattern')
   @ApiBearerAuth()
-
   @ApiOperation({ summary: 'create new postural pattern' })
   @ApiBody({ type: CreatePosturalPatternDto })
   @ApiResponse({
@@ -174,9 +177,8 @@ export class CompanyController {
     @Req() request: Request,
   ) {
     try {
-      validateHeaderApi(request);
-
-      posturalPattern.idCompany = request.headers['idcompany'] as string;
+      const user = new AccessTokenModel(request['user']);
+      posturalPattern.idCompany = user.clientIdCompany;
 
       return this.companyService.createCompanyPosturalPattern(posturalPattern);
     } catch (error) {
@@ -199,11 +201,9 @@ export class CompanyController {
     @Req() request: Request,
   ) {
     try {
-      validateHeaderApi(request);
+      const user = new AccessTokenModel(request['user']);
 
-      const idCompany = request.headers['idcompany'] as string;
-
-      return this.companyService.findAllCompanyPosturalPattern(idCompany);
+      return this.companyService.findAllCompanyPosturalPattern(user.clientIdCompany);
 
     } catch (error) {
       throw error;
@@ -213,13 +213,10 @@ export class CompanyController {
 
   @Delete('/postural-pattern/:id')
   @ApiBearerAuth()
-
   removePosturalPatternById(
     @Param('id') id: string,
-    @Req() request: Request,
   ) {
     try {
-      validateHeaderApi(request);
 
       return this.companyService.deleteCompanyPosturalPattern(id);
 
@@ -236,8 +233,7 @@ export class CompanyController {
     @Body() posturalPattern: UpdatePosturalPatternDto,
   ) {
     try {
-      validateHeaderApi(request);
-
+      const user = new AccessTokenModel(request['user']);
       return this.companyService.updateCompanyPosturalPattern(posturalPattern);
 
 
