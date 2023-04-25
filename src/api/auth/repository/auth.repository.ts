@@ -5,7 +5,7 @@ import { AuthDto } from '../dto/request/auth.dto';
 
 @Injectable()
 export class AuthRepository {
-  constructor(private databaseService: DatabaseService) { }
+  constructor(private databaseService: DatabaseService) {}
 
   findById(id: string): Promise<any> {
     try {
@@ -41,11 +41,9 @@ export class AuthRepository {
 
   async validateUser(email: string, pass: string): Promise<any> {
     try {
-
       return this.databaseService.execute(
         `SELECT * FROM auth WHERE email = '${email}' and pass = '${pass}'`,
       );
-
     } catch (error) {
       throw error;
     }
@@ -59,11 +57,11 @@ export class AuthRepository {
           a.email as clientEmail,
           c.idCompany as clientIdCompany,
           c.idAuth as clientIdAuth
- 
+
         FROM Auth a
           INNER JOIN client c on a.id = c.idAuth
- 
-        WHERE 
+
+        WHERE
           a.email = '${authDto.email}' AND
           a.pass = '${authDto.password}' AND
           a.isAdmin = '0'`,

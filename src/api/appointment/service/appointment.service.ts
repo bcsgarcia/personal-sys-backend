@@ -6,32 +6,31 @@ import { CreateNotificationDto } from 'src/api/notification/dto/create-notificat
 import { NotificationService } from 'src/api/notification/service/notification.service';
 import { DomainError } from 'src/api/utils/domain.error';
 import { AppointmentWithClientResponseDto } from '../dto/response/response-get-appointment.dto';
-import { raw } from 'mysql2';
 import { ClientDto } from 'src/api/client/dto/client.dto';
-import { convertTimestampToDate } from 'src/api/utils/timestamp-to-date';
-
 
 @Injectable()
 export class AppointmentService {
-
   constructor(
     private readonly appointmentRepository: AppointmentRepository,
     private readonly notificationService: NotificationService,
-  ) { }
+  ) {}
 
   async create(createAppointmentDto: CreateAppointmentDto): Promise<void> {
     try {
-
       if (createAppointmentDto.sendNotificationToClients) {
         await this._createNotificationToClient(createAppointmentDto);
       }
 
-      const idAppointment = await this.appointmentRepository.create(createAppointmentDto);
+      const idAppointment = await this.appointmentRepository.create(
+        createAppointmentDto,
+      );
 
       if (createAppointmentDto.idClients.length > 0) {
-        await this._createAppointmentClient(idAppointment['id'], createAppointmentDto.idClients);
+        await this._createAppointmentClient(
+          idAppointment['id'],
+          createAppointmentDto.idClients,
+        );
       }
-
     } catch (error) {
       throw error;
     }
@@ -45,13 +44,21 @@ export class AppointmentService {
     }
   }
 
-  private async _createAppointmentClient(idAppointment: string, idClients: string[]): Promise<void> {
+  private async _createAppointmentClient(
+    idAppointment: string,
+    idClients: string[],
+  ): Promise<void> {
     for (const item of idClients) {
-      await this.appointmentRepository.createAppointmentClient(idAppointment, item);
+      await this.appointmentRepository.createAppointmentClient(
+        idAppointment,
+        item,
+      );
     }
   }
 
-  private async _createNotificationToClient(createAppointmentDto: CreateAppointmentDto): Promise<void> {
+  private async _createNotificationToClient(
+    createAppointmentDto: CreateAppointmentDto,
+  ): Promise<void> {
     try {
       if (createAppointmentDto.idClients.length <= 0) {
         throw new HttpException(
@@ -60,48 +67,70 @@ export class AppointmentService {
         );
       }
 
-      let notification: CreateNotificationDto = {
+      const notification: CreateNotificationDto = {
         description: createAppointmentDto.description,
         idCompany: createAppointmentDto.idCompany,
         title: createAppointmentDto.title,
         appointmentStartDate: createAppointmentDto.appointmentStartDate,
         appointmentEndDate: createAppointmentDto.appointmentEndDate,
-        notificationDate: new Date,
-      }
+        notificationDate: new Date(),
+      };
 
       for (const item of createAppointmentDto.idClients) {
         notification.idClient = item;
 
         await this.notificationService.create(notification);
       }
-
     } catch (error) {
       throw error;
     }
   }
 
-  async update(idAppointment: string, appointment: UpdateAppointmentDto): Promise<void> {
+  async update(
+    idAppointment: string,
+    appointment: UpdateAppointmentDto,
+  ): Promise<void> {
     try {
-      const resClientOfAppointment = await this.appointmentRepository.getAllClientsAssociatedWithAppointment(idAppointment);
-      const clientOfAppointment: string[] = resClientOfAppointment.map(obj => obj.id);
+      const resClientOfAppointment =
+        await this.appointmentRepository.getAllClientsAssociatedWithAppointment(
+          idAppointment,
+        );
+      const clientOfAppointment: string[] = resClientOfAppointment.map(
+        (obj) => obj.id,
+      );
 
-      if (this._diffBetweenCurrentClientsAndUpdatedObject(clientOfAppointment, appointment.idClients)) {
-        await this.appointmentRepository.deleteAppointmentClientByIdAppointment(idAppointment);
+      if (
+        this._diffBetweenCurrentClientsAndUpdatedObject(
+          clientOfAppointment,
+          appointment.idClients,
+        )
+      ) {
+        await this.appointmentRepository.deleteAppointmentClientByIdAppointment(
+          idAppointment,
+        );
 
-        await this._createAppointmentClient(idAppointment, appointment.idClients);
+        await this._createAppointmentClient(
+          idAppointment,
+          appointment.idClients,
+        );
       }
 
       await this.appointmentRepository.update(idAppointment, appointment);
-
-
     } catch (error) {
       throw error;
     }
   }
 
-  private _diffBetweenCurrentClientsAndUpdatedObject(originalClients: string[], newClients: string[]): boolean {
-    const diffArray1: string[] = originalClients.filter(item => !newClients.includes(item));
-    const diffArray2: string[] = newClients.filter(item => !originalClients.includes(item));
+  private _diffBetweenCurrentClientsAndUpdatedObject(
+    originalClients: string[],
+    newClients: string[],
+  ): boolean {
+    const diffArray1: string[] = originalClients.filter(
+      (item) => !newClients.includes(item),
+    );
+    const diffArray2: string[] = newClients.filter(
+      (item) => !originalClients.includes(item),
+    );
 
     const diffCombined: string[] = [...diffArray1, ...diffArray2];
 
@@ -109,7 +138,6 @@ export class AppointmentService {
   }
 
   async getAll(idCompany: string): Promise<AppointmentWithClientResponseDto[]> {
-
     try {
       const rawResults = await this.appointmentRepository.getAll(idCompany);
 
@@ -135,7 +163,6 @@ export class AppointmentService {
           };
 
           appoimentsMap.set(row.id, appointment);
-
         }
 
         if (!row.clientId) {
@@ -152,7 +179,6 @@ export class AppointmentService {
           };
 
           appointment.clients.push(client);
-
         }
       }
 
@@ -160,7 +186,5 @@ export class AppointmentService {
     } catch (error) {
       throw error;
     }
-
-
   }
 }

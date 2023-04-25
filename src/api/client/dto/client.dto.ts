@@ -1,13 +1,5 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsDate,
-  isDate,
-  IsNotEmpty,
-  IsNumber,
-  IsString,
-} from 'class-validator';
-import { convertTimestampToDate } from 'src/api/utils/timestamp-to-date';
+import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class ClientDto {
   @ApiHideProperty()

@@ -26,7 +26,7 @@ import { AccessTokenModel } from 'src/models/access-token-user.model';
 @ApiTags('client')
 @Controller('client')
 export class ClientController {
-  constructor(private readonly clientService: ClientService) { }
+  constructor(private readonly clientService: ClientService) {}
 
   @Post()
   @ApiBearerAuth()
@@ -51,7 +51,6 @@ export class ClientController {
   @ApiBearerAuth()
   findAll(@Req() request: Request): Promise<ClientDto[]> {
     try {
-
       const user = new AccessTokenModel(request['user']);
 
       return this.clientService.findAll(user.clientIdCompany);
@@ -74,10 +73,7 @@ export class ClientController {
   @ApiOperation({ summary: 'Update an existing client' })
   @Put(':id')
   @ApiBearerAuth()
-  update(
-    @Param('id') id: string,
-    @Body() updateClientDto: UpdateClientDto,
-  ) {
+  update(@Param('id') id: string, @Body() updateClientDto: UpdateClientDto) {
     try {
       return this.clientService.update(id, updateClientDto);
     } catch (error) {

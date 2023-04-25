@@ -12,13 +12,18 @@ import {
 import { NotificationService } from '../service/notification.service';
 import { CreateNotificationDto } from '../dto/create-notification.dto';
 import { UpdateNotificationDto } from '../dto/update-notification.dto';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiHeader,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Request } from 'express';
 import { validateHeaderApi } from '../../utils/utils';
 import { CreateWarningDto } from '../dto/create-warning.dto';
 import { GetNotificationDto } from '../dto/get-notification.dto';
-
-
 
 @ApiTags('notification')
 @ApiHeader({
@@ -28,23 +33,27 @@ import { GetNotificationDto } from '../dto/get-notification.dto';
 })
 @Controller('notification')
 export class NotificationController {
-  constructor(private readonly notificationService: NotificationService) { }
-
+  constructor(private readonly notificationService: NotificationService) {}
 
   @Post()
   @ApiBearerAuth()
-
   @ApiOperation({ summary: 'Create a new notification' })
-  @ApiResponse({ status: 201, description: 'The notification has been successfully created.' })
-  @ApiBadRequestResponse({ description: 'Bad request, invalid input or missing required fields.' })
-
-  create(@Body() createNotificationDto: CreateNotificationDto, @Req() request: Request) {
+  @ApiResponse({
+    status: 201,
+    description: 'The notification has been successfully created.',
+  })
+  @ApiBadRequestResponse({
+    description: 'Bad request, invalid input or missing required fields.',
+  })
+  create(
+    @Body() createNotificationDto: CreateNotificationDto,
+    @Req() request: Request,
+  ) {
     try {
       validateHeaderApi(request);
       createNotificationDto.idCompany = request.headers['idcompany'] as string;
 
       return this.notificationService.create(createNotificationDto);
-
     } catch (error) {
       throw error;
     }
@@ -52,28 +61,33 @@ export class NotificationController {
 
   @Post('/warning')
   @ApiBearerAuth()
-
   @ApiOperation({
     summary: 'Create and broadcast a warning to all clients',
     description:
       'This endpoint creates a new warning and sends it to all connected clients. This can be used to inform clients about important updates, maintenance, or any critical information.',
   })
-  @ApiResponse({ status: 201, description: 'The warning has been successfully created and broadcasted.' })
-  @ApiBadRequestResponse({ description: 'Bad request, invalid input or missing required fields.' })
-  createWarning(@Body() createWarningDto: CreateWarningDto, @Req() request: Request) {
+  @ApiResponse({
+    status: 201,
+    description: 'The warning has been successfully created and broadcasted.',
+  })
+  @ApiBadRequestResponse({
+    description: 'Bad request, invalid input or missing required fields.',
+  })
+  createWarning(
+    @Body() createWarningDto: CreateWarningDto,
+    @Req() request: Request,
+  ) {
     try {
-
       validateHeaderApi(request);
 
       const createNotification: CreateNotificationDto = {
         title: createWarningDto.title,
         description: createWarningDto.description,
-        notificationDate: new Date,
+        notificationDate: new Date(),
         idCompany: request.headers['idcompany'] as string,
       };
 
       return this.notificationService.create(createNotification);
-
     } catch (error) {
       throw error;
     }
@@ -81,28 +95,29 @@ export class NotificationController {
 
   @Get(':idClient')
   @ApiBearerAuth()
-
   @ApiOperation({
     summary: 'Get all notifications',
-    description: 'This endpoint retrieves an array of notifications to be displayed on the mobile app\'s notification screen.',
+    description:
+      "This endpoint retrieves an array of notifications to be displayed on the mobile app's notification screen.",
   })
   @ApiResponse({
     status: 200,
     description: 'An array of notifications successfully retrieved.',
     type: [GetNotificationDto],
   })
-  @ApiBadRequestResponse({ description: 'Bad request, unable to retrieve notifications.' })
+  @ApiBadRequestResponse({
+    description: 'Bad request, unable to retrieve notifications.',
+  })
   findAllByIdClient(
     @Param('idClient') idClient: string,
-    @Req() request: Request) {
+    @Req() request: Request,
+  ) {
     try {
-
       validateHeaderApi(request);
 
       const idCompany = request.headers['idcompany'] as string;
 
       return this.notificationService.findAllByIdClient(idClient, idCompany);
-
     } catch (error) {
       throw error;
     }
@@ -110,7 +125,6 @@ export class NotificationController {
 
   @Get('/warning')
   @ApiBearerAuth()
-
   @ApiOperation({
     summary: 'Get all warnings grouped by date',
     description:
@@ -121,17 +135,16 @@ export class NotificationController {
     description: 'An array of warnings grouped by date successfully retrieved.',
     type: [GetNotificationDto],
   })
-  @ApiBadRequestResponse({ description: 'Bad request, unable to retrieve warnings.' })
-  findAllWarningByIdCompany(
-    @Req() request: Request) {
+  @ApiBadRequestResponse({
+    description: 'Bad request, unable to retrieve warnings.',
+  })
+  findAllWarningByIdCompany(@Req() request: Request) {
     try {
-
       validateHeaderApi(request);
 
       const idCompany = request.headers['idcompany'] as string;
 
       return this.notificationService.findAllWarningByIdCompany(idCompany);
-
     } catch (error) {
       throw error;
     }
@@ -139,7 +152,6 @@ export class NotificationController {
 
   @Put('/:idClient/read')
   @ApiBearerAuth()
-
   @ApiOperation({
     summary: 'Update readDate for all notifications related to a client',
     description:
@@ -147,22 +159,22 @@ export class NotificationController {
   })
   @ApiResponse({
     status: 200,
-    description: 'Successfully updated readDate for all notifications related to the client.',
+    description:
+      'Successfully updated readDate for all notifications related to the client.',
   })
-  @ApiBadRequestResponse({ description: 'Bad request, unable to update readDate for notifications.' })
-  update(
-    @Param('idClient') idClient: string,
-    @Req() request: Request,
-  ) {
-
+  @ApiBadRequestResponse({
+    description: 'Bad request, unable to update readDate for notifications.',
+  })
+  update(@Param('idClient') idClient: string, @Req() request: Request) {
     try {
       validateHeaderApi(request);
 
       const idCompany = request.headers['idcompany'] as string;
 
-      return this.notificationService.updateUnreadNotifications(idClient, idCompany);
-
-
+      return this.notificationService.updateUnreadNotifications(
+        idClient,
+        idCompany,
+      );
     } catch (error) {
       throw error;
     }
@@ -170,7 +182,6 @@ export class NotificationController {
 
   @Delete('/:idNotification/deactivate')
   @ApiBearerAuth()
-
   @ApiOperation({
     summary: 'Deactivate a notification by setting isActivate to false',
     description:
@@ -178,15 +189,17 @@ export class NotificationController {
   })
   @ApiResponse({
     status: 200,
-    description: 'Successfully deactivated the notification by setting isActivate to false.',
+    description:
+      'Successfully deactivated the notification by setting isActivate to false.',
   })
-  @ApiBadRequestResponse({ description: 'Bad request, unable to deactivate the notification.' })
+  @ApiBadRequestResponse({
+    description: 'Bad request, unable to deactivate the notification.',
+  })
   remove(@Param('idNotification') idNotification: string) {
     try {
       return this.notificationService.detele(idNotification);
     } catch (error) {
       throw error;
-
     }
   }
 }

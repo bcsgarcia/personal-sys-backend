@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Auth } from 'src/models/auth.model';
 import { AuthDto } from '../dto/request/auth.dto';
 import { AuthRepository } from '../repository/auth.repository';
@@ -11,8 +16,7 @@ export class AuthService {
   constructor(
     private readonly authRepository: AuthRepository,
     private readonly jwtService: JwtService,
-
-  ) { }
+  ) {}
 
   async create(authDto: AuthDto): Promise<Auth> {
     try {
@@ -75,29 +79,23 @@ export class AuthService {
 
   async validateUser(email: string, pass: string): Promise<boolean> {
     try {
-
       const user = await this.authRepository.validateUser(email, pass);
       if (!user) {
-        throw new UnauthorizedException;
+        throw new UnauthorizedException();
       }
 
       return true;
-
     } catch (error) {
       throw error;
     }
   }
-
 
   async appAuth(auth: AppAuthDto): Promise<AccessTokenDto> {
     try {
       const rows = await this.authRepository.appAuth(auth);
 
       if (rows.length === 0) {
-        throw new HttpException(
-          `user/pass not found`,
-          HttpStatus.NOT_FOUND,
-        );
+        throw new HttpException(`user/pass not found`, HttpStatus.NOT_FOUND);
       }
 
       const payload = {
@@ -111,8 +109,6 @@ export class AuthService {
       const accessToken = await this.jwtService.signAsync(payload);
 
       return new AccessTokenDto(accessToken);
-
-
     } catch (error) {
       throw error;
     }

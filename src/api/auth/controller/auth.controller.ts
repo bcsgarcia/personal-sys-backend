@@ -7,7 +7,7 @@ import {
   Delete,
   Put,
 } from '@nestjs/common';
-import { ApiHeader, ApiTags } from '@nestjs/swagger';
+import { ApiTags } from '@nestjs/swagger';
 
 import { AuthDto } from '../dto/request/auth.dto';
 import { AuthService } from '../service/auth.service';
@@ -17,7 +17,7 @@ import { Public } from '../jwt.decorator';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
   @Post()
   create(@Body() authDto: AuthDto) {
