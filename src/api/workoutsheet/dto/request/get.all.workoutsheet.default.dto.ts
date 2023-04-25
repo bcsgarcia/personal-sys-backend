@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Workout } from '../../../models/workout.model';
+import { Workout } from 'src/models/workout.model';
 
 export class GetAllWorkoutSheetDefaultDto {
   @ApiProperty({

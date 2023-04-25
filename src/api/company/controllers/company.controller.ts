@@ -24,6 +24,7 @@ import { PosturalPatternDto } from '../dto/response/company-postural-pattern.dto
 import { UpdatePosturalPatternDto } from '../dto/request/update-company-postural-pattern.dto';
 import { AccessTokenModel } from 'src/models/access-token-user.model';
 import { GetMeetAppScreenResponseDto } from '../dto/response/get-meet-app-screen-response.dto';
+import { Public } from 'src/api/auth/jwt.decorator';
 
 
 @ApiTags('company')
@@ -68,13 +69,13 @@ export class CompanyController {
     description: 'Successful request with Meet App Screen information',
     type: GetMeetAppScreenResponseDto,
   })
+  @Public()
   async getMeetAppScreen(
     @Req() request: Request
   ) {
     try {
-      const user = new AccessTokenModel(request['user']);
 
-      return await this.companyService.getMeetAppScreen(user.clientIdCompany);
+      return await this.companyService.getMeetAppScreen('7c576f1d-d78e-11ed-ba77-0242ac110002');
     } catch (error) {
       throw error;
     }

@@ -54,7 +54,7 @@ export class AuthRepository {
   async appAuth(authDto: AppAuthDto): Promise<any> {
     try {
       return this.databaseService.execute(
-        `SELECT c.id as clienId,
+        `SELECT c.id as clientId,
           c.name as clientName,
           a.email as clientEmail,
           c.idCompany as clientIdCompany,

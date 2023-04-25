@@ -6,6 +6,8 @@ import {
 } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 import { getMessage, SqlError } from 'src/api/utils/utils';
+import { AccessTokenDto } from 'src/api/auth/dto/response/access-token-dto';
+import { AccessTokenModel } from 'src/models/access-token-user.model';
 
 @Injectable()
 export class WorkoutsheetRepository {
@@ -87,6 +89,78 @@ export class WorkoutsheetRepository {
         'UPDATE workoutSheetDefault SET isActive = 0 WHERE id = ?',
         [idWorkoutSheetDefault],
       );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getMyTrainingProgram(user: AccessTokenModel): Promise<any> {
+    try {
+
+      const query = `
+        SELECT
+        ws.id as workoutSheetId,
+        ws.name as workoutSheetName,
+        wsd.date as workoutSheedConclusionDate,
+        ws.order as workoutSheetOrder,
+    
+        w.title as workoutTitle,
+        w.subTitle as workoutSubtitle,
+        w.description as workoutDescription,
+        w.imageUrl as workoutImageUrl,
+        w.videoUrl as workoutVideoUrl,
+        wc.order as workoutOrder,
+        wc.breakTime as workoutBreakTime,
+        wc.series as workoutSeries
+
+          FROM workoutSheetDone wsD
+              INNER JOIN workoutSheet wS on wsD.idWorkoutSheet = wS.id
+              INNER JOIN workoutClient wC on wS.id = wC.idWorkoutSheet
+              INNER JOIN workout w on wC.idWorkout = w.id
+
+          WHERE ws.idClient = '${user.clientId}' AND
+                ws.idCompany = '${user.clientIdCompany}'
+
+          ORDER BY wsd.date ASC;`;
+
+      return await this.databaseService.execute(query);
+
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async getAllMyCurrentWorkoutSheetsWithWorkouts(user: AccessTokenModel): Promise<any> {
+    try {
+      const query = `
+      SELECT
+
+            ws.id as workoutSheetId,
+                ws.name as workoutSheetName,
+                ws.order as workoutSheetOrder,
+
+                w.title as workoutTitle,
+                w.subTitle as workoutSubtitle,
+                w.description as workoutDescription,
+                w.imageUrl as workoutImageUrl,
+                w.videoUrl as workoutVideoUrl,
+                wc.order as workoutOrder,
+                wc.breakTime as workoutBreakTime,
+                wc.series as workoutSeries
+
+        FROM workoutSheet ws
+
+                INNER JOIN workoutClient wC on ws.id = wC.idWorkoutSheet
+                INNER JOIN workout w on wC.idWorkout = w.id
+
+
+        WHERE ws.idClient = '${user.clientId}' AND
+              ws.isActive = 1
+
+        ORDER BY ws.order ASC
+      `;
+
+      return await this.databaseService.execute(query);
     } catch (error) {
       throw error;
     }

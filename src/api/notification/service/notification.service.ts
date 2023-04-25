@@ -56,7 +56,6 @@ export class NotificationService {
       if (allNotificationsUnread.length > 0) {
         for (const item of allNotificationsUnread) {
           await this.notificationRepository.createReadNotification(item.id, idClient);
-          console.log('done');
         }
       }
     } catch (error) {

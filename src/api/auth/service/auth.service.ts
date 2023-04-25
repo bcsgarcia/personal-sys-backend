@@ -101,7 +101,7 @@ export class AuthService {
       }
 
       const payload = {
-        clienId: rows[0]['clienId'],
+        clientId: rows[0]['clientId'],
         clientEmail: rows[0]['clientEmail'],
         clientIdAuth: rows[0]['clientIdAuth'],
         clientIdCompany: rows[0]['clientIdCompany'],

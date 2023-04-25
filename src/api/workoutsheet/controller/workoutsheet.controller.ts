@@ -11,7 +11,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { WorkoutsheetService } from '../service/workoutsheet.service';
-import { CreateWorkoutsheetDefaultDto } from '../dto/create.workoutsheet.default.dto';
+import { CreateWorkoutsheetDefaultDto } from '../dto/request/create.workoutsheet.default.dto';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -23,9 +23,11 @@ import {
 } from '@nestjs/swagger';
 import { validateHeaderApi } from 'src/api/utils/validate-header-api';
 import { Request } from 'express';
-import { UpdateWorkoutsheetDefaultDto } from '../dto/update.workoutsheet.default.dto';
-import { GetAllWorkoutSheetDefaultDto } from '../dto/get.all.workoutsheet.default.dto';
+import { UpdateWorkoutsheetDefaultDto } from '../dto/request/update.workoutsheet.default.dto';
+import { GetAllWorkoutSheetDefaultDto } from '../dto/request/get.all.workoutsheet.default.dto';
 import { AuthGuard } from '@nestjs/passport';
+import { AccessTokenModel } from 'src/models/access-token-user.model';
+import { WorkoutSheetResponseDto } from '../dto/response/workoutsheet-response.dto';
 
 @ApiTags('workoutsheet')
 @ApiHeader({
@@ -39,7 +41,6 @@ export class WorkoutsheetController {
 
   @Post('default')
   @ApiBearerAuth()
-
   @ApiOperation({ summary: 'Create a default workout sheet' })
   @ApiBody({ type: CreateWorkoutsheetDefaultDto })
   @ApiResponse({
@@ -56,8 +57,9 @@ export class WorkoutsheetController {
     @Req() request: Request,
   ): Promise<void> {
     try {
-      validateHeaderApi(request);
-      createWorkoutsheetDto.idCompany = request.headers['idcompany'] as string;
+      const user = new AccessTokenModel(request['user']);
+      createWorkoutsheetDto.idCompany = user.clientIdCompany
+
 
       return this.workoutsheetService.createWorkoutSheetDefault(
         createWorkoutsheetDto,
@@ -69,7 +71,6 @@ export class WorkoutsheetController {
 
   @Put('default')
   @ApiBearerAuth()
-
   @ApiOperation({ summary: 'Update the worksheetDefault with new workouts' })
   @ApiBody({ type: UpdateWorkoutsheetDefaultDto })
   @ApiResponse({
@@ -82,7 +83,10 @@ export class WorkoutsheetController {
     @Req() request: Request,
   ) {
     try {
-      validateHeaderApi(request);
+
+      const user = new AccessTokenModel(request['user']);
+
+      updateWorkoutsheetDto.idCompany = user.clientIdCompany;
 
       return this.workoutsheetService.updateWorkoutSheetDefaultWorkout(
         updateWorkoutsheetDto,
@@ -94,7 +98,6 @@ export class WorkoutsheetController {
 
   @Get('default/all')
   @ApiBearerAuth()
-
   @ApiOperation({
     summary: 'Get all workoutsheet default by idCompany',
     description:
@@ -110,12 +113,10 @@ export class WorkoutsheetController {
   })
   findAllWorkoutSheetDefaultByIdCompany(@Req() request: Request) {
     try {
-      validateHeaderApi(request);
-
-      const idCompany = request.headers['idcompany'] as string;
+      const user = new AccessTokenModel(request['user']);
 
       return this.workoutsheetService.getAllWorkoutSheetDefaultByIdCompany(
-        idCompany,
+        user.clientIdCompany,
       );
     } catch (error) {
       throw error;
@@ -124,7 +125,6 @@ export class WorkoutsheetController {
 
   @Delete('default/:id')
   @ApiBearerAuth()
-
   @ApiOperation({
     summary: 'Deactivate a workoutsheetdefault by setting isActivate to false',
     description:
@@ -138,11 +138,32 @@ export class WorkoutsheetController {
   @ApiBadRequestResponse({
     description: 'Bad request, unable to deactivate the workout sheet default.',
   })
-  delete(@Param('id') id: string, @Req() request: Request) {
+  delete(@Param('id') id: string) {
     try {
-      validateHeaderApi(request);
 
       return this.workoutsheetService.deleteWorkoutSheetDefault(id);
+
+    } catch (error) {
+      throw error;
+    }
+  }
+
+
+  @Get('my-training-program')
+  @ApiOperation({ summary: 'Get the user\'s training program' })
+  @ApiResponse({
+    status: 200,
+    description: 'The user\'s training program has been successfully retrieved.',
+    type: [WorkoutSheetResponseDto],
+  })
+  getMyTrainingProgram(
+    @Req() request: Request
+  ) {
+    try {
+
+      const user = new AccessTokenModel(request['user']);
+
+      return this.workoutsheetService.getMyTrainingProgram(user);
 
     } catch (error) {
       throw error;
