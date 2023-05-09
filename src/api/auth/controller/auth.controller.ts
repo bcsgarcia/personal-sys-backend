@@ -17,7 +17,7 @@ import { Public } from '../jwt.decorator';
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService) { }
 
   @Post()
   create(@Body() authDto: AuthDto) {
@@ -27,6 +27,11 @@ export class AuthController {
   @Public()
   @Post('/app')
   appLogin(@Body() authDto: AppAuthDto) {
+    return this.authService.appAuth(authDto);
+  }
+
+  @Post('/refresh')
+  refreshToken(@Body() authDto: AppAuthDto) {
     return this.authService.appAuth(authDto);
   }
 

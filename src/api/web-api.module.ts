@@ -7,6 +7,7 @@ import { AppointmentModule } from './appointment/appointment.module';
 import { ClientModule } from './client/client.module';
 import { CompanyModule } from './company/company.module';
 import { AuthModule } from './auth/auth.module';
+import { AppHomeScreenModule } from './screens/app/home/screen-home.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { AuthModule } from './auth/auth.module';
     ClientModule,
     CompanyModule,
     AuthModule,
+    AppHomeScreenModule,
   ],
   exports: [
     NotificationModule,
@@ -24,6 +26,7 @@ import { AuthModule } from './auth/auth.module';
     WorkoutsheetModule,
     AppointmentModule,
     ClientModule,
+    AppHomeScreenModule,
   ],
 })
-export class WebApiModule {}
+export class ApiModule { }

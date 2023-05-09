@@ -224,6 +224,36 @@ export class CompanyRepository {
     return await this.databaseService.execute(query);
   }
 
+  async getAllPartnershipsByIdCompany(idCompany: string): Promise<any> {
+    try {
+
+      const querie = `
+      SELECT
+        p.id as partnershipId,
+        p.idCompany as partnershipIdCompany,
+        p.name as partnershipName,
+        p.imageUrl as partnershipImageUrl,
+        p.description as partnershipDescription,
+        p.contact as partnershipContact,
+        p.email as partnershipEmail,
+        p.instagram as partnershipInstagram,
+        p.website as partnershipWebsite,
+        p.address as partnershipAddress,
+        pc.name as partnershipCategoryName
+  FROM partnership p
+      INNER JOIN partnershipCategory pC on p.idPartnershipCategory = pC.id
+  
+  WHERE
+      p.idCompany = '${idCompany}' AND
+      p.isActive = 1`;
+
+      return await this.databaseService.execute(querie);
+
+    } catch (error) {
+      throw error;
+    }
+  }
+
 }
 
 

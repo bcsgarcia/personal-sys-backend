@@ -10,13 +10,14 @@ import { AuthRepository } from '../repository/auth.repository';
 import { AccessTokenDto } from '../dto/response/access-token-dto';
 import { AppAuthDto } from '../dto/request/app-auth.dto';
 import { JwtService } from '@nestjs/jwt';
+import { jwtConstants } from '../constants';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly authRepository: AuthRepository,
     private readonly jwtService: JwtService,
-  ) {}
+  ) { }
 
   async create(authDto: AuthDto): Promise<Auth> {
     try {
@@ -104,6 +105,7 @@ export class AuthService {
         clientIdAuth: rows[0]['clientIdAuth'],
         clientIdCompany: rows[0]['clientIdCompany'],
         clientName: rows[0]['clientName'],
+        clientPhotoUrl: rows[0]['clientPhotoUrl']
       };
 
       const accessToken = await this.jwtService.signAsync(payload);
@@ -112,6 +114,22 @@ export class AuthService {
     } catch (error) {
       throw error;
     }
+  }
+
+  async refreshToken(token: AccessTokenDto): Promise<AccessTokenDto> {
+    try {
+      const payload = await this.jwtService.verifyAsync(token.accessToken, {
+        secret: jwtConstants.secret,
+        ignoreExpiration: true, // Add this to ignore token expiration when verifying
+      });
+
+      const accessToken = await this.jwtService.signAsync(payload);
+
+      return new AccessTokenDto(accessToken);
+    } catch (error) {
+      throw new UnauthorizedException();
+    }
+
   }
 
   async updateEmailByIdClient(idClient: string, email: string) {

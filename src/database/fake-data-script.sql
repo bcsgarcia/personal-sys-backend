@@ -68,4 +68,22 @@ insert into workoutSheetDone (idWorkoutSheet, idCompany, date)
 values 
 ('a52b8fe5-e143-11ed-b707-0242ac110002', '7c576f1d-d78e-11ed-ba77-0242ac110002', '2023-04-20 15:02:31'),
 ('a52b9804-e143-11ed-b707-0242ac110002', '7c576f1d-d78e-11ed-ba77-0242ac110002', '2023-04-21 15:02:31'),
-('a52b993e-e143-11ed-b707-0242ac110002', '7c576f1d-d78e-11ed-ba77-0242ac110002', '2023-04-22 15:02:31')
+('a52b993e-e143-11ed-b707-0242ac110002', '7c576f1d-d78e-11ed-ba77-0242ac110002', '2023-04-22 15:02:31');
+
+INSERT INTO partnership (idCompany, name, contact, email, whatsapp, instagram, website,
+                         imageUrl, description, address, idPartnershipCategory)
+VALUES 
+('7c576f1d-d78e-11ed-ba77-0242ac110002', 'The Coffee Shop', '+1 (123) 456-7890', 'contact@coffeeshop.com', '+1 (123) 456-7890', 'coffeeshop', 'https://www.coffeeshop.com',
+ 'https://loremflickr.com/320/240/coffee', 'Cozy coffee shop with a variety of drinks and snacks.', '123 Coffee St, New York, NY 10001', '6f10667e-ecdd-11ed-b70c-0242ac110002'),
+
+('7c576f1d-d78e-11ed-ba77-0242ac110002', 'Gym Center', '+1 (234) 567-8910', 'info@gymcenter.com', '+1 (234) 567-8910', 'gymcenter', 'https://www.gymcenter.com',
+ 'https://loremflickr.com/320/240/gym', 'State-of-the-art gym facilities and personal training.', '456 Fitness Ave, Los Angeles, CA 90001', '6f115ef0-ecdd-11ed-b70c-0242ac110002'),
+
+('7c576f1d-d78e-11ed-ba77-0242ac110002', 'Green Garden Restaurant', '+1 (345) 678-9101', 'reservations@greengarden.com', '+1 (345) 678-9101', 'greengarden', 'https://www.greengarden.com',
+ 'https://loremflickr.com/320/240/restaurant', 'Organic and locally sourced dishes in a beautiful garden setting.', '789 Garden Rd, San Francisco, CA 94110', '6f0f807e-ecdd-11ed-b70c-0242ac110002'),
+
+('7c576f1d-d78e-11ed-ba77-0242ac110002', 'Tech Solutions', '+1 (456) 789-1011', 'support@techsolutions.com', '+1 (456) 789-1011', 'techsolutions', 'https://www.techsolutions.com',
+ 'https://loremflickr.com/320/240/technology', 'Providing IT support and custom software solutions.', '123 Tech St, Seattle, WA 98101', '6f10667e-ecdd-11ed-b70c-0242ac110002'),
+
+('7c576f1d-d78e-11ed-ba77-0242ac110002', 'Artistic Designs', '+1 (567) 890-1213', 'info@artisticdesigns.com', '+1 (567) 890-1213', 'artisticdesigns', 'https://www.artisticdesigns.com',
+ 'https://loremflickr.com/320/240/design', 'Graphic design, branding, and marketing services.', '234 Creativity St, Chicago, IL 60601', '6f115ef0-ecdd-11ed-b70c-0242ac110002');

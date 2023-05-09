@@ -11,6 +11,7 @@ import { UpdatePosturalPatternDto } from '../dto/request/update-company-postural
 import { mapperSqlResultToResponseObject } from '../mappers/mappers';
 import { GetMeetAppScreenResponseDto, TestimonyDto } from '../dto/response/response';
 import { Company } from 'src/models/company.model';
+import { PartnershipDTO } from '../dto/response/partnership-dto';
 
 @Injectable()
 export class CompanyService {
@@ -140,6 +141,16 @@ export class CompanyService {
 
       return response;
 
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async findAllPartnershipByIdCompany(idCompany: string): Promise<PartnershipDTO[]> {
+    try {
+      const rows = await this.companyRepository.getAllPartnershipsByIdCompany(idCompany);
+
+      return rows.map((item) => new PartnershipDTO(item));
     } catch (error) {
       throw error;
     }

@@ -149,24 +149,5 @@ export class WorkoutsheetController {
   }
 
 
-  @Get('my-training-program')
-  @ApiOperation({ summary: 'Get the user\'s training program' })
-  @ApiResponse({
-    status: 200,
-    description: 'The user\'s training program has been successfully retrieved.',
-    type: [WorkoutSheetResponseDto],
-  })
-  getMyTrainingProgram(
-    @Req() request: Request
-  ) {
-    try {
 
-      const user = new AccessTokenModel(request['user']);
-
-      return this.workoutsheetService.getMyTrainingProgram(user);
-
-    } catch (error) {
-      throw error;
-    }
-  }
 }

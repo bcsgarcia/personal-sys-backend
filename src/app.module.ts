@@ -4,12 +4,12 @@ import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
 import { DatabaseService } from './database/database.service';
 import { RecordsController } from './records/records.controller';
-import { WebApiModule } from './api/web-api.module';
+import { ApiModule } from './api/web-api.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './api/auth/auth.guard';
 
 @Module({
-  imports: [DatabaseModule, WebApiModule],
+  imports: [DatabaseModule, ApiModule],
   controllers: [AppController, RecordsController],
   providers: [
     AppService,

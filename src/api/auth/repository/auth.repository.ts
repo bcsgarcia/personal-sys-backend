@@ -5,7 +5,7 @@ import { AuthDto } from '../dto/request/auth.dto';
 
 @Injectable()
 export class AuthRepository {
-  constructor(private databaseService: DatabaseService) {}
+  constructor(private databaseService: DatabaseService) { }
 
   findById(id: string): Promise<any> {
     try {
@@ -56,7 +56,8 @@ export class AuthRepository {
           c.name as clientName,
           a.email as clientEmail,
           c.idCompany as clientIdCompany,
-          c.idAuth as clientIdAuth
+          c.idAuth as clientIdAuth,
+          c.photoUrl as clientPhotoUrl
 
         FROM Auth a
           INNER JOIN client c on a.id = c.idAuth
