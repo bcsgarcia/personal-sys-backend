@@ -3,6 +3,7 @@ import { Notification } from 'src/models/notification.model';
 import { CreateNotificationDto } from '../dto/create-notification.dto';
 import { GetNotificationDto } from '../dto/get-notification.dto';
 import { NotificationRepository } from '../repository/notification.repository';
+import { AccessTokenModel } from 'src/models/access-token-user.model';
 
 @Injectable()
 export class NotificationService {
@@ -45,27 +46,17 @@ export class NotificationService {
     }
   }
 
-  async updateUnreadNotifications(idClient: string, idCompany: string): Promise<void> {
+  async detele(idNotification: string): Promise<void> {
     try {
-
-      const allNotifications = await this.notificationRepository.findAllByIdClient(idClient, idCompany);
-
-
-      const allNotificationsUnread = allNotifications.filter((notification) => notification.readDate === null);
-
-      if (allNotificationsUnread.length > 0) {
-        for (const item of allNotificationsUnread) {
-          await this.notificationRepository.createReadNotification(item.id, idClient);
-        }
-      }
+      await this.notificationRepository.deleteById(idNotification);
     } catch (error) {
       throw error;
     }
   }
 
-  async detele(idNotification: string): Promise<void> {
+  async updateUnreadNotifications(user: AccessTokenModel): Promise<void> {
     try {
-      await this.notificationRepository.deleteById(idNotification);
+      await this.notificationRepository.updateReadDateForAllNotification(user.clientId, user.clientIdCompany);
     } catch (error) {
       throw error;
     }

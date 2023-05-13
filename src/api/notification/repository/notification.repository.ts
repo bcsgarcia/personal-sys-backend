@@ -29,7 +29,7 @@ export class NotificationRepository {
     async findAllByIdClient(idClient: string, idCompany: string): Promise<any> {
         try {
             const query = `
-            SELECT n.id, n.title, n.description, n.date, rN.readDate, rN.readDate FROM notification n
+            SELECT n.id, n.title, n.description, n.notificationDate, rN.readDate, rN.readDate, n.appointmentStartDate, n.appointmentEndDate FROM notification n
             LEFT JOIN readNotification rN on n.id = rN.idNotification
         
             WHERE
@@ -37,7 +37,7 @@ export class NotificationRepository {
             AND n.idCompany = '${idCompany}'
             AND n.isActive = 1
 
-            ORDER BY n.date desc;
+            ORDER BY n.notificationDate desc;
             `;
 
             return await this.databaseService.execute(query);
@@ -92,5 +92,24 @@ export class NotificationRepository {
             'UPDATE readNotification SET isActive = 0 WHERE idNotification = ?',
             [id],
         )
+    }
+
+    async updateReadDateForAllNotification(idClient: string, idCompany: string): Promise<void> {
+        try {
+            const createQuery =
+                `INSERT INTO readNotification (readDate, idNotification, idClient)
+                SELECT CURRENT_TIMESTAMP, n.id, n.idClient
+                FROM notification n
+                WHERE n.idClient = '${idClient}' AND n.idCompany = '${idCompany}'
+                AND NOT EXISTS (
+                    SELECT 1
+                    FROM readNotification rn
+                    WHERE rn.idNotification = n.id AND rn.idClient = n.idClient
+                );`
+
+            await this.databaseService.execute(createQuery);
+        } catch (error) {
+            throw error;
+        }
     }
 }

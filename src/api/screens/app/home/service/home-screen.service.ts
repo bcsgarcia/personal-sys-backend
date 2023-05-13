@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { CompanyService } from 'src/api/company/service/company.service';
 import { ClientService } from 'src/api/client/service/client.service';
 import { isToday } from 'src/api/utils/is-today';
-import { WorkoutResponseDto } from 'src/api/workoutsheet/dto/response/workout-response.dto';
 import { WorkoutSheetResponseDto } from 'src/api/workoutsheet/dto/response/workoutsheet-response.dto';
 import { WorkoutsheetService } from 'src/api/workoutsheet/service/workoutsheet.service';
 import { AccessTokenModel } from 'src/models/access-token-user.model';
+import { NotificationService } from 'src/api/notification/service/notification.service';
+import { WorkoutResponseDto } from 'src/api/workoutsheet/dto/response/workout-response.dto';
 
 @Injectable()
 export class AppHomeScreenService {
@@ -13,6 +14,7 @@ export class AppHomeScreenService {
         private readonly workoutsheetService: WorkoutsheetService,
         private readonly companyService: CompanyService,
         private readonly clientService: ClientService,
+        private readonly notificationService: NotificationService,
     ) { }
 
     async getHomeScreen(user: AccessTokenModel): Promise<any> {
@@ -22,6 +24,7 @@ export class AppHomeScreenService {
             const companyTipsInformation = await this.companyService.findAllCompanyMainInformation(user.clientIdCompany);
             const companyPosturalPatterns = await this.companyService.findAllCompanyPosturalPattern(user.clientIdCompany);
             const companyPartnerships = await this.companyService.findAllPartnershipByIdCompany(user.clientIdCompany);
+            const notifications = await this.notificationService.findAllByIdClient(user.clientId, user.clientIdCompany);
 
             // Retrieve the user's training program and convert it to a readable format
             const rows = await this.workoutsheetService.getMyTrainingProgram(user);
@@ -39,6 +42,7 @@ export class AppHomeScreenService {
                 return {
                     "myTrainingPlan": myTrainingPlan,
                     "myWorksheets": allMyCurrentWorkoutSheets,
+                    "notifications": notifications,
                     "drawerMenu": {
                         clientDto,
                         companyTipsInformation,
@@ -59,6 +63,7 @@ export class AppHomeScreenService {
             return {
                 "myTrainingPlan": myTrainingPlan,
                 "myWorksheets": allMyCurrentWorkoutSheets,
+                "notifications": notifications,
                 "drawerMenu": {
                     clientDto,
                     companyTipsInformation,

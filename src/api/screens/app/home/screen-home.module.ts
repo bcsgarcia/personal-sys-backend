@@ -12,6 +12,8 @@ import { ClientRepository } from "src/api/client/repository/client.repository";
 import { AuthRepository } from "src/api/auth/repository/auth.repository";
 import { AuthModule } from "src/api/auth/auth.module";
 import { JwtModule } from "@nestjs/jwt";
+import { NotificationService } from "src/api/notification/service/notification.service";
+import { NotificationRepository } from "src/api/notification/repository/notification.repository";
 
 @Module({
     controllers: [AppHomeScreenController],
@@ -22,10 +24,12 @@ import { JwtModule } from "@nestjs/jwt";
         CompanyService,
         ClientService,
         AuthService,
+        NotificationService,
         AuthRepository,
         ClientRepository,
         CompanyRepository,
-        WorkoutsheetRepository
+        WorkoutsheetRepository,
+        NotificationRepository,
     ],
 })
 export class AppHomeScreenModule { }

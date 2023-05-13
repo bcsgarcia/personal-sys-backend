@@ -24,19 +24,14 @@ import { Request } from 'express';
 import { validateHeaderApi } from '../../utils/utils';
 import { CreateWarningDto } from '../dto/create-warning.dto';
 import { GetNotificationDto } from '../dto/get-notification.dto';
+import { AccessTokenModel } from 'src/models/access-token-user.model';
 
 @ApiTags('notification')
-@ApiHeader({
-  name: 'idCompany',
-  description: 'The unique identifier of the company',
-  example: '4e4d8d1e-7d4b-4ec7-a0f8-8c35647bb70c',
-})
 @Controller('notification')
 export class NotificationController {
-  constructor(private readonly notificationService: NotificationService) {}
+  constructor(private readonly notificationService: NotificationService) { }
 
   @Post()
-  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new notification' })
   @ApiResponse({
     status: 201,
@@ -50,7 +45,6 @@ export class NotificationController {
     @Req() request: Request,
   ) {
     try {
-      validateHeaderApi(request);
       createNotificationDto.idCompany = request.headers['idcompany'] as string;
 
       return this.notificationService.create(createNotificationDto);
@@ -60,7 +54,6 @@ export class NotificationController {
   }
 
   @Post('/warning')
-  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Create and broadcast a warning to all clients',
     description:
@@ -78,7 +71,6 @@ export class NotificationController {
     @Req() request: Request,
   ) {
     try {
-      validateHeaderApi(request);
 
       const createNotification: CreateNotificationDto = {
         title: createWarningDto.title,
@@ -94,7 +86,6 @@ export class NotificationController {
   }
 
   @Get(':idClient')
-  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Get all notifications',
     description:
@@ -113,7 +104,6 @@ export class NotificationController {
     @Req() request: Request,
   ) {
     try {
-      validateHeaderApi(request);
 
       const idCompany = request.headers['idcompany'] as string;
 
@@ -124,7 +114,6 @@ export class NotificationController {
   }
 
   @Get('/warning')
-  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Get all warnings grouped by date',
     description:
@@ -140,7 +129,6 @@ export class NotificationController {
   })
   findAllWarningByIdCompany(@Req() request: Request) {
     try {
-      validateHeaderApi(request);
 
       const idCompany = request.headers['idcompany'] as string;
 
@@ -150,38 +138,7 @@ export class NotificationController {
     }
   }
 
-  @Put('/:idClient/read')
-  @ApiBearerAuth()
-  @ApiOperation({
-    summary: 'Update readDate for all notifications related to a client',
-    description:
-      'This endpoint receives an idClient and updates the readDate for all notifications related to the specified client.',
-  })
-  @ApiResponse({
-    status: 200,
-    description:
-      'Successfully updated readDate for all notifications related to the client.',
-  })
-  @ApiBadRequestResponse({
-    description: 'Bad request, unable to update readDate for notifications.',
-  })
-  update(@Param('idClient') idClient: string, @Req() request: Request) {
-    try {
-      validateHeaderApi(request);
-
-      const idCompany = request.headers['idcompany'] as string;
-
-      return this.notificationService.updateUnreadNotifications(
-        idClient,
-        idCompany,
-      );
-    } catch (error) {
-      throw error;
-    }
-  }
-
   @Delete('/:idNotification/deactivate')
-  @ApiBearerAuth()
   @ApiOperation({
     summary: 'Deactivate a notification by setting isActivate to false',
     description:
@@ -198,6 +155,31 @@ export class NotificationController {
   remove(@Param('idNotification') idNotification: string) {
     try {
       return this.notificationService.detele(idNotification);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+
+  @Put('/update-unread-notification')
+  @ApiOperation({
+    summary: 'Update readDate for all notifications related to a client',
+    description:
+      'This endpoint receives an idClient and updates the readDate for all notifications related to the specified client.',
+  })
+  @ApiResponse({
+    status: 200,
+    description:
+      'Successfully updated readDate for all notifications related to the client.',
+  })
+  @ApiBadRequestResponse({
+    description: 'Bad request, unable to update readDate for notifications.',
+  })
+  update(@Req() request: Request) {
+    try {
+      const user = new AccessTokenModel(request['user']);
+
+      return this.notificationService.updateUnreadNotifications(user);
     } catch (error) {
       throw error;
     }
