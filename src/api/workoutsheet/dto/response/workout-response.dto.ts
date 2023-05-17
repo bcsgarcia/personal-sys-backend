@@ -1,6 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class WorkoutResponseDto {
+  @ApiProperty({ description: 'The uid of the workout' })
+  id: string;
+
   @ApiProperty({ description: 'The title of the workout' })
   title: string;
 
@@ -26,6 +29,7 @@ export class WorkoutResponseDto {
   serie: string;
 
   constructor(data: any) {
+    this.id = data.id;
     this.title = data.title;
     this.subtitle = data.subtitle;
     this.description = data.description;

@@ -96,6 +96,7 @@ export class AppHomeScreenService {
 
         for (const row of rows) {
             const workout: WorkoutResponseDto = {
+                id: row.workoutId,
                 title: row.workoutTitle,
                 subtitle: row.workoutSubtitle,
                 description: row.workoutDescription,

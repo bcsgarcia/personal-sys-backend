@@ -103,7 +103,8 @@ export class WorkoutsheetRepository {
         ws.name as workoutSheetName,
         wsd.date as workoutSheedConclusionDate,
         ws.order as workoutSheetOrder,
-    
+
+        w.id as workoutId,
         w.title as workoutTitle,
         w.subTitle as workoutSubtitle,
         w.description as workoutDescription,
@@ -139,6 +140,7 @@ export class WorkoutsheetRepository {
                 ws.name as workoutSheetName,
                 ws.order as workoutSheetOrder,
 
+                w.id as workoutId,
                 w.title as workoutTitle,
                 w.subTitle as workoutSubtitle,
                 w.description as workoutDescription,
