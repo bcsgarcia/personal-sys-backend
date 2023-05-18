@@ -96,31 +96,37 @@ export class WorkoutsheetRepository {
 
   async getMyTrainingProgram(user: AccessTokenModel): Promise<any> {
     try {
-
       const query = `
         SELECT
-        ws.id as workoutSheetId,
-        ws.name as workoutSheetName,
-        wsd.date as workoutSheedConclusionDate,
-        ws.order as workoutSheetOrder,
-
-        w.id as workoutId,
-        w.title as workoutTitle,
-        w.subTitle as workoutSubtitle,
-        w.description as workoutDescription,
-        w.imageUrl as workoutImageUrl,
-        w.videoUrl as workoutVideoUrl,
-        wc.order as workoutOrder,
-        wc.breakTime as workoutBreakTime,
-        wc.series as workoutSeries
-
-          FROM workoutSheetDone wsD
-              INNER JOIN workoutSheet wS on wsD.idWorkoutSheet = wS.id
-              INNER JOIN workoutClient wC on wS.id = wC.idWorkoutSheet
-              INNER JOIN workout w on wC.idWorkout = w.id
-
-          WHERE ws.idClient = '${user.clientId}' AND
-                ws.idCompany = '${user.clientIdCompany}'
+              ws.id as workoutSheetId,
+                ws.name as workoutSheetName,
+                wsd.date as workoutSheedConclusionDate,
+                ws.order as workoutSheetOrder,
+        
+                w.id as workoutId,
+                w.title as workoutTitle,
+                w.subTitle as workoutSubtitle,
+                w.description as workoutDescription,
+                wc.order as workoutOrder,
+                wc.breakTime as workoutBreakTime,
+                wc.series as workoutSeries,
+        
+                m.title as mediaTitle,
+                m.fileFormat as mediaFormat,
+                m.type as mediaType,
+                m.url as mediaUrl
+        FROM
+            workoutSheetDone wsD
+        INNER JOIN workoutSheet wS on wsD.idWorkoutSheet = wS.id
+        INNER JOIN workoutClient wC on ws.id = wc.idWorkoutSheet
+        INNER JOIN workout w on wc.idWorkout = w.id
+        INNER JOIN workoutMedia wM on w.id = wM.idWorkout
+        INNER JOIN media m on wM.idMedia = m.id
+        
+        WHERE
+            ws.idClient = '${user.clientId}' AND
+            ws.idCompany = '${user.clientIdCompany}' AND
+            ws.isActive = 1
 
           ORDER BY wsd.date ASC;`;
 
@@ -135,7 +141,6 @@ export class WorkoutsheetRepository {
     try {
       const query = `
       SELECT
-
             ws.id as workoutSheetId,
                 ws.name as workoutSheetName,
                 ws.order as workoutSheetOrder,
@@ -144,21 +149,27 @@ export class WorkoutsheetRepository {
                 w.title as workoutTitle,
                 w.subTitle as workoutSubtitle,
                 w.description as workoutDescription,
-                w.imageUrl as workoutImageUrl,
-                w.videoUrl as workoutVideoUrl,
                 wc.order as workoutOrder,
                 wc.breakTime as workoutBreakTime,
-                wc.series as workoutSeries
+                wc.series as workoutSeries,
+
+                m.title as mediaTitle,
+                m.fileFormat as mediaFormat,
+                m.type as mediaType,
+                m.url as mediaUrl
 
         FROM workoutSheet ws
 
                 INNER JOIN workoutClient wC on ws.id = wC.idWorkoutSheet
                 INNER JOIN workout w on wC.idWorkout = w.id
+                INNER JOIN workoutMedia wM on w.id = wM.idWorkout
+                INNER JOIN media m on wM.idMedia = m.id
 
 
-        WHERE ws.idClient = '${user.clientId}' AND
+         WHERE
+             ws.idClient = 'c284ac9d-d78e-11ed-ba77-0242ac110002' AND
+              ws.idCompany = '7c576f1d-d78e-11ed-ba77-0242ac110002' AND
               ws.isActive = 1
-
         ORDER BY ws.order ASC
       `;
 

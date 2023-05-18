@@ -15,6 +15,7 @@ import { AccessTokenModel } from 'src/models/access-token-user.model';
 import { WorkoutResponseDto } from '../dto/response/workout-response.dto';
 import { isToday } from '../../utils/is-today';
 import { WorkoutSheetResponseDto } from '../dto/response/workoutsheet-response.dto';
+import { WorkoutMediaDto } from '../dto/response/workout-media.dto';
 
 @Injectable()
 export class WorkoutsheetService {
@@ -132,12 +133,62 @@ export class WorkoutsheetService {
     }
   }
 
-  async getMyTrainingProgram(user: AccessTokenModel) {
-    return await this.workoutSheetRepository.getMyTrainingProgram(user);
+  async getMyTrainingProgram(user: AccessTokenModel): Promise<WorkoutSheetResponseDto[]> {
+    const rows = await this.workoutSheetRepository.getMyTrainingProgram(user);
+    return this._convertRowsToWorkoutSheetResponseDto(rows);
+
   }
 
   async getAllMyCurrentWorkoutSheetsWithWorkouts(user: AccessTokenModel) {
-    return await this.workoutSheetRepository.getAllMyCurrentWorkoutSheetsWithWorkouts(user);
+    const rows = await this.workoutSheetRepository.getAllMyCurrentWorkoutSheetsWithWorkouts(user);
+    return this._convertRowsToWorkoutSheetResponseDto(rows);
+
+  }
+
+  _convertRowsToWorkoutSheetResponseDto(rows: any): WorkoutSheetResponseDto[] {
+    // Group rows by workoutSheetId as there might be multiple workouts per sheet
+    const workoutSheetsMap: Record<number, any> = {};
+    for (const row of rows) {
+      if (!workoutSheetsMap[row.workoutSheetId]) {
+        workoutSheetsMap[row.workoutSheetId] = {
+          id: row.workoutSheetId,
+          date: row.workoutSheedConclusionDate,
+          name: row.workoutSheetName,
+          order: row.workoutSheetOrder,
+          workouts: {}
+        };
+      }
+
+      const workoutMediaDto = new WorkoutMediaDto({
+        mediaTitle: row.mediaTitle,
+        mediaFormat: row.mediaFormat,
+        mediaType: row.mediaType,
+        mediaUrl: row.mediaUrl,
+      });
+
+      if (!workoutSheetsMap[row.workoutSheetId].workouts[row.workoutId]) {
+        workoutSheetsMap[row.workoutSheetId].workouts[row.workoutId] = {
+          id: row.workoutId,
+          title: row.workoutTitle,
+          subtitle: row.workoutSubtitle,
+          description: row.workoutDescription,
+          order: row.workoutOrder,
+          breaktime: row.workoutBreakTime,
+          serie: row.workoutSeries,
+          media: []
+        };
+      }
+
+      workoutSheetsMap[row.workoutSheetId].workouts[row.workoutId].media.push(workoutMediaDto);
+    }
+
+    // Convert each grouped workout sheet object and its workouts to DTOs
+    const workoutSheetResponseDtos = Object.values(workoutSheetsMap).map(data => {
+      data.workouts = Object.values(data.workouts).map(workoutData => new WorkoutResponseDto(workoutData));
+      return new WorkoutSheetResponseDto(data);
+    });
+
+    return workoutSheetResponseDtos;
   }
 
   async _createWorkoutSheetDefaultWorkout(

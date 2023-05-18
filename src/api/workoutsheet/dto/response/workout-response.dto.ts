@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { WorkoutMediaDto } from './workout-media.dto';
 
 export class WorkoutResponseDto {
   @ApiProperty({ description: 'The uid of the workout' })
@@ -14,10 +15,7 @@ export class WorkoutResponseDto {
   description: string;
 
   @ApiProperty({ description: 'The URL of the workout image' })
-  imageUrl: string;
-
-  @ApiProperty({ description: 'The URL of the workout video' })
-  videoUrl: string;
+  media: WorkoutMediaDto[];
 
   @ApiProperty({ description: 'The order of the workout in the workout sheet' })
   order: number;
@@ -33,8 +31,7 @@ export class WorkoutResponseDto {
     this.title = data.title;
     this.subtitle = data.subtitle;
     this.description = data.description;
-    this.imageUrl = data.imageUrl;
-    this.videoUrl = data.videoUrl;
+    this.media = data.media ? data.media.map((item: any) => new WorkoutMediaDto(item)) : [];
     this.order = data.order;
     this.breaktime = data.breaktime;
     this.serie = data.serie;

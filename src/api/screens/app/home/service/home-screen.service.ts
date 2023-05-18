@@ -27,13 +27,11 @@ export class AppHomeScreenService {
             const notifications = await this.notificationService.findAllByIdClient(user.clientId, user.clientIdCompany);
 
             // Retrieve the user's training program and convert it to a readable format
-            const rows = await this.workoutsheetService.getMyTrainingProgram(user);
-            const myTrainingPlan = this.convertRowsToWorkoutSheetResponseDto(rows);
+            const myTrainingPlan = await this.workoutsheetService.getMyTrainingProgram(user);
+            // const myTrainingPlan = this.convertRowsToWorkoutSheetResponseDto(rows);
 
             // Retrieve the user's current workout sheets and convert them to a readable format
-            const rowsCurrentWorkoutSheets = await this.workoutsheetService.getAllMyCurrentWorkoutSheetsWithWorkouts(user);
-            const allMyCurrentWorkoutSheets = this.convertRowsToWorkoutSheetResponseDto(rowsCurrentWorkoutSheets);
-
+            const allMyCurrentWorkoutSheets = await this.workoutsheetService.getAllMyCurrentWorkoutSheetsWithWorkouts(user);
 
             // Check if the user has already completed today's workout
             const lastWorkout = myTrainingPlan[myTrainingPlan.length - 1];
@@ -89,41 +87,5 @@ export class AppHomeScreenService {
 
         // Otherwise, return the next workout in the array
         return workoutSheets[lastWorkoutIndex + 1];
-    }
-
-    convertRowsToWorkoutSheetResponseDto(rows: any[]): WorkoutSheetResponseDto[] {
-        const groupedWorkouts = new Map<number, WorkoutSheetResponseDto>();
-
-        for (const row of rows) {
-            const workout: WorkoutResponseDto = {
-                id: row.workoutId,
-                title: row.workoutTitle,
-                subtitle: row.workoutSubtitle,
-                description: row.workoutDescription,
-                imageUrl: row.workoutImageUrl,
-                videoUrl: row.workoutVideoUrl,
-                order: row.workoutOrder,
-                breaktime: row.workoutBreakTime,
-                serie: row.workoutSeries,
-            };
-
-            const workoutSheetId = row.workoutSheetId;
-            let workoutSheet = groupedWorkouts.get(workoutSheetId);
-
-            if (!workoutSheet) {
-                workoutSheet = {
-                    id: workoutSheetId,
-                    date: row.workoutSheedConclusionDate === undefined ? null : new Date(row.workoutSheedConclusionDate),
-                    name: row.workoutSheetName,
-                    order: row.workoutSheetOrder,
-                    workouts: [],
-                };
-                groupedWorkouts.set(workoutSheetId, workoutSheet);
-            }
-
-            workoutSheet.workouts.push(workout);
-        }
-
-        return Array.from(groupedWorkouts.values());
     }
 }

@@ -23,7 +23,8 @@ export class WorkoutSheetResponseDto {
     constructor(data: any) {
         this.id = data.id;
         this.date = data.date === undefined ? null : new Date(data.date);
-        this.order = this.order;
-        this.workouts = this.workouts.map((item) => new WorkoutResponseDto(item));
+        this.name = data.name;
+        this.order = data.order;
+        this.workouts = data.workouts ? data.workouts.map((item: any) => new WorkoutResponseDto(item)) : [];
     }
 }
