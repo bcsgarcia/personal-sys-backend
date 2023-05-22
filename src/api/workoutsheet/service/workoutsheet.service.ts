@@ -16,6 +16,7 @@ import { WorkoutResponseDto } from '../dto/response/workout-response.dto';
 import { isToday } from '../../utils/is-today';
 import { WorkoutSheetResponseDto } from '../dto/response/workoutsheet-response.dto';
 import { WorkoutMediaDto } from '../dto/response/workout-media.dto';
+import { MediaForSyncDto } from '../dto/response/media-for-sync.dto';
 
 @Injectable()
 export class WorkoutsheetService {
@@ -160,6 +161,7 @@ export class WorkoutsheetService {
       }
 
       const workoutMediaDto = new WorkoutMediaDto({
+        mediaId: row.mediaId,
         mediaTitle: row.mediaTitle,
         mediaFormat: row.mediaFormat,
         mediaType: row.mediaType,
@@ -206,5 +208,31 @@ export class WorkoutsheetService {
       throw error;
     }
   }
+
+  async getUrlMidiaForSync(user: AccessTokenModel): Promise<MediaForSyncDto[]> {
+    try {
+
+      const rows = await this.workoutSheetRepository.getUrlMediasForSync(user);
+      const allMidias = rows.map((media) => new MediaForSyncDto(media));
+
+      let uniqueMedias: MediaForSyncDto[] = Array.from(
+        allMidias.reduce((map, obj) => map.set(obj.id, obj), new Map<string, MediaForSyncDto>()).values()
+      );
+
+      return uniqueMedias;
+
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async workoutSheetDone(idWorkoutsheet: string, user: AccessTokenModel): Promise<void> {
+    try {
+      return await this.workoutSheetRepository.workoutSheetDone(idWorkoutsheet, user.clientIdCompany);
+    } catch (error) {
+      throw error;
+    }
+  }
+
 
 }

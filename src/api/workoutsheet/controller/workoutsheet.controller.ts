@@ -148,6 +148,40 @@ export class WorkoutsheetController {
     }
   }
 
+  @Get('all/medias-sync')
+  @ApiBearerAuth()
+  getAllUrlMediaForSync(@Req() request: Request) {
+    try {
+      const user = new AccessTokenModel(request['user']);
+
+      return this.workoutsheetService.getUrlMidiaForSync(user);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Post('done')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Mark as done a workoutsheet' })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'The default workout sheet has been successfully created.',
+  })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request.' })
+  workoutsheetDone(
+    @Body() body: any,
+    @Req() request: Request,
+  ): Promise<void> {
+    try {
+      const user = new AccessTokenModel(request['user']);
+
+      const idWorkoutsheet = body['idworkoutsheet'];
+
+      return this.workoutsheetService.workoutSheetDone(idWorkoutsheet, user);
+    } catch (error) {
+      throw error;
+    }
+  }
 
 
 }

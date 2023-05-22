@@ -5,7 +5,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
-import { getMessage, SqlError } from 'src/api/utils/utils';
+import { convertDateToTimestamp, getMessage, SqlError } from 'src/api/utils/utils';
 import { AccessTokenDto } from 'src/api/auth/dto/response/access-token-dto';
 import { AccessTokenModel } from 'src/models/access-token-user.model';
 
@@ -110,7 +110,8 @@ export class WorkoutsheetRepository {
                 wc.order as workoutOrder,
                 wc.breakTime as workoutBreakTime,
                 wc.series as workoutSeries,
-        
+
+                m.id as mediaId,
                 m.title as mediaTitle,
                 m.fileFormat as mediaFormat,
                 m.type as mediaType,
@@ -153,6 +154,7 @@ export class WorkoutsheetRepository {
                 wc.breakTime as workoutBreakTime,
                 wc.series as workoutSeries,
 
+                m.id as mediaId,
                 m.title as mediaTitle,
                 m.fileFormat as mediaFormat,
                 m.type as mediaType,
@@ -178,4 +180,49 @@ export class WorkoutsheetRepository {
       throw error;
     }
   }
+
+  async getUrlMediasForSync(user: AccessTokenModel): Promise<any> {
+    try {
+      const query = `SELECT
+                        m.id,
+                        m.url,
+                        m.type
+
+                    FROM workoutSheet ws
+
+                        INNER JOIN workoutClient wC on ws.id = wC.idWorkoutSheet
+                        INNER JOIN workout w on wC.idWorkout = w.id
+                        INNER JOIN workoutMedia wM on w.id = wM.idWorkout
+                        INNER JOIN media m on wM.idMedia = m.id
+                      WHERE
+                          ws.idClient = '${user.clientId}' AND
+                            ws.idCompany = '${user.clientIdCompany}' AND
+                            ws.isActive = 1`;
+
+      return await this.databaseService.execute(query);
+
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async workoutSheetDone(idWorkoutsheet: string, idCompany: string) {
+    try {
+
+
+      const query = `
+          INSERT INTO workoutSheetDone
+                  (idWorkoutSheet,
+                  idCompany,
+                  date)
+                VALUES
+                  (?, ?, ?);`;
+
+      return await this.databaseService.execute(query, [idWorkoutsheet, idCompany, convertDateToTimestamp(new Date())]);
+
+    } catch (error) {
+      throw error;
+    }
+  }
+
 }

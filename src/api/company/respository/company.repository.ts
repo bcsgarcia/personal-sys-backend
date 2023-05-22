@@ -64,7 +64,7 @@ export class CompanyRepository {
 
   async findAllCompanyMainInformatin(idCompany: string): Promise<any> {
     try {
-      return await this.databaseService.execute(`SELECT * FROM companyMainInformation WHERE idCompany = '${idCompany}' AND isActive = 1`);
+      return await this.databaseService.execute(`SELECT * FROM companyMainInformation WHERE idCompany = '${idCompany}' AND isActive = 1 ORDER BY title ASC`);
     } catch (error) {
       throw error;
     }
@@ -117,7 +117,7 @@ export class CompanyRepository {
 
   async findAllPosturalPatterns(idCompany: string): Promise<any> {
     try {
-      const rows = await this.databaseService.execute(`SELECT * FROM posturalPattern WHERE idCompany = '${idCompany}' AND isActive = 1`);
+      const rows = await this.databaseService.execute(`SELECT * FROM posturalPattern pp WHERE pp.idCompany = '${idCompany}' AND pp.isActive = 1  ORDER BY pp.order ASC`);
       return rows;
     } catch (error) {
       throw error;

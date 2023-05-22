@@ -1,6 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class WorkoutMediaDto {
+    @ApiProperty({ description: 'The id of the media' })
+    id: string;
+
     @ApiProperty({ description: 'The title of the media' })
     title: string;
 
@@ -14,6 +17,7 @@ export class WorkoutMediaDto {
     url: string;
 
     constructor(data: any) {
+        this.id = data.id || data.mediaId;
         this.title = data.title || data.mediaTitle;
         this.format = data.format || data.mediaFormat;
         this.type = data.type || data.mediaType;
