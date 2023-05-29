@@ -22,14 +22,10 @@ import {
 } from '@nestjs/swagger';
 import { validateHeaderApi } from 'src/api/utils/utils';
 import { Request } from 'express';
+import { AccessTokenModel } from 'src/models/access-token-user.model';
 
 
 @ApiTags('workout')
-@ApiHeader({
-  name: 'idCompany',
-  description: 'The unique identifier of the company',
-  example: '4e4d8d1e-7d4b-4ec7-a0f8-8c35647bb70c',
-})
 @Controller('workout')
 export class WorkoutController {
 
@@ -37,7 +33,6 @@ export class WorkoutController {
 
   @Post()
   @ApiBearerAuth()
-
   @ApiOperation({ summary: 'Create a new workout' })
   @ApiResponse({
     status: 201,
@@ -48,7 +43,6 @@ export class WorkoutController {
   })
   create(@Body() createWorkoutDto: CreateWorkoutDto, @Req() request: Request) {
     try {
-      validateHeaderApi(request);
 
       createWorkoutDto.idCompany = request.headers['idcompany'] as string;
 
@@ -58,9 +52,30 @@ export class WorkoutController {
     }
   }
 
+  @Post('feedback')
+  @ApiOperation({ summary: 'Create a new feedback' })
+  @ApiResponse({
+    status: 201,
+    description: 'The feedback has been successfully created.',
+  })
+  @ApiBadRequestResponse({
+    description: 'Invalid or missing data in the header/request.',
+  })
+  createFeedback(@Body() body: any, @Req() request: Request) {
+    try {
+
+      const idWorkout = body['idworkout'];
+      const feedback = body['feedback'];
+      const user = new AccessTokenModel(request['user']);
+
+      return this.workoutService.createFeedback(idWorkout, user.clientIdCompany, feedback);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   @Put(':idWorkout')
   @ApiBearerAuth()
-
   @ApiOperation({ summary: 'Update an existing workout' })
   @ApiResponse({
     status: 200,
@@ -74,9 +89,7 @@ export class WorkoutController {
     @Param('idWorkout') idWorkout: string,
     @Body() updateWorkoutDto: UpdateWorkoutDto,
   ) {
-
     try {
-      validateHeaderApi(request);
 
       return this.workoutService.update(idWorkout, updateWorkoutDto);
     } catch (error) {
@@ -87,11 +100,8 @@ export class WorkoutController {
 
   @Get('all')
   @ApiBearerAuth()
-
   findAll(@Req() request: Request) {
     try {
-
-      validateHeaderApi(request);
 
       const idCompany = request.headers['idcompany'] as string;
 
@@ -117,8 +127,6 @@ export class WorkoutController {
   })
   remove(@Req() request: Request, @Param('idWorkout') idWorkout: string) {
     try {
-
-      validateHeaderApi(request);
 
       return this.workoutService.remove(idWorkout);
     } catch (error) {

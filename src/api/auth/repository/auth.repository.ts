@@ -130,4 +130,18 @@ export class AuthRepository {
       [id],
     );
   }
+
+  async validateOldPass(idClient: string): Promise<string> {
+    const querie = 'SELECT pass FROM client c INNER JOIN auth a on a.id = c.idAuth WHERE c.id = ?';
+
+    const rows = await this.databaseService.execute(querie, [idClient]);
+
+    return rows[0];
+  }
+
+
+
+
+
+
 }

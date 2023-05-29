@@ -116,12 +116,14 @@ export class AuthService {
     }
   }
 
-  async refreshToken(token: AccessTokenDto): Promise<AccessTokenDto> {
+  async refreshToken(token: string): Promise<AccessTokenDto> {
     try {
-      const payload = await this.jwtService.verifyAsync(token.accessToken, {
+      const payload = await this.jwtService.verifyAsync(token, {
         secret: jwtConstants.secret,
         ignoreExpiration: true, // Add this to ignore token expiration when verifying
       });
+
+      delete payload.exp;
 
       const accessToken = await this.jwtService.signAsync(payload);
 
@@ -140,8 +142,24 @@ export class AuthService {
     }
   }
 
-  updatePassByIdClient(idClient: string, pass: string) {
-    return this.authRepository.updatePassByIdClient(idClient, pass);
+  async updatePassByIdClient(idClient: string, oldpass: string, newpass: string): Promise<void> {
+
+    try {
+      const currentPass = await this.authRepository.validateOldPass(idClient);
+
+      if (oldpass == currentPass['pass']) {
+        return this.authRepository.updatePassByIdClient(idClient, newpass);
+      } else {
+        throw new HttpException(
+          'Wrong current password',
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+    } catch (error) {
+      throw error;
+
+    }
+
   }
 
   update(authDto: AuthDto) {

@@ -16,6 +16,15 @@ export class WorkoutService {
     }
   }
 
+  async createFeedback(idWorkoutClient: string, idCompany: string, feedback: string): Promise<void> {
+    try {
+      return await this.workoutRepository.createFeedback(idWorkoutClient, idCompany, feedback);
+    } catch (error) {
+      throw error;
+    }
+
+  }
+
   async update(
     idWorkout: string,
     updateWorkoutDto: UpdateWorkoutDto,

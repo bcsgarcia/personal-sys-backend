@@ -98,12 +98,12 @@ export class WorkoutsheetRepository {
     try {
       const query = `
         SELECT
-              ws.id as workoutSheetId,
+                ws.id as workoutSheetId,
                 ws.name as workoutSheetName,
                 wsd.date as workoutSheedConclusionDate,
                 ws.order as workoutSheetOrder,
         
-                w.id as workoutId,
+                wc.id as workoutId,
                 w.title as workoutTitle,
                 w.subTitle as workoutSubtitle,
                 w.description as workoutDescription,
@@ -118,7 +118,7 @@ export class WorkoutsheetRepository {
                 m.url as mediaUrl
         FROM
             workoutSheetDone wsD
-        INNER JOIN workoutSheet wS on wsD.idWorkoutSheet = wS.id
+        LEFT JOIN workoutSheet wS on wsD.idWorkoutSheet = wS.id
         INNER JOIN workoutClient wC on ws.id = wc.idWorkoutSheet
         INNER JOIN workout w on wc.idWorkout = w.id
         INNER JOIN workoutMedia wM on w.id = wM.idWorkout
@@ -146,7 +146,7 @@ export class WorkoutsheetRepository {
                 ws.name as workoutSheetName,
                 ws.order as workoutSheetOrder,
 
-                w.id as workoutId,
+                wc.id as workoutId,
                 w.title as workoutTitle,
                 w.subTitle as workoutSubtitle,
                 w.description as workoutDescription,
@@ -223,6 +223,23 @@ export class WorkoutsheetRepository {
     } catch (error) {
       throw error;
     }
+  }
+
+  async createWorkoutsheetFeedback(feedback: string, idWorkoutsheet: string): Promise<void> {
+    try {
+      const query = `
+    INSERT INTO workoutSheetFeedback
+        (feedback,
+        idWorkoutsheet)
+        VALUES
+        ('${feedback}',
+        '${idWorkoutsheet}');`;
+
+      return await this.databaseService.execute(query);
+    } catch (error) {
+      throw error;
+    }
+
   }
 
 }

@@ -136,7 +136,7 @@ export class WorkoutsheetService {
 
   async getMyTrainingProgram(user: AccessTokenModel): Promise<WorkoutSheetResponseDto[]> {
     const rows = await this.workoutSheetRepository.getMyTrainingProgram(user);
-    return this._convertRowsToWorkoutSheetResponseDto(rows);
+    return this._convertRowsToMyTrainingProgramResponseDto(rows);
 
   }
 
@@ -144,6 +144,53 @@ export class WorkoutsheetService {
     const rows = await this.workoutSheetRepository.getAllMyCurrentWorkoutSheetsWithWorkouts(user);
     return this._convertRowsToWorkoutSheetResponseDto(rows);
 
+  }
+
+  _convertRowsToMyTrainingProgramResponseDto(rows: any): WorkoutSheetResponseDto[] {
+    // Group rows by workoutSheetId as there might be multiple workouts per sheet
+    const workoutSheetsMap: Record<number, any> = {};
+    for (const row of rows) {
+      if (!workoutSheetsMap[row.workoutSheedConclusionDate]) {
+        workoutSheetsMap[row.workoutSheedConclusionDate] = {
+          id: row.workoutSheetId,
+          date: row.workoutSheedConclusionDate,
+          name: row.workoutSheetName,
+          order: row.workoutSheetOrder,
+          workouts: {}
+        };
+      }
+
+      const workoutMediaDto = new WorkoutMediaDto({
+        mediaId: row.mediaId,
+        mediaTitle: row.mediaTitle,
+        mediaFormat: row.mediaFormat,
+        mediaType: row.mediaType,
+        mediaUrl: row.mediaUrl,
+      });
+
+      if (!workoutSheetsMap[row.workoutSheedConclusionDate].workouts[row.workoutId]) {
+        workoutSheetsMap[row.workoutSheedConclusionDate].workouts[row.workoutId] = {
+          id: row.workoutId,
+          title: row.workoutTitle,
+          subtitle: row.workoutSubtitle,
+          description: row.workoutDescription,
+          order: row.workoutOrder,
+          breaktime: row.workoutBreakTime,
+          serie: row.workoutSeries,
+          media: []
+        };
+      }
+
+      workoutSheetsMap[row.workoutSheedConclusionDate].workouts[row.workoutId].media.push(workoutMediaDto);
+    }
+
+    // Convert each grouped workout sheet object and its workouts to DTOs
+    const workoutSheetResponseDtos = Object.values(workoutSheetsMap).map(data => {
+      data.workouts = Object.values(data.workouts).map(workoutData => new WorkoutResponseDto(workoutData));
+      return new WorkoutSheetResponseDto(data);
+    });
+
+    return workoutSheetResponseDtos;
   }
 
   _convertRowsToWorkoutSheetResponseDto(rows: any): WorkoutSheetResponseDto[] {
@@ -234,5 +281,11 @@ export class WorkoutsheetService {
     }
   }
 
-
+  async createWorkoutsheetFeedback(feedback: string, idWorkoutsheet: string): Promise<void> {
+    try {
+      return await this.workoutSheetRepository.createWorkoutsheetFeedback(feedback, idWorkoutsheet);
+    } catch (error) {
+      throw error;
+    }
+  }
 }

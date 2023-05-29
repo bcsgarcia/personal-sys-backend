@@ -30,11 +30,6 @@ import { AccessTokenModel } from 'src/models/access-token-user.model';
 import { WorkoutSheetResponseDto } from '../dto/response/workoutsheet-response.dto';
 
 @ApiTags('workoutsheet')
-@ApiHeader({
-  name: 'idCompany',
-  description: 'The unique identifier of the company',
-  example: '4e4d8d1e-7d4b-4ec7-a0f8-8c35647bb70c',
-})
 @Controller('workoutsheet')
 export class WorkoutsheetController {
   constructor(private readonly workoutsheetService: WorkoutsheetService) { }
@@ -178,6 +173,28 @@ export class WorkoutsheetController {
       const idWorkoutsheet = body['idworkoutsheet'];
 
       return this.workoutsheetService.workoutSheetDone(idWorkoutsheet, user);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Post('feedback')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Create a feedback for workoutsheet' })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'The default workout sheet has been successfully created.',
+  })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request.' })
+  createWorkoutsheetFeedback(
+    @Body() body: any,
+    @Req() request: Request,
+  ): Promise<void> {
+    try {
+      const feedback = body['feedback'];
+      const idWorkoutsheet = body['idworkoutsheet'];
+
+      return this.workoutsheetService.createWorkoutsheetFeedback(feedback, idWorkoutsheet);
     } catch (error) {
       throw error;
     }
