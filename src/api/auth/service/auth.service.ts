@@ -17,7 +17,7 @@ export class AuthService {
   constructor(
     private readonly authRepository: AuthRepository,
     private readonly jwtService: JwtService,
-  ) { }
+  ) {}
 
   async create(authDto: AuthDto): Promise<Auth> {
     try {
@@ -105,7 +105,7 @@ export class AuthService {
         clientIdAuth: rows[0]['clientIdAuth'],
         clientIdCompany: rows[0]['clientIdCompany'],
         clientName: rows[0]['clientName'],
-        clientPhotoUrl: rows[0]['clientPhotoUrl']
+        clientPhotoUrl: rows[0]['clientPhotoUrl'],
       };
 
       const accessToken = await this.jwtService.signAsync(payload);
@@ -129,10 +129,49 @@ export class AuthService {
 
       return new AccessTokenDto(accessToken);
     } catch (error) {
-      throw new UnauthorizedException();
+      throw error;
     }
-
   }
+
+  async adminAuth(auth: AppAuthDto): Promise<AccessTokenDto> {
+    try {
+      const rows = await this.authRepository.adminAuth(auth);
+
+      if (rows.length === 0) {
+        throw new HttpException(`user/pass not found`, HttpStatus.NOT_FOUND);
+      }
+
+      const payload = {
+        clientId: rows[0]['clientId'],
+        clientEmail: rows[0]['clientEmail'],
+        clientIdAuth: rows[0]['clientIdAuth'],
+        clientIdCompany: rows[0]['clientIdCompany'],
+        clientName: rows[0]['clientName'],
+        clientPhotoUrl: rows[0]['clientPhotoUrl'],
+      };
+
+      const accessToken = await this.jwtService.signAsync(payload);
+
+      return new AccessTokenDto(accessToken);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // async refreshToken(token: AccessTokenDto): Promise<AccessTokenDto> {
+  //   try {
+  //     const payload = await this.jwtService.verifyAsync(token.accessToken, {
+  //       secret: jwtConstants.secret,
+  //       ignoreExpiration: true, // Add this to ignore token expiration when verifying
+  //     });
+
+  //     const accessToken = await this.jwtService.signAsync(payload);
+
+  //     return new AccessTokenDto(accessToken);
+  //   } catch (error) {
+  //     throw new UnauthorizedException();
+  //   }
+  // }
 
   async updateEmailByIdClient(idClient: string, email: string) {
     try {
@@ -142,8 +181,11 @@ export class AuthService {
     }
   }
 
-  async updatePassByIdClient(idClient: string, oldpass: string, newpass: string): Promise<void> {
-
+  async updatePassByIdClient(
+    idClient: string,
+    oldpass: string,
+    newpass: string,
+  ): Promise<void> {
     try {
       const currentPass = await this.authRepository.validateOldPass(idClient);
 
@@ -157,9 +199,7 @@ export class AuthService {
       }
     } catch (error) {
       throw error;
-
     }
-
   }
 
   update(authDto: AuthDto) {

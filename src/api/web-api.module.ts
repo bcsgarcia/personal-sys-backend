@@ -29,4 +29,4 @@ import { AppHomeScreenModule } from './screens/app/home/screen-home.module';
     AppHomeScreenModule,
   ],
 })
-export class ApiModule { }
+export class ApiModule {}

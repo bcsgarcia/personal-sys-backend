@@ -3,6 +3,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import * as dotenv from 'dotenv-flow';
 import { AuthGuard } from './api/auth/auth.guard';
+import * as cors from 'cors';
 
 async function bootstrap() {
   dotenv.config();
@@ -19,6 +20,13 @@ async function bootstrap() {
       'access-token', // Name of the security scheme, you can choose any name
     )
     .build();
+
+  app.use(
+    cors({
+      origin: 'http://localhost:50249',
+      // origin: '*',
+    }),
+  );
 
   const document = SwaggerModule.createDocument(app, config);
 

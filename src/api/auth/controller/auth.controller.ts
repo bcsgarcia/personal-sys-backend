@@ -18,12 +18,10 @@ import { AccessTokenModel } from 'src/models/access-token-user.model';
 import { Request } from 'express';
 import { AccessTokenDto } from '../dto/response/access-token-dto';
 
-
-
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) { }
+  constructor(private readonly authService: AuthService) {}
 
   @Post()
   create(@Body() authDto: AuthDto) {
@@ -38,10 +36,18 @@ export class AuthController {
 
   @Public()
   @Post('/app/refresh')
-  refreshToken(@Body() token: string
-  ) {
-
+  refreshToken(@Body() token: string) {
     return this.authService.refreshToken(token['token']);
+  }
+
+  @Post('/admin')
+  adminLogin(@Body() authDto: AppAuthDto) {
+    return this.authService.adminAuth(authDto);
+  }
+
+  @Post('/admin/refresh')
+  refreshTokenAdmin(@Body() authDto: AppAuthDto) {
+    return this.authService.adminAuth(authDto);
   }
 
   @Get()
@@ -69,17 +75,19 @@ export class AuthController {
   }
 
   @Post('/app/change-pass')
-  changePass(@Body() body: string,
-    @Req() request: Request,
-  ) {
+  changePass(@Body() body: string, @Req() request: Request) {
     try {
       const user = new AccessTokenModel(request['user']);
       const oldPass = body['oldpass'];
       const newPass = body['newpass'];
 
-      return this.authService.updatePassByIdClient(user.clientId, oldPass, newPass);
+      return this.authService.updatePassByIdClient(
+        user.clientId,
+        oldPass,
+        newPass,
+      );
     } catch (error) {
       throw error;
     }
   }
-} 
+}

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
@@ -7,6 +7,7 @@ import { RecordsController } from './records/records.controller';
 import { ApiModule } from './api/web-api.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './api/auth/auth.guard';
+import { MyMiddleware } from './myMiddleware.middleware';
 
 @Module({
   imports: [DatabaseModule, ApiModule],
@@ -18,7 +19,12 @@ import { AuthGuard } from './api/auth/auth.guard';
       provide: APP_GUARD,
       useClass: AuthGuard,
     },
+    MyMiddleware,
   ],
   exports: [DatabaseService],
 })
-export class AppModule { }
+export class AppModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(MyMiddleware).forRoutes('*');
+  }
+}
