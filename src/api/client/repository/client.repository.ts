@@ -9,7 +9,7 @@ import { UpdateClientDto } from '../dto/update-client.dto';
 
 @Injectable()
 export class ClientRepository {
-  constructor(private databaseService: DatabaseService) { }
+  constructor(private databaseService: DatabaseService) {}
 
   async findById(id: string): Promise<any> {
     try {

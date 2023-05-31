@@ -8,6 +8,8 @@ import { ApiModule } from './api/web-api.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AuthGuard } from './api/auth/auth.guard';
 import { MyMiddleware } from './myMiddleware.middleware';
+import { FtpService } from './common-services/ftp-service.service';
+import { ImageService } from './common-services/image-service.service';
 
 @Module({
   imports: [DatabaseModule, ApiModule],
@@ -15,6 +17,8 @@ import { MyMiddleware } from './myMiddleware.middleware';
   providers: [
     AppService,
     DatabaseService,
+    FtpService,
+    ImageService,
     {
       provide: APP_GUARD,
       useClass: AuthGuard,

@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UploadedFile,
+} from '@nestjs/common';
 import { Auth } from 'src/models/auth.model';
 import { AuthDto } from 'src/api/auth/dto/request/auth.dto';
 import { AuthService } from 'src/api/auth/service/auth.service';
@@ -6,13 +11,18 @@ import { ClientDto } from '../dto/client.dto';
 import { CreateClientDto } from '../dto/create-client.dto';
 import { UpdateClientDto } from '../dto/update-client.dto';
 import { ClientRepository } from '../repository/client.repository';
+import { FtpService } from 'src/common-services/ftp-service.service';
+import { DomainError } from 'src/api/utils/domain.error';
+import { ImageService } from 'src/common-services/image-service.service';
 
 @Injectable()
 export class ClientService {
   constructor(
     private readonly clientRepository: ClientRepository,
     private readonly authService: AuthService,
-  ) { }
+    private readonly ftpService: FtpService,
+    private readonly imageService: ImageService,
+  ) {}
 
   async create(createClientDto: CreateClientDto) {
     try {
@@ -69,6 +79,32 @@ export class ClientService {
       await this.clientRepository.update(id, updateClientDto);
 
       await this.authService.updateEmailByIdClient(id, updateClientDto.email);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async uploadPhoto(@UploadedFile() file, uuid: string): Promise<void> {
+    try {
+      if (!file.mimetype.includes('image')) {
+        throw new HttpException(
+          DomainError.INTERNAL_SERVER_ERROR,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      const imageBuffer = file.mimetype.includes('png')
+        ? file.buffer
+        : await this.imageService.convertToPNG(file.buffer);
+
+      await this.ftpService.uploadPhoto(imageBuffer, `${uuid}.png`);
+
+      const user = await this.clientRepository.findById(uuid);
+
+      const userDto = new UpdateClientDto(user[0]);
+      userDto.photoUrl = `https://treinadoraamanda.bcsgarcia.com.br/client_image/${uuid}.png`;
+
+      await this.clientRepository.update(uuid, userDto);
     } catch (error) {
       throw error;
     }

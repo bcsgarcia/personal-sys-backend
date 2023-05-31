@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsDate, IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class UpdateClientDto {
   @ApiProperty({
@@ -16,8 +16,8 @@ export class UpdateClientDto {
     example: '492044400000',
     type: Number,
   })
-  @IsNumber()
-  birthday: number;
+  @IsDate()
+  birthday: Date;
 
   @ApiProperty({
     description: 'Client`s gender',
@@ -58,4 +58,14 @@ export class UpdateClientDto {
   })
   @IsString()
   photoUrl: string;
+
+  constructor(data: any | null) {
+    this.name = data.name;
+    this.birthday = new Date(data.birthday);
+    this.gender = data.gender;
+    this.email = data.email;
+    this.phone = data.phone;
+    this.photoUrl = data.photoUrl;
+    this.isActive = data.isActive;
+  }
 }

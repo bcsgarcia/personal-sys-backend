@@ -1,5 +1,11 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsBoolean,
+  IsDate,
+  IsNotEmpty,
+  IsNumber,
+  IsString,
+} from 'class-validator';
 
 export class ClientDto {
   @ApiHideProperty()
@@ -22,7 +28,7 @@ export class ClientDto {
     example: 'date',
     type: Date,
   })
-  @IsNumber()
+  @IsDate()
   birthday: Date;
 
   @ApiProperty({

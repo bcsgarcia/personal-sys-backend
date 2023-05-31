@@ -2,6 +2,7 @@ import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import * as dotenv from 'dotenv-flow';
+import * as bodyParser from 'body-parser';
 import { AuthGuard } from './api/auth/auth.guard';
 import * as cors from 'cors';
 
@@ -21,6 +22,9 @@ async function bootstrap() {
     )
     .build();
 
+  app.use(bodyParser.json({ limit: '50mb' }));
+  app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+
   app.use(
     cors({
       origin: 'http://localhost:50249',
@@ -32,6 +36,6 @@ async function bootstrap() {
 
   SwaggerModule.setup('api/swagger', app, document);
 
-  await app.listen(3000);
+  await app.listen(process.env.SYSTEM_PORT || 3000);
 }
 bootstrap();

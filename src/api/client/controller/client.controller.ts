@@ -7,10 +7,11 @@ import {
   Req,
   BadRequestException,
   Put,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
-  ApiHeader,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -22,6 +23,9 @@ import { Request } from 'express';
 import { ClientService } from '../service/client.service';
 import { ClientDto } from '../dto/client.dto';
 import { AccessTokenModel } from 'src/models/access-token-user.model';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { FtpService } from 'src/common-services/ftp-service.service';
+import { Public } from 'src/api/auth/jwt.decorator';
 
 @ApiTags('client')
 @Controller('client')
@@ -68,6 +72,15 @@ export class ClientController {
     } catch (error) {
       throw error;
     }
+  }
+
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadFile(@UploadedFile() file, @Req() request: Request) {
+    const user = new AccessTokenModel(request['user']);
+
+    await this.clientService.uploadPhoto(file, user.clientId);
+    return { message: 'File uploaded successfully' };
   }
 
   @ApiOperation({ summary: 'Update an existing client' })
