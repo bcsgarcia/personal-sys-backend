@@ -1,1 +1,2 @@
-web: npm run start:prod
+
+web: grep -iRl "PATH" .
