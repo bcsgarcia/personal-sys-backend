@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import * as mysql from 'mysql2/promise';
 
 @Injectable()
@@ -10,6 +10,7 @@ export class DatabaseService {
   }
 
   async connect() {
+    Logger.log('info testeeeeeee');
     this.connection = await mysql.createConnection({
       host: process.env.DATABASE_HOST,
       user: process.env.DATABASE_USERNAME,
