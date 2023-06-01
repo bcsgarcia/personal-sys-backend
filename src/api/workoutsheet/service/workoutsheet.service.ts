@@ -1,9 +1,4 @@
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Workout } from 'src/models/workout.model';
 import { DomainError } from 'src/api/utils/domain.error';
 import { hasDuplicates } from 'src/api/utils/has.duplicates';
@@ -13,7 +8,6 @@ import { UpdateWorkoutsheetDefaultDto } from '../dto/request/update.workoutsheet
 import { WorkoutsheetRepository } from '../respository/workoutsheet.repository';
 import { AccessTokenModel } from 'src/models/access-token-user.model';
 import { WorkoutResponseDto } from '../dto/response/workout-response.dto';
-import { isToday } from '../../utils/is-today';
 import { WorkoutSheetResponseDto } from '../dto/response/workoutsheet-response.dto';
 import { WorkoutMediaDto } from '../dto/response/workout-media.dto';
 import { MediaForSyncDto } from '../dto/response/media-for-sync.dto';
@@ -22,7 +16,7 @@ import { MediaForSyncDto } from '../dto/response/media-for-sync.dto';
 export class WorkoutsheetService {
   constructor(
     private readonly workoutSheetRepository: WorkoutsheetRepository,
-  ) { }
+  ) {}
 
   async createWorkoutSheetDefault(
     createWorkoutsheetDefaultDto: CreateWorkoutsheetDefaultDto,
@@ -134,19 +128,24 @@ export class WorkoutsheetService {
     }
   }
 
-  async getMyTrainingProgram(user: AccessTokenModel): Promise<WorkoutSheetResponseDto[]> {
+  async getMyTrainingProgram(
+    user: AccessTokenModel,
+  ): Promise<WorkoutSheetResponseDto[]> {
     const rows = await this.workoutSheetRepository.getMyTrainingProgram(user);
     return this._convertRowsToMyTrainingProgramResponseDto(rows);
-
   }
 
   async getAllMyCurrentWorkoutSheetsWithWorkouts(user: AccessTokenModel) {
-    const rows = await this.workoutSheetRepository.getAllMyCurrentWorkoutSheetsWithWorkouts(user);
+    const rows =
+      await this.workoutSheetRepository.getAllMyCurrentWorkoutSheetsWithWorkouts(
+        user,
+      );
     return this._convertRowsToWorkoutSheetResponseDto(rows);
-
   }
 
-  _convertRowsToMyTrainingProgramResponseDto(rows: any): WorkoutSheetResponseDto[] {
+  _convertRowsToMyTrainingProgramResponseDto(
+    rows: any,
+  ): WorkoutSheetResponseDto[] {
     // Group rows by workoutSheetId as there might be multiple workouts per sheet
     const workoutSheetsMap: Record<number, any> = {};
     for (const row of rows) {
@@ -156,7 +155,7 @@ export class WorkoutsheetService {
           date: row.workoutSheedConclusionDate,
           name: row.workoutSheetName,
           order: row.workoutSheetOrder,
-          workouts: {}
+          workouts: {},
         };
       }
 
@@ -168,8 +167,14 @@ export class WorkoutsheetService {
         mediaUrl: row.mediaUrl,
       });
 
-      if (!workoutSheetsMap[row.workoutSheedConclusionDate].workouts[row.workoutId]) {
-        workoutSheetsMap[row.workoutSheedConclusionDate].workouts[row.workoutId] = {
+      if (
+        !workoutSheetsMap[row.workoutSheedConclusionDate].workouts[
+          row.workoutId
+        ]
+      ) {
+        workoutSheetsMap[row.workoutSheedConclusionDate].workouts[
+          row.workoutId
+        ] = {
           id: row.workoutId,
           title: row.workoutTitle,
           subtitle: row.workoutSubtitle,
@@ -177,18 +182,24 @@ export class WorkoutsheetService {
           order: row.workoutOrder,
           breaktime: row.workoutBreakTime,
           serie: row.workoutSeries,
-          media: []
+          media: [],
         };
       }
 
-      workoutSheetsMap[row.workoutSheedConclusionDate].workouts[row.workoutId].media.push(workoutMediaDto);
+      workoutSheetsMap[row.workoutSheedConclusionDate].workouts[
+        row.workoutId
+      ].media.push(workoutMediaDto);
     }
 
     // Convert each grouped workout sheet object and its workouts to DTOs
-    const workoutSheetResponseDtos = Object.values(workoutSheetsMap).map(data => {
-      data.workouts = Object.values(data.workouts).map(workoutData => new WorkoutResponseDto(workoutData));
-      return new WorkoutSheetResponseDto(data);
-    });
+    const workoutSheetResponseDtos = Object.values(workoutSheetsMap).map(
+      (data) => {
+        data.workouts = Object.values(data.workouts).map(
+          (workoutData) => new WorkoutResponseDto(workoutData),
+        );
+        return new WorkoutSheetResponseDto(data);
+      },
+    );
 
     return workoutSheetResponseDtos;
   }
@@ -203,7 +214,7 @@ export class WorkoutsheetService {
           date: row.workoutSheedConclusionDate,
           name: row.workoutSheetName,
           order: row.workoutSheetOrder,
-          workouts: {}
+          workouts: {},
         };
       }
 
@@ -224,18 +235,24 @@ export class WorkoutsheetService {
           order: row.workoutOrder,
           breaktime: row.workoutBreakTime,
           serie: row.workoutSeries,
-          media: []
+          media: [],
         };
       }
 
-      workoutSheetsMap[row.workoutSheetId].workouts[row.workoutId].media.push(workoutMediaDto);
+      workoutSheetsMap[row.workoutSheetId].workouts[row.workoutId].media.push(
+        workoutMediaDto,
+      );
     }
 
     // Convert each grouped workout sheet object and its workouts to DTOs
-    const workoutSheetResponseDtos = Object.values(workoutSheetsMap).map(data => {
-      data.workouts = Object.values(data.workouts).map(workoutData => new WorkoutResponseDto(workoutData));
-      return new WorkoutSheetResponseDto(data);
-    });
+    const workoutSheetResponseDtos = Object.values(workoutSheetsMap).map(
+      (data) => {
+        data.workouts = Object.values(data.workouts).map(
+          (workoutData) => new WorkoutResponseDto(workoutData),
+        );
+        return new WorkoutSheetResponseDto(data);
+      },
+    );
 
     return workoutSheetResponseDtos;
   }
@@ -258,32 +275,47 @@ export class WorkoutsheetService {
 
   async getUrlMidiaForSync(user: AccessTokenModel): Promise<MediaForSyncDto[]> {
     try {
-
       const rows = await this.workoutSheetRepository.getUrlMediasForSync(user);
       const allMidias = rows.map((media) => new MediaForSyncDto(media));
 
-      let uniqueMedias: MediaForSyncDto[] = Array.from(
-        allMidias.reduce((map, obj) => map.set(obj.id, obj), new Map<string, MediaForSyncDto>()).values()
+      const uniqueMedias: MediaForSyncDto[] = Array.from(
+        allMidias
+          .reduce(
+            (map, obj) => map.set(obj.id, obj),
+            new Map<string, MediaForSyncDto>(),
+          )
+          .values(),
       );
 
       return uniqueMedias;
-
     } catch (error) {
       throw error;
     }
   }
 
-  async workoutSheetDone(idWorkoutsheet: string, user: AccessTokenModel): Promise<void> {
+  async workoutSheetDone(
+    idWorkoutsheet: string,
+    user: AccessTokenModel,
+  ): Promise<void> {
     try {
-      return await this.workoutSheetRepository.workoutSheetDone(idWorkoutsheet, user.clientIdCompany);
+      await this.workoutSheetRepository.workoutSheetDone(
+        idWorkoutsheet,
+        user.clientIdCompany,
+      );
     } catch (error) {
       throw error;
     }
   }
 
-  async createWorkoutsheetFeedback(feedback: string, idWorkoutsheet: string): Promise<void> {
+  async createWorkoutsheetFeedback(
+    feedback: string,
+    idWorkoutsheet: string,
+  ): Promise<void> {
     try {
-      return await this.workoutSheetRepository.createWorkoutsheetFeedback(feedback, idWorkoutsheet);
+      return await this.workoutSheetRepository.createWorkoutsheetFeedback(
+        feedback,
+        idWorkoutsheet,
+      );
     } catch (error) {
       throw error;
     }

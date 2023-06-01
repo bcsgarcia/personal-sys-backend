@@ -6,8 +6,6 @@ import { AuthRepository } from './repository/auth.repository';
 import { AuthService } from './service/auth.service';
 import { Reflector } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
-import { PassportModule } from '@nestjs/passport';
-import { jwtConstants } from './constants';
 
 @Module({
   controllers: [AuthController],
@@ -25,7 +23,7 @@ import { jwtConstants } from './constants';
   imports: [
     JwtModule.register({
       global: true,
-      secret: jwtConstants.secret,
+      secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '240m' },
     }),
     // PassportModule,

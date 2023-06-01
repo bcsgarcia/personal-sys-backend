@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class UpdateWorkoutDto {
   @ApiProperty({
@@ -42,4 +42,3 @@ export class UpdateWorkoutDto {
   @IsOptional()
   imageUrl: string;
 }
-

@@ -29,7 +29,7 @@ import { AccessTokenModel } from 'src/models/access-token-user.model';
 @ApiTags('notification')
 @Controller('notification')
 export class NotificationController {
-  constructor(private readonly notificationService: NotificationService) { }
+  constructor(private readonly notificationService: NotificationService) {}
 
   @Post()
   @ApiOperation({ summary: 'Create a new notification' })
@@ -71,7 +71,6 @@ export class NotificationController {
     @Req() request: Request,
   ) {
     try {
-
       const createNotification: CreateNotificationDto = {
         title: createWarningDto.title,
         description: createWarningDto.description,
@@ -104,7 +103,6 @@ export class NotificationController {
     @Req() request: Request,
   ) {
     try {
-
       const idCompany = request.headers['idcompany'] as string;
 
       return this.notificationService.findAllByIdClient(idClient, idCompany);
@@ -129,7 +127,6 @@ export class NotificationController {
   })
   findAllWarningByIdCompany(@Req() request: Request) {
     try {
-
       const idCompany = request.headers['idcompany'] as string;
 
       return this.notificationService.findAllWarningByIdCompany(idCompany);
@@ -159,7 +156,6 @@ export class NotificationController {
       throw error;
     }
   }
-
 
   @Put('/update-unread-notification')
   @ApiOperation({

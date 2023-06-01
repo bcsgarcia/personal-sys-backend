@@ -9,7 +9,7 @@ import { UpdatePosturalPatternDto } from '../dto/request/update-company-postural
 
 @Injectable()
 export class CompanyRepository {
-  constructor(private databaseService: DatabaseService) { }
+  constructor(private databaseService: DatabaseService) {}
 
   async findById(id: string): Promise<any> {
     const row = await this.databaseService.execute(
@@ -64,17 +64,21 @@ export class CompanyRepository {
 
   async findAllCompanyMainInformatin(idCompany: string): Promise<any> {
     try {
-      return await this.databaseService.execute(`SELECT * FROM companyMainInformation WHERE idCompany = '${idCompany}' AND isActive = 1 ORDER BY title ASC`);
+      return await this.databaseService.execute(
+        `SELECT * FROM companyMainInformation WHERE idCompany = '${idCompany}' AND isActive = 1 ORDER BY title ASC`,
+      );
     } catch (error) {
       throw error;
     }
   }
 
-  async createCompanyMainInformation(item: CreateCompanyMainInformationDto): Promise<void> {
+  async createCompanyMainInformation(
+    item: CreateCompanyMainInformationDto,
+  ): Promise<void> {
     try {
       const querie = `
-      insert into 
-        companyMainInformation 
+      insert into
+        companyMainInformation
           (title, description, idCompany)
         values (?, ?, ?);
       `;
@@ -89,7 +93,9 @@ export class CompanyRepository {
     }
   }
 
-  async deleteCompanyMainInformation(idCompanyMainInformation: string): Promise<void> {
+  async deleteCompanyMainInformation(
+    idCompanyMainInformation: string,
+  ): Promise<void> {
     try {
       await this.databaseService.execute(
         'UPDATE companyMainInformation SET isActive = 0 WHERE id = ?',
@@ -100,15 +106,13 @@ export class CompanyRepository {
     }
   }
 
-  async updateCompanyMainInformation(item: UpdateCompanyMainInformationDto): Promise<void> {
+  async updateCompanyMainInformation(
+    item: UpdateCompanyMainInformationDto,
+  ): Promise<void> {
     try {
       await this.databaseService.execute(
         'UPDATE companyMainInformation SET title = ?, description = ? WHERE id = ?',
-        [
-          item.title,
-          item.description,
-          item.idCompanyMainInformation,
-        ],
+        [item.title, item.description, item.idCompanyMainInformation],
       );
     } catch (error) {
       throw error;
@@ -117,7 +121,9 @@ export class CompanyRepository {
 
   async findAllPosturalPatterns(idCompany: string): Promise<any> {
     try {
-      const rows = await this.databaseService.execute(`SELECT * FROM posturalPattern pp WHERE pp.idCompany = '${idCompany}' AND pp.isActive = 1  ORDER BY pp.order ASC`);
+      const rows = await this.databaseService.execute(
+        `SELECT * FROM posturalPattern pp WHERE pp.idCompany = '${idCompany}' AND pp.isActive = 1  ORDER BY pp.order ASC`,
+      );
       return rows;
     } catch (error) {
       throw error;
@@ -127,7 +133,7 @@ export class CompanyRepository {
   async createPosturalPatterns(item: CreatePosturalPatternDto): Promise<void> {
     try {
       const querie = `
-      insert into 
+      insert into
         posturalPattern (title, description, imageUrl, idCompany)
         values (?, ?, ?, ?);
       `;
@@ -143,16 +149,13 @@ export class CompanyRepository {
     }
   }
 
-  async updateCompanyPosturalPatterns(item: UpdatePosturalPatternDto): Promise<void> {
+  async updateCompanyPosturalPatterns(
+    item: UpdatePosturalPatternDto,
+  ): Promise<void> {
     try {
       await this.databaseService.execute(
         'UPDATE posturalPattern SET title = ?, description = ?, imageUrl = ? WHERE id = ?',
-        [
-          item.title,
-          item.description,
-          item.imageUrl,
-          item.id,
-        ],
+        [item.title, item.description, item.imageUrl, item.id],
       );
     } catch (error) {
       throw error;
@@ -172,7 +175,6 @@ export class CompanyRepository {
 
   async getMeetAppScreen(idCompany: string): Promise<any> {
     try {
-
       const querie = `
         SELECT
             c.about AS aboutCompany_description,
@@ -190,7 +192,6 @@ export class CompanyRepository {
             c.id = '${idCompany}';`;
 
       return await this.databaseService.execute(querie);
-
     } catch (error) {
       throw error;
     }
@@ -200,7 +201,7 @@ export class CompanyRepository {
     const query = `
     SELECT
       name,
-      description, 
+      description,
       imageUrl
     FROM
       testimony
@@ -226,7 +227,6 @@ export class CompanyRepository {
 
   async getAllPartnershipsByIdCompany(idCompany: string): Promise<any> {
     try {
-
       const querie = `
       SELECT
         p.id as partnershipId,
@@ -242,18 +242,14 @@ export class CompanyRepository {
         pc.name as partnershipCategoryName
   FROM partnership p
       INNER JOIN partnershipCategory pC on p.idPartnershipCategory = pC.id
-  
+
   WHERE
       p.idCompany = '${idCompany}' AND
       p.isActive = 1`;
 
       return await this.databaseService.execute(querie);
-
     } catch (error) {
       throw error;
     }
   }
-
 }
-
-

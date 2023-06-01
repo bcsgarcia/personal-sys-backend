@@ -1,37 +1,43 @@
-import { Injectable, InternalServerErrorException } from "@nestjs/common";
-import { DatabaseService } from "src/database/database.service";
-import { CreateNotificationDto } from "../dto/create-notification.dto";
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
+import { DatabaseService } from 'src/database/database.service';
+import { CreateNotificationDto } from '../dto/create-notification.dto';
 import { convertDateToTimestamp } from '../../utils/utils';
 
 @Injectable()
 export class NotificationRepository {
-    constructor(private databaseService: DatabaseService) { }
+  constructor(private databaseService: DatabaseService) {}
 
-    async create(notification: CreateNotificationDto): Promise<void> {
-        try {
-            const createQuery =
-                'INSERT INTO notification (title, description, notificationDate, appointmentStartDate, appointmentEndDate, idClient, idCompany) VALUES (?, ?, ?, ?, ?, ?, ?)'
+  async create(notification: CreateNotificationDto): Promise<void> {
+    try {
+      const createQuery =
+        'INSERT INTO notification (title, description, notificationDate, appointmentStartDate, appointmentEndDate, idClient, idCompany) VALUES (?, ?, ?, ?, ?, ?, ?)';
 
-            await this.databaseService.execute(createQuery, [
-                notification.title,
-                notification.description,
-                notification.notificationDate == undefined ? null : convertDateToTimestamp(notification.notificationDate),
-                notification.appointmentStartDate == undefined ? null : convertDateToTimestamp(notification.appointmentStartDate),
-                notification.appointmentEndDate == undefined ? null : convertDateToTimestamp(notification.appointmentEndDate),
-                notification.idClient === undefined ? null : notification.idClient,
-                notification.idCompany,
-            ]);
-        } catch (error) {
-            throw new InternalServerErrorException();
-        }
+      await this.databaseService.execute(createQuery, [
+        notification.title,
+        notification.description,
+        notification.notificationDate == undefined
+          ? null
+          : convertDateToTimestamp(notification.notificationDate),
+        notification.appointmentStartDate == undefined
+          ? null
+          : convertDateToTimestamp(notification.appointmentStartDate),
+        notification.appointmentEndDate == undefined
+          ? null
+          : convertDateToTimestamp(notification.appointmentEndDate),
+        notification.idClient === undefined ? null : notification.idClient,
+        notification.idCompany,
+      ]);
+    } catch (error) {
+      throw new InternalServerErrorException();
     }
+  }
 
-    async findAllByIdClient(idClient: string, idCompany: string): Promise<any> {
-        try {
-            const query = `
+  async findAllByIdClient(idClient: string, idCompany: string): Promise<any> {
+    try {
+      const query = `
             SELECT n.id, n.title, n.description, n.notificationDate, rN.readDate, rN.readDate, n.appointmentStartDate, n.appointmentEndDate FROM notification n
             LEFT JOIN readNotification rN on n.id = rN.idNotification
-        
+
             WHERE
             (n.idClient = '${idClient}' or n.idClient is null)
             AND n.idCompany = '${idCompany}'
@@ -40,64 +46,64 @@ export class NotificationRepository {
             ORDER BY n.notificationDate desc;
             `;
 
-            return await this.databaseService.execute(query);
-
-        } catch (error) {
-            throw error;
-        }
+      return await this.databaseService.execute(query);
+    } catch (error) {
+      throw error;
     }
+  }
 
-    async findAllWarningByIdCompany(idCompany: string): Promise<any> {
-        try {
-            const query = `
+  async findAllWarningByIdCompany(idCompany: string): Promise<any> {
+    try {
+      const query = `
                 SELECT * FROM notification
-                    WHERE 
+                    WHERE
                         idClient is null
                         AND idCompany = '${idCompany}'
                         AND isActive = 1
                     ORDER BY date desc`;
 
-            return await this.databaseService.execute(query);
-
-        } catch (error) {
-            throw error;
-        }
-
+      return await this.databaseService.execute(query);
+    } catch (error) {
+      throw error;
     }
+  }
 
-    async createReadNotification(idNotification: string, idClient: string): Promise<void> {
-        try {
+  async createReadNotification(
+    idNotification: string,
+    idClient: string,
+  ): Promise<void> {
+    try {
+      const createQuery =
+        'insert into readNotification (readDate, idNotification, idClient) VALUES (?, ?, ?);';
 
-            const createQuery =
-                'insert into readNotification (readDate, idNotification, idClient) VALUES (?, ?, ?);'
-
-            await this.databaseService.execute(createQuery, [
-                convertDateToTimestamp(new Date()),
-                idNotification,
-                idClient
-            ]);
-
-        } catch (error) {
-            throw error;
-        }
+      await this.databaseService.execute(createQuery, [
+        convertDateToTimestamp(new Date()),
+        idNotification,
+        idClient,
+      ]);
+    } catch (error) {
+      throw error;
     }
+  }
 
-    async deleteById(id: string): Promise<void> {
-        await this.databaseService.execute(
-            'UPDATE notification SET isActive = 0 WHERE id = ?',
-            [id],
-        );
+  async deleteById(id: string): Promise<void> {
+    await this.databaseService.execute(
+      'UPDATE notification SET isActive = 0 WHERE id = ?',
+      [id],
+    );
 
-        await this.databaseService.execute(
-            'UPDATE readNotification SET isActive = 0 WHERE idNotification = ?',
-            [id],
-        )
-    }
+    await this.databaseService.execute(
+      'UPDATE readNotification SET isActive = 0 WHERE idNotification = ?',
+      [id],
+    );
+  }
 
-    async updateReadDateForAllNotification(idClient: string, idCompany: string): Promise<void> {
-        try {
-            const createQuery =
-                `INSERT INTO readNotification (readDate, idNotification, idClient)
+  async updateReadDateForAllNotification(
+    idClient: string,
+    idCompany: string,
+  ): Promise<void> {
+    try {
+      const createQuery = `INSERT INTO readNotification (readDate, idNotification, idClient)
                 SELECT CURRENT_TIMESTAMP, n.id, n.idClient
                 FROM notification n
                 WHERE n.idClient = '${idClient}' AND n.idCompany = '${idCompany}'
@@ -105,11 +111,11 @@ export class NotificationRepository {
                     SELECT 1
                     FROM readNotification rn
                     WHERE rn.idNotification = n.id AND rn.idClient = n.idClient
-                );`
+                );`;
 
-            await this.databaseService.execute(createQuery);
-        } catch (error) {
-            throw error;
-        }
+      await this.databaseService.execute(createQuery);
+    } catch (error) {
+      throw error;
     }
+  }
 }

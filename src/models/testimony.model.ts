@@ -1,5 +1,5 @@
 interface Testimony {
-    imageUrl: string;
-    name: string;
-    description: string;
+  imageUrl: string;
+  name: string;
+  description: string;
 }

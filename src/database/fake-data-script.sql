@@ -44,7 +44,7 @@ VALUES
   ('29911ab3-e142-11ed-b707-0242ac110002', 60, '5 sets of 6 reps', 6, 'a52b9804-e143-11ed-b707-0242ac110002', '7c576f1d-d78e-11ed-ba77-0242ac110002'),
   ('29911ba8-e142-11ed-b707-0242ac110002', 30, '3 sets of 12 reps', 7, 'a52b9804-e143-11ed-b707-0242ac110002', '7c576f1d-d78e-11ed-ba77-0242ac110002'),
   ('29911c89-e142-11ed-b707-0242ac110002', 45, '4 sets of 8 reps', 8, 'a52b9804-e143-11ed-b707-0242ac110002', '7c576f1d-d78e-11ed-ba77-0242ac110002'),
-  
+
   ('29910c82-e142-11ed-b707-0242ac110002', 60, '3 sets of 10 reps', 1, 'a52b8fe5-e143-11ed-b707-0242ac110002', '7c576f1d-d78e-11ed-ba77-0242ac110002'),
   ('2991155b-e142-11ed-b707-0242ac110002', 45, '4 sets of 12 reps', 2, 'a52b8fe5-e143-11ed-b707-0242ac110002', '7c576f1d-d78e-11ed-ba77-0242ac110002'),
   ('2991176d-e142-11ed-b707-0242ac110002', 90, '5 sets of 8 reps', 3, 'a52b8fe5-e143-11ed-b707-0242ac110002', '7c576f1d-d78e-11ed-ba77-0242ac110002'),
@@ -65,14 +65,14 @@ VALUES
 
 
 insert into workoutSheetDone (idWorkoutSheet, idCompany, date)
-values 
+values
 ('a52b8fe5-e143-11ed-b707-0242ac110002', '7c576f1d-d78e-11ed-ba77-0242ac110002', '2023-04-20 15:02:31'),
 ('a52b9804-e143-11ed-b707-0242ac110002', '7c576f1d-d78e-11ed-ba77-0242ac110002', '2023-04-21 15:02:31'),
 ('a52b993e-e143-11ed-b707-0242ac110002', '7c576f1d-d78e-11ed-ba77-0242ac110002', '2023-04-22 15:02:31');
 
 INSERT INTO partnership (idCompany, name, contact, email, whatsapp, instagram, website,
                          imageUrl, description, address, idPartnershipCategory)
-VALUES 
+VALUES
 ('7c576f1d-d78e-11ed-ba77-0242ac110002', 'The Coffee Shop', '+1 (123) 456-7890', 'contact@coffeeshop.com', '+1 (123) 456-7890', 'coffeeshop', 'https://www.coffeeshop.com',
  'https://loremflickr.com/320/240/coffee', 'Cozy coffee shop with a variety of drinks and snacks.', '123 Coffee St, New York, NY 10001', '6f10667e-ecdd-11ed-b70c-0242ac110002'),
 

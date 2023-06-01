@@ -6,7 +6,7 @@ import { UpdateWorkoutDto } from '../dto/update-workout.dto';
 
 @Injectable()
 export class WorkoutService {
-  constructor(private readonly workoutRepository: WorkoutRepository) { }
+  constructor(private readonly workoutRepository: WorkoutRepository) {}
 
   async create(createWorkoutDto: CreateWorkoutDto): Promise<void> {
     try {
@@ -16,13 +16,20 @@ export class WorkoutService {
     }
   }
 
-  async createFeedback(idWorkoutClient: string, idCompany: string, feedback: string): Promise<void> {
+  async createFeedback(
+    idWorkoutClient: string,
+    idCompany: string,
+    feedback: string,
+  ): Promise<void> {
     try {
-      return await this.workoutRepository.createFeedback(idWorkoutClient, idCompany, feedback);
+      return await this.workoutRepository.createFeedback(
+        idWorkoutClient,
+        idCompany,
+        feedback,
+      );
     } catch (error) {
       throw error;
     }
-
   }
 
   async update(

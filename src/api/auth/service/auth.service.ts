@@ -10,7 +10,6 @@ import { AuthRepository } from '../repository/auth.repository';
 import { AccessTokenDto } from '../dto/response/access-token-dto';
 import { AppAuthDto } from '../dto/request/app-auth.dto';
 import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from '../constants';
 
 @Injectable()
 export class AuthService {
@@ -119,7 +118,7 @@ export class AuthService {
   async refreshToken(token: string): Promise<AccessTokenDto> {
     try {
       const payload = await this.jwtService.verifyAsync(token, {
-        secret: jwtConstants.secret,
+        secret: process.env.JWT_SECRET,
         ignoreExpiration: true, // Add this to ignore token expiration when verifying
       });
 

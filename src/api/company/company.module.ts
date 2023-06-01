@@ -17,4 +17,4 @@ import { CompanyRepository } from './respository/company.repository';
     },
   ],
 })
-export class CompanyModule { }
+export class CompanyModule {}

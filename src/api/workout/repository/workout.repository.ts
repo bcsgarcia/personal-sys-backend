@@ -5,7 +5,7 @@ import { UpdateWorkoutDto } from '../dto/update-workout.dto';
 
 @Injectable()
 export class WorkoutRepository {
-  constructor(private databaseService: DatabaseService) { }
+  constructor(private databaseService: DatabaseService) {}
 
   async create(workout: CreateWorkoutDto): Promise<void> {
     try {
@@ -60,19 +60,22 @@ export class WorkoutRepository {
     }
   }
 
-  async createFeedback(idWorkoutClient: string, idCompany: string, feedback: string): Promise<void> {
-
+  async createFeedback(
+    idWorkoutClient: string,
+    idCompany: string,
+    feedback: string,
+  ): Promise<void> {
     try {
+      const querie =
+        'insert into workoutFeedback (feedback, idWorkoutClient, idCompany) values (?,?,?);';
 
-      const querie = 'insert into workoutFeedback (feedback, idWorkoutClient, idCompany) values (?,?,?);';
-
-
-      return await this.databaseService.execute(querie, [feedback, idWorkoutClient, idCompany]);
-
+      await this.databaseService.execute(querie, [
+        feedback,
+        idWorkoutClient,
+        idCompany,
+      ]);
     } catch (error) {
       throw error;
     }
-
   }
-
 }

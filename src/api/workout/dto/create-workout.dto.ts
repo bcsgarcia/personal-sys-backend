@@ -1,5 +1,5 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { Workout } from 'src/models/workout.model';
 
 export class CreateWorkoutDto {
@@ -55,4 +55,3 @@ export class CreateWorkoutDto {
     this.imageUrl = workout.imageUrl;
   }
 }
-

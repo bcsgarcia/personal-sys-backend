@@ -21,7 +21,6 @@ import {
 } from '@nestjs/swagger';
 import { CompanyService } from '../service/company.service';
 import { CompanyDTO } from '../dto/company.dto';
-import { validateHeaderApi } from 'src/api/utils/validate-header-api';
 import { Request } from 'express';
 import { CompanyMainInformationDto } from '../dto/response/company-main-information.dto';
 import { CreateCompanyMainInformationDto } from '../dto/request/create-company-main-information.dto';

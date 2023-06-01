@@ -5,13 +5,17 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
-import { convertDateToTimestamp, getMessage, SqlError } from 'src/api/utils/utils';
+import {
+  convertDateToTimestamp,
+  getMessage,
+  SqlError,
+} from 'src/api/utils/utils';
 import { AccessTokenDto } from 'src/api/auth/dto/response/access-token-dto';
 import { AccessTokenModel } from 'src/models/access-token-user.model';
 
 @Injectable()
 export class WorkoutsheetRepository {
-  constructor(private databaseService: DatabaseService) { }
+  constructor(private databaseService: DatabaseService) {}
 
   async createWorkoutSheetDefault(
     title: string,
@@ -102,7 +106,7 @@ export class WorkoutsheetRepository {
                 ws.name as workoutSheetName,
                 wsd.date as workoutSheedConclusionDate,
                 ws.order as workoutSheetOrder,
-        
+
                 wc.id as workoutId,
                 w.title as workoutTitle,
                 w.subTitle as workoutSubtitle,
@@ -123,7 +127,7 @@ export class WorkoutsheetRepository {
         INNER JOIN workout w on wc.idWorkout = w.id
         INNER JOIN workoutMedia wM on w.id = wM.idWorkout
         INNER JOIN media m on wM.idMedia = m.id
-        
+
         WHERE
             ws.idClient = '${user.clientId}' AND
             ws.idCompany = '${user.clientIdCompany}' AND
@@ -132,13 +136,14 @@ export class WorkoutsheetRepository {
           ORDER BY wsd.date ASC;`;
 
       return await this.databaseService.execute(query);
-
     } catch (error) {
       throw error;
     }
   }
 
-  async getAllMyCurrentWorkoutSheetsWithWorkouts(user: AccessTokenModel): Promise<any> {
+  async getAllMyCurrentWorkoutSheetsWithWorkouts(
+    user: AccessTokenModel,
+  ): Promise<any> {
     try {
       const query = `
       SELECT
@@ -200,7 +205,6 @@ export class WorkoutsheetRepository {
                             ws.isActive = 1`;
 
       return await this.databaseService.execute(query);
-
     } catch (error) {
       throw error;
     }
@@ -208,8 +212,6 @@ export class WorkoutsheetRepository {
 
   async workoutSheetDone(idWorkoutsheet: string, idCompany: string) {
     try {
-
-
       const query = `
           INSERT INTO workoutSheetDone
                   (idWorkoutSheet,
@@ -218,14 +220,20 @@ export class WorkoutsheetRepository {
                 VALUES
                   (?, ?, ?);`;
 
-      return await this.databaseService.execute(query, [idWorkoutsheet, idCompany, convertDateToTimestamp(new Date())]);
-
+      return await this.databaseService.execute(query, [
+        idWorkoutsheet,
+        idCompany,
+        convertDateToTimestamp(new Date()),
+      ]);
     } catch (error) {
       throw error;
     }
   }
 
-  async createWorkoutsheetFeedback(feedback: string, idWorkoutsheet: string): Promise<void> {
+  async createWorkoutsheetFeedback(
+    feedback: string,
+    idWorkoutsheet: string,
+  ): Promise<void> {
     try {
       const query = `
     INSERT INTO workoutSheetFeedback
@@ -235,11 +243,9 @@ export class WorkoutsheetRepository {
         ('${feedback}',
         '${idWorkoutsheet}');`;
 
-      return await this.databaseService.execute(query);
+      await this.databaseService.execute(query);
     } catch (error) {
       throw error;
     }
-
   }
-
 }

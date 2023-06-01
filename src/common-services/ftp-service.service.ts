@@ -12,34 +12,28 @@ export class FtpService {
 
   uploadPhoto(fileBuffer: Buffer, fileName: string): Promise<void> {
     return new Promise((resolve, reject) => {
-      // Converte a string Base64 de volta para um buffer
-      //   const buffer = Buffer.from(base64, 'base64');
-
       // Cria um stream de leitura a partir do buffer
       const stream = new Readable();
       stream.push(fileBuffer);
       stream.push(null);
 
       this.client.on('ready', () => {
-        this.client.cwd(
-          '/public_html/treinadoraamanda/client_image/',
-          (err) => {
+        this.client.cwd(process.env.FTP_CLIENT_IMAGE_PATH, (err) => {
+          if (err) reject(err);
+
+          this.client.put(stream, fileName, (err) => {
             if (err) reject(err);
 
-            this.client.put(stream, fileName, (err) => {
-              if (err) reject(err);
-
-              this.client.end();
-              resolve();
-            });
-          },
-        );
+            this.client.end();
+            resolve();
+          });
+        });
       });
 
       this.client.connect({
-        host: 'bcsgarcia.com.br',
-        user: 'u408558298',
-        password: 'jovZy3-gopryn-huspad',
+        host: process.env.FTP_HOST,
+        user: process.env.FTP_USER,
+        password: process.env.FTP_PASSWORD,
       });
     });
   }

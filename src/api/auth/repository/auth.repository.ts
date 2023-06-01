@@ -117,7 +117,7 @@ export class AuthRepository {
 
   async update(authDto: AuthDto): Promise<void> {
     try {
-      return await this.databaseService.execute(
+      await this.databaseService.execute(
         'UPDATE auth SET email = ?, pass = ? WHERE id = ?',
         [authDto.email, authDto.pass, authDto.id],
       );
@@ -128,7 +128,7 @@ export class AuthRepository {
 
   async updateEmailByIdClient(idClient: string, email: string): Promise<void> {
     try {
-      return this.databaseService.execute(
+      this.databaseService.execute(
         'UPDATE auth SET email = ? WHERE id in (select idAuth from client where id = ?)',
         [email, idClient],
       );
@@ -139,7 +139,7 @@ export class AuthRepository {
 
   async updatePassByIdClient(idClient: string, pass: string): Promise<void> {
     try {
-      return this.databaseService.execute(
+      this.databaseService.execute(
         'UPDATE auth SET pass = ? WHERE id in (select idAuth from client where id = ?)',
         [pass, idClient],
       );

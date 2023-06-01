@@ -23,7 +23,9 @@ export class WorkoutResponseDto {
   @ApiProperty({ description: 'The breaktime of the workout in seconds' })
   breaktime: number;
 
-  @ApiProperty({ description: 'The recommended number of repetitions for the workout' })
+  @ApiProperty({
+    description: 'The recommended number of repetitions for the workout',
+  })
   serie: string;
 
   constructor(data: any) {
@@ -31,7 +33,9 @@ export class WorkoutResponseDto {
     this.title = data.title;
     this.subtitle = data.subtitle;
     this.description = data.description;
-    this.media = data.media ? data.media.map((item: any) => new WorkoutMediaDto(item)) : [];
+    this.media = data.media
+      ? data.media.map((item: any) => new WorkoutMediaDto(item))
+      : [];
     this.order = data.order;
     this.breaktime = data.breaktime;
     this.serie = data.serie;

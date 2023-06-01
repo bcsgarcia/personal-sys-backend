@@ -95,6 +95,8 @@ export class ClientService {
 
       const imageBuffer = file.mimetype.includes('png')
         ? file.buffer
+        : file.mimetype.includes('heic')
+        ? await this.imageService.convertHEICtoPNG(file.buffer)
         : await this.imageService.convertToPNG(file.buffer);
 
       await this.ftpService.uploadPhoto(imageBuffer, `${uuid}.png`);

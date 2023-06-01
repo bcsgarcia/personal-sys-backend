@@ -1,13 +1,14 @@
+import { config } from 'dotenv';
+config();
+
 import { NestFactory, Reflector } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import * as dotenv from 'dotenv-flow';
 import * as bodyParser from 'body-parser';
 import { AuthGuard } from './api/auth/auth.guard';
 import * as cors from 'cors';
 
 async function bootstrap() {
-  dotenv.config();
   const app = await NestFactory.create(AppModule);
   app.useGlobalGuards();
   const config = new DocumentBuilder()

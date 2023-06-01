@@ -8,7 +8,6 @@ import {
   Req,
   HttpStatus,
   Put,
-  UseGuards,
 } from '@nestjs/common';
 import { WorkoutsheetService } from '../service/workoutsheet.service';
 import { CreateWorkoutsheetDefaultDto } from '../dto/request/create.workoutsheet.default.dto';
@@ -16,23 +15,19 @@ import {
   ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
-  ApiHeader,
   ApiOperation,
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
-import { validateHeaderApi } from 'src/api/utils/validate-header-api';
 import { Request } from 'express';
 import { UpdateWorkoutsheetDefaultDto } from '../dto/request/update.workoutsheet.default.dto';
 import { GetAllWorkoutSheetDefaultDto } from '../dto/request/get.all.workoutsheet.default.dto';
-import { AuthGuard } from '@nestjs/passport';
 import { AccessTokenModel } from 'src/models/access-token-user.model';
-import { WorkoutSheetResponseDto } from '../dto/response/workoutsheet-response.dto';
 
 @ApiTags('workoutsheet')
 @Controller('workoutsheet')
 export class WorkoutsheetController {
-  constructor(private readonly workoutsheetService: WorkoutsheetService) { }
+  constructor(private readonly workoutsheetService: WorkoutsheetService) {}
 
   @Post('default')
   @ApiBearerAuth()
@@ -53,8 +48,7 @@ export class WorkoutsheetController {
   ): Promise<void> {
     try {
       const user = new AccessTokenModel(request['user']);
-      createWorkoutsheetDto.idCompany = user.clientIdCompany
-
+      createWorkoutsheetDto.idCompany = user.clientIdCompany;
 
       return this.workoutsheetService.createWorkoutSheetDefault(
         createWorkoutsheetDto,
@@ -78,7 +72,6 @@ export class WorkoutsheetController {
     @Req() request: Request,
   ) {
     try {
-
       const user = new AccessTokenModel(request['user']);
 
       updateWorkoutsheetDto.idCompany = user.clientIdCompany;
@@ -135,9 +128,7 @@ export class WorkoutsheetController {
   })
   delete(@Param('id') id: string) {
     try {
-
       return this.workoutsheetService.deleteWorkoutSheetDefault(id);
-
     } catch (error) {
       throw error;
     }
@@ -163,10 +154,7 @@ export class WorkoutsheetController {
     description: 'The default workout sheet has been successfully created.',
   })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request.' })
-  workoutsheetDone(
-    @Body() body: any,
-    @Req() request: Request,
-  ): Promise<void> {
+  workoutsheetDone(@Body() body: any, @Req() request: Request): Promise<void> {
     try {
       const user = new AccessTokenModel(request['user']);
 
@@ -194,11 +182,12 @@ export class WorkoutsheetController {
       const feedback = body['feedback'];
       const idWorkoutsheet = body['idworkoutsheet'];
 
-      return this.workoutsheetService.createWorkoutsheetFeedback(feedback, idWorkoutsheet);
+      return this.workoutsheetService.createWorkoutsheetFeedback(
+        feedback,
+        idWorkoutsheet,
+      );
     } catch (error) {
       throw error;
     }
   }
-
-
 }
