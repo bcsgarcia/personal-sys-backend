@@ -59,7 +59,7 @@ export class AuthRepository {
           c.idAuth as clientIdAuth,
           c.photoUrl as clientPhotoUrl
 
-        FROM Auth a
+        FROM auth a
           INNER JOIN client c on a.id = c.idAuth
 
         WHERE
@@ -83,7 +83,7 @@ export class AuthRepository {
           c.idAuth as clientIdAuth,
           c.photoUrl as clientPhotoUrl
 
-        FROM Auth a
+        FROM auth a
           INNER JOIN client c on a.id = c.idAuth
 
         WHERE
