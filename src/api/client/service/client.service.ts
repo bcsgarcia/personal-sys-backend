@@ -86,7 +86,7 @@ export class ClientService {
 
   async uploadPhoto(@UploadedFile() file, uuid: string): Promise<void> {
     try {
-      if (!file.mimetype.includes('image')) {
+      if (!file.mimetype.includes('image') || file.mimetype.includes('heic')) {
         throw new HttpException(
           DomainError.INTERNAL_SERVER_ERROR,
           HttpStatus.BAD_REQUEST,
@@ -95,8 +95,6 @@ export class ClientService {
 
       const imageBuffer = file.mimetype.includes('png')
         ? file.buffer
-        : file.mimetype.includes('heic')
-        ? await this.imageService.convertHEICtoPNG(file.buffer)
         : await this.imageService.convertToPNG(file.buffer);
 
       await this.ftpService.uploadPhoto(imageBuffer, `${uuid}.png`);
