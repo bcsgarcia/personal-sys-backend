@@ -67,7 +67,7 @@ export class CompanyController {
     return this.companyService.remove(id);
   }
 
-  @Get('/screen/get-meet-app')
+  @Get('/screen/get-meet-app/:id')
   @ApiOperation({ summary: 'Get Meet App Screen information' })
   @ApiResponse({
     status: 200,
@@ -75,11 +75,9 @@ export class CompanyController {
     type: GetMeetAppScreenResponseDto,
   })
   @Public()
-  async getMeetAppScreen(@Req() request: Request) {
+  async getMeetAppScreen(@Param('id') id: string, @Req() request: Request) {
     try {
-      return await this.companyService.getMeetAppScreen(
-        '7c576f1d-d78e-11ed-ba77-0242ac110002',
-      );
+      return await this.companyService.getMeetAppScreen(id);
     } catch (error) {
       throw error;
     }
