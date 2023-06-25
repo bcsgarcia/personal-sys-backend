@@ -241,7 +241,7 @@ export class CompanyRepository {
         p.address as partnershipAddress,
         pc.name as partnershipCategoryName
   FROM partnership p
-      INNER JOIN partnershipCategory pC on p.idPartnershipCategory = pC.id
+      INNER JOIN partnershipCategory pc on p.idPartnershipCategory = pc.id
 
   WHERE
       p.idCompany = '${idCompany}' AND
