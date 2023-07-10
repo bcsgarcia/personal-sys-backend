@@ -33,7 +33,7 @@ export class ThumbnailService {
 
         const thumbnailFileName = `${idMedia}.jpg`;
 
-        const thumbnailPath = `uploads/temp/${thumbnailFileName}}`;
+        const thumbnailPath = `uploads/temp/${thumbnailFileName}`;
         const thumbnailWriteStream = writeFileAsync(thumbnailPath, {});
 
         ffmpeg(createReadStream(videoPath))
