@@ -10,8 +10,6 @@ import { ClientService } from 'src/api/client/service/client.service';
 import { AuthService } from 'src/api/auth/service/auth.service';
 import { ClientRepository } from 'src/api/client/repository/client.repository';
 import { AuthRepository } from 'src/api/auth/repository/auth.repository';
-import { AuthModule } from 'src/api/auth/auth.module';
-import { JwtModule } from '@nestjs/jwt';
 import { NotificationService } from 'src/api/notification/service/notification.service';
 import { NotificationRepository } from 'src/api/notification/repository/notification.repository';
 import { FtpService } from 'src/common-services/ftp-service.service';

@@ -9,6 +9,10 @@ import { CompanyModule } from './company/company.module';
 import { AuthModule } from './auth/auth.module';
 import { AppHomeScreenModule } from './screens/app/home/screen-home.module';
 
+import { IntroductionPageModule } from './screens/admin/introduction-page/introduction-page.module';
+import { MediaModule } from './media/media.module';
+import { UploadModule } from './upload/upload.module';
+
 @Module({
   imports: [
     NotificationModule,
@@ -19,6 +23,9 @@ import { AppHomeScreenModule } from './screens/app/home/screen-home.module';
     CompanyModule,
     AuthModule,
     AppHomeScreenModule,
+    IntroductionPageModule,
+    MediaModule,
+    UploadModule,
   ],
   exports: [
     NotificationModule,
@@ -27,6 +34,7 @@ import { AppHomeScreenModule } from './screens/app/home/screen-home.module';
     AppointmentModule,
     ClientModule,
     AppHomeScreenModule,
+    IntroductionPageModule,
   ],
 })
 export class ApiModule {}

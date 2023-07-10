@@ -20,6 +20,15 @@ export class CompanyRepository {
     return row[0];
   }
 
+  async findByIdAdmin(id: string): Promise<any> {
+    const row = await this.databaseService.execute(
+      'SELECT id, name, about, photo, video, whatsapp, instagram FROM company WHERE id = ?',
+      [id],
+    );
+
+    return row[0];
+  }
+
   async findAll(): Promise<Company[]> {
     const rows = await this.databaseService.execute('SELECT * FROM company');
     const companies = rows.map((row) => new Company(row));
@@ -62,7 +71,7 @@ export class CompanyRepository {
     );
   }
 
-  async findAllCompanyMainInformatin(idCompany: string): Promise<any> {
+  async findAllCompanyMainInformation(idCompany: string): Promise<any> {
     try {
       return await this.databaseService.execute(
         `SELECT * FROM companyMainInformation WHERE idCompany = '${idCompany}' AND isActive = 1 ORDER BY title ASC`,
@@ -212,6 +221,22 @@ export class CompanyRepository {
     return await this.databaseService.execute(query);
   }
 
+  async getTestimonyByIdCompanyAdmin(idCompany: string): Promise<any> {
+    const query = `
+    SELECT
+    id,
+    name,
+    description,
+    imageUrl
+    FROM
+      testimony
+    WHERE
+      idCompany = '${idCompany}'
+    `;
+
+    return await this.databaseService.execute(query);
+  }
+
   async getPhotosBeforeAndAfterByIdCompany(idCompany: string): Promise<any> {
     const query = `
     SELECT
@@ -223,6 +248,21 @@ export class CompanyRepository {
     `;
 
     return await this.databaseService.execute(query);
+  }
+
+  async getPhotosBeforeAndAfterByIdCompanyAdmin(
+    idCompany: string,
+  ): Promise<any> {
+    const query = `
+    SELECT
+      id, imageUrl
+    FROM
+    photosBeforeAndAfter
+    WHERE
+      idCompany = '${idCompany}'
+    `;
+
+    return this.databaseService.execute(query);
   }
 
   async getAllPartnershipsByIdCompany(idCompany: string): Promise<any> {

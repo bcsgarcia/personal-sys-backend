@@ -60,7 +60,7 @@ export class CompanyService {
     idCompany: string,
   ): Promise<CompanyMainInformationDto[]> {
     try {
-      const rows = await this.companyRepository.findAllCompanyMainInformatin(
+      const rows = await this.companyRepository.findAllCompanyMainInformation(
         idCompany,
       );
       const companyMainInformations = rows.map(

@@ -40,11 +40,13 @@ export class AuthController {
     return this.authService.refreshToken(token['token']);
   }
 
+  @Public()
   @Post('/admin')
   adminLogin(@Body() authDto: AppAuthDto) {
     return this.authService.adminAuth(authDto);
   }
 
+  @Public()
   @Post('/admin/refresh')
   refreshTokenAdmin(@Body() authDto: AppAuthDto) {
     return this.authService.adminAuth(authDto);

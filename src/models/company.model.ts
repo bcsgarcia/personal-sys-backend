@@ -10,7 +10,7 @@ export class Company {
   instagram: string | null;
 
   constructor(data: any) {
-    this.id = data.id;
+    this.id = data.id ?? '';
     this.isActive = data.isActive;
     this.lastUpdate = data.lastUpdate;
     this.name = data.name;
