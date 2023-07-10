@@ -24,6 +24,7 @@ export class UploadService {
         const thumbnailBuffer = await this.thumbnailService.createThumbnail(
           file.buffer,
           file.mimetype,
+          idMedia,
         );
 
         // save thumbnail to ftp
