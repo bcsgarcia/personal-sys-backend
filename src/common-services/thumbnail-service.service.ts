@@ -26,14 +26,14 @@ export class ThumbnailService {
   ): Promise<Buffer> {
     return new Promise(async (resolve, reject) => {
       try {
-        const videoPath = `uploads/temp/${idMedia}.${this.getFileExtension(
+        const videoPath = `/uploads/temp/${idMedia}.${this.getFileExtension(
           mimeType,
         )}`;
         await fsPromises.writeFile(videoPath, videoBuffer);
 
         const thumbnailFileName = `${idMedia}.jpg`;
 
-        const thumbnailPath = `uploads/temp/${thumbnailFileName}`;
+        const thumbnailPath = `/uploads/temp/${thumbnailFileName}`;
         const thumbnailWriteStream = writeFileAsync(thumbnailPath, {});
 
         ffmpeg(createReadStream(videoPath))
