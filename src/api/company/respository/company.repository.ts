@@ -6,6 +6,10 @@ import { CreateCompanyMainInformationDto } from '../dto/request/create-company-m
 import { UpdateCompanyMainInformationDto } from '../dto/request/update-company-main-information.dto';
 import { CreatePosturalPatternDto } from '../dto/request/create-company-postural-pattern.dto';
 import { UpdatePosturalPatternDto } from '../dto/request/update-company-postural-pattern.dto';
+import { CreateBeforeAndAfterImageDto } from '../../screens/admin/introduction-page/dto/create-before-and-after-image.dto';
+import { DeleteBeforeAndAfterImageDto } from '../../screens/admin/introduction-page/dto/delete-before-and-after-image.dto';
+import { CreateTestimonyDto } from '../../screens/admin/introduction-page/dto/create-testimony.dto';
+import { DeleteTestimonyDto } from '../../screens/admin/introduction-page/dto/delete-testimony.dto';
 
 @Injectable()
 export class CompanyRepository {
@@ -22,7 +26,7 @@ export class CompanyRepository {
 
   async findByIdAdmin(id: string): Promise<any> {
     const row = await this.databaseService.execute(
-      'SELECT id, name, about, photo, video, whatsapp, instagram FROM company WHERE id = ?',
+      'SELECT id, name, about, photoMediaId, firstVideoMediaId, secondVideoMediaId, whatsapp, instagram FROM company WHERE id = ?',
       [id],
     );
 
@@ -37,29 +41,29 @@ export class CompanyRepository {
 
   async create(company: CompanyDTO): Promise<void> {
     await this.databaseService.execute(
-      'INSERT INTO company (name, about, photo, video, whatsapp, instagram) VALUES (?, ?, ?, ?, ?, ?)',
+      'INSERT INTO company (name, about, photoMediaId, firstVideoMediaId, secondVideoMediaId, whatsapp, instagram) VALUES (?, ?, ?, ?, ?, ?, ?)',
       [
         company.name,
         company.about,
-        company.photo,
-        company.video,
+        company.photoMediaId,
+        company.firstVideoMediaId,
+        company.secondVideoMediaId,
         company.whatsapp,
         company.instagram,
       ],
     );
   }
 
-  async update(id: string, company: CompanyDTO): Promise<void> {
+  async update(company: CompanyDTO): Promise<void> {
     await this.databaseService.execute(
-      'UPDATE company SET name = ?, about = ?, photo = ?, video = ?, whatsapp = ?, instagram = ? WHERE id = ?',
+      'UPDATE company SET  about = ?, photoMediaId = ?, firstVideoMediaId = ?, secondVideoMediaId = ?, whatsapp = ? WHERE id = ?',
       [
-        company.name,
         company.about,
-        company.photo,
-        company.video,
+        company.photoMediaId,
+        company.firstVideoMediaId,
+        company.secondVideoMediaId,
         company.whatsapp,
-        company.instagram,
-        id,
+        company.id,
       ],
     );
   }
@@ -74,7 +78,11 @@ export class CompanyRepository {
   async findAllCompanyMainInformation(idCompany: string): Promise<any> {
     try {
       return await this.databaseService.execute(
-        `SELECT * FROM companyMainInformation WHERE idCompany = '${idCompany}' AND isActive = 1 ORDER BY title ASC`,
+        `SELECT *
+         FROM companyMainInformation
+         WHERE idCompany = '${idCompany}'
+           AND isActive = 1
+         ORDER BY title ASC`,
       );
     } catch (error) {
       throw error;
@@ -86,10 +94,9 @@ export class CompanyRepository {
   ): Promise<void> {
     try {
       const querie = `
-      insert into
-        companyMainInformation
-          (title, description, idCompany)
-        values (?, ?, ?);
+          insert into companyMainInformation
+              (title, description, idCompany)
+          values (?, ?, ?);
       `;
 
       await this.databaseService.execute(querie, [
@@ -131,7 +138,11 @@ export class CompanyRepository {
   async findAllPosturalPatterns(idCompany: string): Promise<any> {
     try {
       const rows = await this.databaseService.execute(
-        `SELECT * FROM posturalPattern pp WHERE pp.idCompany = '${idCompany}' AND pp.isActive = 1  ORDER BY pp.order ASC`,
+        `SELECT *
+         FROM posturalPattern pp
+         WHERE pp.idCompany = '${idCompany}'
+           AND pp.isActive = 1
+         ORDER BY pp.order ASC`,
       );
       return rows;
     } catch (error) {
@@ -142,9 +153,8 @@ export class CompanyRepository {
   async createPosturalPatterns(item: CreatePosturalPatternDto): Promise<void> {
     try {
       const querie = `
-      insert into
-        posturalPattern (title, description, imageUrl, idCompany)
-        values (?, ?, ?, ?);
+          insert into posturalPattern (title, description, imageUrl, idCompany)
+          values (?, ?, ?, ?);
       `;
 
       await this.databaseService.execute(querie, [
@@ -185,20 +195,19 @@ export class CompanyRepository {
   async getMeetAppScreen(idCompany: string): Promise<any> {
     try {
       const querie = `
-        SELECT
-            c.about AS aboutCompany_description,
-            c.photo AS aboutCompany_imageUrl,
-            c.video AS aboutCompany_videoUrl,
-            t.name AS testimonies_name,
-            t.description AS testimonies_description,
-            t.imageUrl AS testimonies_imageUrl,
-            pba.imageUrl AS photosBeforeAndAfter_imageUrl
-        FROM
-            company c
-        LEFT JOIN testimony t ON c.id = t.idCompany
-        LEFT JOIN photosBeforeAndAfter pba ON c.id = pba.idCompany
-        WHERE
-            c.id = '${idCompany}';`;
+          SELECT c.about             AS aboutCompany_description,
+                 c.photo             AS aboutCompany_imageUrl,
+                 c.firstVideoMediaId AS aboutCompany_videoUrl,
+                 t.name              AS testimonies_name,
+                 t.description       AS testimonies_description,
+                 mt.url              AS testimonies_imageUrl,
+                 m.url               AS photosBeforeAndAfter_imageUrl
+          FROM company c
+                   LEFT JOIN testimony t ON c.id = t.idCompany
+                   LEFT JOIN photosBeforeAndAfter pba ON c.id = pba.idCompany
+                   LEFT JOIN media mt on mt.id = t.idMedia
+                   LEFT JOIN media m ON m.id = pba.idMedia
+          WHERE c.id = '${idCompany}';`;
 
       return await this.databaseService.execute(querie);
     } catch (error) {
@@ -208,14 +217,11 @@ export class CompanyRepository {
 
   async getTestimonyByIdCompany(idCompany: string): Promise<any> {
     const query = `
-    SELECT
-      name,
-      description,
-      imageUrl
-    FROM
-      testimony
-    WHERE
-      idCompany = '${idCompany}'
+        SELECT name,
+               description,
+               imageUrl
+        FROM testimony
+        WHERE idCompany = '${idCompany}'
     `;
 
     return await this.databaseService.execute(query);
@@ -223,15 +229,12 @@ export class CompanyRepository {
 
   async getTestimonyByIdCompanyAdmin(idCompany: string): Promise<any> {
     const query = `
-    SELECT
-    id,
-    name,
-    description,
-    imageUrl
-    FROM
-      testimony
-    WHERE
-      idCompany = '${idCompany}'
+        SELECT id,
+               name,
+               description,
+               idMedia
+        FROM testimony
+        WHERE idCompany = '${idCompany}'
     `;
 
     return await this.databaseService.execute(query);
@@ -239,12 +242,10 @@ export class CompanyRepository {
 
   async getPhotosBeforeAndAfterByIdCompany(idCompany: string): Promise<any> {
     const query = `
-    SELECT
-      imageUrl
-    FROM
-    photosBeforeAndAfter
-    WHERE
-      idCompany = '${idCompany}'
+        SELECT m.url
+        FROM photosBeforeAndAfter b
+                 left join media m on m.id = b.idMedia
+        WHERE b.idCompany = '${idCompany}'
     `;
 
     return await this.databaseService.execute(query);
@@ -254,12 +255,11 @@ export class CompanyRepository {
     idCompany: string,
   ): Promise<any> {
     const query = `
-    SELECT
-      id, imageUrl
-    FROM
-    photosBeforeAndAfter
-    WHERE
-      idCompany = '${idCompany}'
+        SELECT b.id,
+               b.idMedia
+        FROM photosBeforeAndAfter b
+        WHERE b.idCompany = '${idCompany}'
+        order by b.lastUpdate
     `;
 
     return this.databaseService.execute(query);
@@ -268,26 +268,109 @@ export class CompanyRepository {
   async getAllPartnershipsByIdCompany(idCompany: string): Promise<any> {
     try {
       const querie = `
-      SELECT
-        p.id as partnershipId,
-        p.idCompany as partnershipIdCompany,
-        p.name as partnershipName,
-        p.imageUrl as partnershipImageUrl,
-        p.description as partnershipDescription,
-        p.contact as partnershipContact,
-        p.email as partnershipEmail,
-        p.instagram as partnershipInstagram,
-        p.website as partnershipWebsite,
-        p.address as partnershipAddress,
-        pc.name as partnershipCategoryName
-  FROM partnership p
-      INNER JOIN partnershipCategory pc on p.idPartnershipCategory = pc.id
+          SELECT p.id          as partnershipId,
+                 p.idCompany   as partnershipIdCompany,
+                 p.name        as partnershipName,
+                 p.imageUrl    as partnershipImageUrl,
+                 p.description as partnershipDescription,
+                 p.contact     as partnershipContact,
+                 p.email       as partnershipEmail,
+                 p.instagram   as partnershipInstagram,
+                 p.website     as partnershipWebsite,
+                 p.address     as partnershipAddress,
+                 pc.name       as partnershipCategoryName
+          FROM partnership p
+                   INNER JOIN partnershipCategory pc on p.idPartnershipCategory = pc.id
 
-  WHERE
-      p.idCompany = '${idCompany}' AND
-      p.isActive = 1`;
+          WHERE p.idCompany = '${idCompany}'
+            AND p.isActive = 1`;
 
       return await this.databaseService.execute(querie);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async createBeforeAndAfterImage(
+    items: CreateBeforeAndAfterImageDto[],
+    idCompany: string,
+  ): Promise<void> {
+    try {
+      const params = items
+        .map((item) => `('${item.idMedia}', '${idCompany}')`)
+        .join(',');
+
+      const query = `
+          insert into photosBeforeAndAfter
+              (idMedia, idCompany)
+          values ${params};
+      `;
+
+      await this.databaseService.execute(query);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteBeforeAndAfterImage(
+    deleteBeforeAndAfterImageDto: DeleteBeforeAndAfterImageDto,
+  ): Promise<void> {
+    try {
+      const placeholders = deleteBeforeAndAfterImageDto.idList
+        .map(() => '?')
+        .join(',');
+
+      const query = `delete
+                     from photosBeforeAndAfter
+                     WHERE id in (${placeholders})
+                       and idCompany = ?`;
+
+      await this.databaseService.execute(query, [
+        ...deleteBeforeAndAfterImageDto.idList,
+        deleteBeforeAndAfterImageDto.idCompany,
+      ]);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async createTestimony(
+    items: CreateTestimonyDto[],
+    idCompany: string,
+  ): Promise<void> {
+    try {
+      const params = items
+        .map(
+          (item) =>
+            `('${item.name}', '${item.description}', '${idCompany}', '${item.idMedia}')`,
+        )
+        .join(',');
+
+      const query = `
+          insert into testimony
+              (name, description, idCompany, idMedia)
+          values ${params};
+      `;
+
+      await this.databaseService.execute(query);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteTestimony(deleteTestimonyDto: DeleteTestimonyDto): Promise<void> {
+    try {
+      const placeholders = deleteTestimonyDto.idList.map(() => '?').join(',');
+
+      const query = `delete
+                     from testimony
+                     WHERE id in (${placeholders})
+                       and idCompany = ? `;
+
+      await this.databaseService.execute(query, [
+        ...deleteTestimonyDto.idList,
+        deleteTestimonyDto.idCompany,
+      ]);
     } catch (error) {
       throw error;
     }

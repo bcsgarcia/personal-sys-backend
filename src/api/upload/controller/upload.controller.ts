@@ -5,7 +5,7 @@ import {
   UploadedFile,
   UseInterceptors,
 } from '@nestjs/common';
-import { FileType, UploadService } from '../service/upload.service';
+import { UploadService } from '../service/upload.service';
 import { ApiTags } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 
@@ -16,17 +16,18 @@ export class UploadController {
 
   @Post('file')
   @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(@UploadedFile() file, @Body('idMedia') idMedia: string) {
+  async uploadFile(
+    @UploadedFile() file,
+    @Body('idMedia') idMedia: string,
+    @Body('mediaType') mediaType: string,
+  ) {
     try {
-      const fileType = this.uploadService.validateFile(file);
-
-      if (fileType === FileType.UNKNOWN) {
+      if (!this.uploadService.validateFile(file)) {
         return { status: 'error', message: 'Invalid file type' };
       }
 
       console.log(file);
-      await this.uploadService.uploadFile(file, fileType, idMedia);
-      // Retorne uma resposta ou faça algo com o arquivo aqui
+      await this.uploadService.uploadFile(file, mediaType, idMedia);
       console.log('success');
       return { status: 'success' };
     } catch (e) {

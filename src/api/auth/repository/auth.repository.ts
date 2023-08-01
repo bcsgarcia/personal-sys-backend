@@ -42,7 +42,10 @@ export class AuthRepository {
   async validateUser(email: string, pass: string): Promise<any> {
     try {
       return this.databaseService.execute(
-        `SELECT * FROM auth WHERE email = '${email}' and pass = '${pass}'`,
+        `SELECT *
+         FROM auth
+         WHERE email = '${email}'
+           and pass = '${pass}'`,
       );
     } catch (error) {
       throw error;
@@ -52,21 +55,40 @@ export class AuthRepository {
   async appAuth(authDto: AppAuthDto): Promise<any> {
     try {
       return this.databaseService.execute(
-        `SELECT c.id as clientId,
-          c.name as clientName,
-          a.email as clientEmail,
-          c.idCompany as clientIdCompany,
-          c.idAuth as clientIdAuth,
-          c.photoUrl as clientPhotoUrl
+        `SELECT c.id        as clientId,
+                c.name      as clientName,
+                a.email     as clientEmail,
+                c.idCompany as clientIdCompany,
+                c.idAuth    as clientIdAuth,
+                c.photoUrl  as clientPhotoUrl
 
-        FROM auth a
-          INNER JOIN client c on a.id = c.idAuth
+         FROM auth a
+                  INNER JOIN client c on a.id = c.idAuth
 
-        WHERE
-          a.email = '${authDto.email}' AND
-          a.pass = '${authDto.password}' AND
-          a.isAdmin = '0'`,
+         WHERE a.email = '${authDto.email}'
+           AND a.pass = '${authDto.password}'
+           AND a.isAdmin = '0'`,
         [authDto.email, authDto.password],
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async adminAuthRefresh(authDto: AppAuthDto): Promise<any> {
+    try {
+      return this.databaseService.execute(
+        `SELECT c.id        as clientId,
+                c.name      as clientName,
+                a.email     as clientEmail,
+                c.idCompany as clientIdCompany,
+                c.idAuth    as clientIdAuth,
+                c.photoUrl  as clientPhotoUrl
+         FROM auth a
+                  INNER JOIN client c on a.id = c.idAuth
+         WHERE a.email = ?
+           AND a.isAdmin = '1'`,
+        [authDto.email],
       );
     } catch (error) {
       throw error;
@@ -76,20 +98,17 @@ export class AuthRepository {
   async adminAuth(authDto: AppAuthDto): Promise<any> {
     try {
       return this.databaseService.execute(
-        `SELECT c.id as clientId,
-          c.name as clientName,
-          a.email as clientEmail,
-          c.idCompany as clientIdCompany,
-          c.idAuth as clientIdAuth,
-          c.photoUrl as clientPhotoUrl
-
-        FROM auth a
-          INNER JOIN client c on a.id = c.idAuth
-
-        WHERE
-          a.email = '${authDto.email}' AND
-          a.pass = '${authDto.password}' AND
-          a.isAdmin = '1'`,
+        `SELECT c.id        as clientId,
+                c.name      as clientName,
+                a.email     as clientEmail,
+                c.idCompany as clientIdCompany,
+                c.idAuth    as clientIdAuth,
+                c.photoUrl  as clientPhotoUrl
+         FROM auth a
+                  INNER JOIN client c on a.id = c.idAuth
+         WHERE a.email = ?
+           AND a.pass = ?
+           AND a.isAdmin = '1'`,
         [authDto.email, authDto.password],
       );
     } catch (error) {

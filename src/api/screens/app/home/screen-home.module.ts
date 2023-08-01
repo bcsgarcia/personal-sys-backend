@@ -14,6 +14,7 @@ import { NotificationService } from 'src/api/notification/service/notification.s
 import { NotificationRepository } from 'src/api/notification/repository/notification.repository';
 import { FtpService } from 'src/common-services/ftp-service.service';
 import { ImageService } from 'src/common-services/image-service.service';
+import { MediaRepository } from '../../../media/repository/media.repository';
 
 @Module({
   controllers: [AppHomeScreenController],
@@ -32,6 +33,7 @@ import { ImageService } from 'src/common-services/image-service.service';
     CompanyRepository,
     WorkoutsheetRepository,
     NotificationRepository,
+    MediaRepository,
   ],
 })
 export class AppHomeScreenModule {}

@@ -4,8 +4,9 @@ export class Company {
   lastUpdate: Date;
   name: string;
   about: string;
-  photo: string | null;
-  video: string | null;
+  photoMediaId: string | null;
+  firstVideoMediaId: string | null;
+  secondVideoMediaId: string | null;
   whatsapp: string | null;
   instagram: string | null;
 
@@ -15,8 +16,9 @@ export class Company {
     this.lastUpdate = data.lastUpdate;
     this.name = data.name;
     this.about = data.about;
-    this.photo = data.photo;
-    this.video = data.video;
+    this.photoMediaId = data.photoMediaId;
+    this.firstVideoMediaId = data.firstVideoMediaId;
+    this.secondVideoMediaId = data.secondVideoMediaId;
     this.whatsapp = data.whatsapp;
     this.instagram = data.instagram;
   }

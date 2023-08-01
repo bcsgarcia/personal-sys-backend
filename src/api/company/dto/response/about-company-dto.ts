@@ -16,4 +16,9 @@ export class AboutCompanyDto {
   @IsNotEmpty()
   @IsString()
   videoUrl: string;
+
+  @ApiProperty({ description: 'URL of the company video' })
+  @IsNotEmpty()
+  @IsString()
+  secondVideoUrl: string;
 }

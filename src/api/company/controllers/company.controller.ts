@@ -1,20 +1,17 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Patch,
-  Param,
+  Controller,
   Delete,
+  Get,
   HttpStatus,
-  Req,
+  Param,
+  Post,
   Put,
-  UseGuards,
+  Req,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiBody,
-  ApiHeader,
   ApiOperation,
   ApiResponse,
   ApiTags,
@@ -55,10 +52,13 @@ export class CompanyController {
     return this.companyService.findOne(id);
   }
 
-  @Patch(':id')
+  @Put()
   @ApiBearerAuth()
-  update(@Param('id') id: string, @Body() companyDto: CompanyDTO) {
-    return this.companyService.update(id, companyDto);
+  update(@Body() companyDto: CompanyDTO, @Req() request: Request) {
+    const user = new AccessTokenModel(request['user']);
+
+    companyDto.id = user.clientIdCompany;
+    return this.companyService.update(companyDto);
   }
 
   @Delete(':id')

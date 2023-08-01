@@ -69,7 +69,7 @@ export class FtpService {
   async uploadFile(
     fileBuffer: Buffer,
     fileName: string,
-    fileType: string,
+    mediaType: string,
   ): Promise<void> {
     const client = new basicFtp.Client();
     const stream = new Readable();
@@ -83,7 +83,7 @@ export class FtpService {
         password: process.env.FTP_PASSWORD,
       });
 
-      switch (fileType) {
+      switch (mediaType) {
         case 'image':
           await client.cd(process.env.FTP_IMAGE_PATH);
           break;
@@ -97,12 +97,45 @@ export class FtpService {
           return;
       }
 
-      await client.uploadFrom(stream, fileName);
+      await client.uploadFrom(stream, fileName.toLowerCase());
     } catch (error) {
       console.error('Erro ao fazer upload do vídeo:', error);
       rethrow;
     } finally {
       stream.destroy();
+      client.close();
+    }
+  }
+
+  async removeFile(fileName: string, mediaType: string): Promise<void> {
+    const client = new basicFtp.Client();
+
+    try {
+      await client.access({
+        host: process.env.FTP_HOST,
+        user: process.env.FTP_USER,
+        password: process.env.FTP_PASSWORD,
+      });
+
+      switch (mediaType) {
+        case 'image':
+          await client.cd(process.env.FTP_IMAGE_PATH);
+          break;
+        case 'video':
+          await client.cd(process.env.FTP_VIDEO_PATH);
+          break;
+        case 'thumbnail':
+          await client.cd(process.env.FTP_THUMBNAIL_PATH);
+          break;
+        default:
+          return;
+      }
+
+      await client.remove(fileName);
+    } catch (error) {
+      console.error('Erro ao fazer upload do vídeo:', error);
+      rethrow;
+    } finally {
       client.close();
     }
   }

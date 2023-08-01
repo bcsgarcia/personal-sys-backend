@@ -1,46 +1,21 @@
 import { Injectable, UploadedFile } from '@nestjs/common';
 import { FtpService } from '../../../common-services/ftp-service.service';
 import * as path from 'path';
-import { ThumbnailService } from '../../../common-services/thumbnail-service.service';
 
 @Injectable()
 export class UploadService {
-  constructor(
-    private readonly ftpService: FtpService,
-    private readonly thumbnailService: ThumbnailService,
-  ) {}
+  constructor(private readonly ftpService: FtpService) {}
 
   async uploadFile(
     @UploadedFile() file,
-    fileType: FileType,
+    mediaType: string,
     idMedia: string,
   ): Promise<void> {
     try {
       const fileBuffer = file.buffer;
       const fileName = `${idMedia}.${this.getExtension(file.originalname)}`;
 
-      if (fileType == FileType.VIDEO) {
-        // generate thumbnail
-        const thumbnailBuffer = await this.thumbnailService.createThumbnail(
-          file.buffer,
-          file.mimetype,
-          idMedia,
-        );
-
-        // save thumbnail to ftp
-        await this.ftpService.uploadFile(
-          thumbnailBuffer,
-          `${idMedia}.jpg`,
-          'thumbnail',
-        );
-      }
-
-      // save file to ftp
-      await this.ftpService.uploadFile(
-        fileBuffer,
-        fileName,
-        fileType.toString(),
-      );
+      await this.ftpService.uploadFile(fileBuffer, fileName, mediaType);
     } catch (error) {
       throw error;
     }
@@ -49,25 +24,26 @@ export class UploadService {
   getExtension(fileName: string): string {
     const filename = fileName;
     const ext = path.extname(filename).slice(1);
-    return ext; // 'mp3'
+    return ext.toLowerCase();
   }
 
-  validateFile(@UploadedFile() file): FileType {
+  validateFile(@UploadedFile() file): boolean {
     const imageMimeTypes = [
       'image/png',
       'image/jpeg',
       'image/jpg',
       'image/gif',
+      'image/webp',
     ];
 
     const videoMimeTypes = ['video/mp4', 'video/mpeg'];
 
     if (imageMimeTypes.includes(file.mimetype)) {
-      return FileType.IMAGE;
+      return true;
     } else if (videoMimeTypes.includes(file.mimetype)) {
-      return FileType.VIDEO;
+      return true;
     } else {
-      return FileType.UNKNOWN;
+      return false;
     }
   }
 }
@@ -75,5 +51,6 @@ export class UploadService {
 export enum FileType {
   IMAGE = 'image',
   VIDEO = 'video',
+  THUMBNAIL = 'thumbnail',
   UNKNOWN = 'unknown',
 }

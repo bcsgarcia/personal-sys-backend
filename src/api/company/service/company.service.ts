@@ -8,17 +8,21 @@ import { UpdateCompanyMainInformationDto } from '../dto/request/update-company-m
 import { CreatePosturalPatternDto } from '../dto/request/create-company-postural-pattern.dto';
 import { PosturalPatternDto } from '../dto/response/company-postural-pattern.dto';
 import { UpdatePosturalPatternDto } from '../dto/request/update-company-postural-pattern.dto';
-import { mapperSqlResultToResponseObject } from '../mappers/mappers';
 import {
   GetMeetAppScreenResponseDto,
   TestimonyDto,
 } from '../dto/response/response';
 import { Company } from 'src/models/company.model';
 import { PartnershipDTO } from '../dto/response/partnership-dto';
+import { MediaRepository } from '../../media/repository/media.repository';
+import { MediaDto } from '../../media/dto/create-media.dto';
 
 @Injectable()
 export class CompanyService {
-  constructor(private readonly companyRepository: CompanyRepository) {}
+  constructor(
+    private readonly companyRepository: CompanyRepository,
+    private readonly mediaRepository: MediaRepository,
+  ) {}
 
   create(companyDto: CompanyDTO) {
     return this.companyRepository.create(companyDto);
@@ -36,8 +40,13 @@ export class CompanyService {
     return new Company(company);
   }
 
-  update(id: string, updateCompanyDto: CompanyDTO) {
-    return this.companyRepository.update(id, updateCompanyDto);
+  async update(updateCompanyDto: CompanyDTO) {
+    try {
+      await this.companyRepository.update(updateCompanyDto);
+      return { status: 'success' };
+    } catch (error) {
+      throw error;
+    }
   }
 
   remove(id: string) {
@@ -147,6 +156,7 @@ export class CompanyService {
           imageUrl: '',
           description: '',
           videoUrl: '',
+          secondVideoUrl: '',
         },
         testemonies: [],
         photosBeforeAndAfter: [],
@@ -162,9 +172,31 @@ export class CompanyService {
           idCompany,
         );
 
+      if (company.photoMediaId != null && company.photoMediaId != '') {
+        const photoMedia = await this.mediaRepository.findById(
+          company.photoMediaId,
+        );
+
+        response.aboutCompany.imageUrl = photoMedia.url;
+      }
+
       response.aboutCompany.description = company.about;
-      response.aboutCompany.imageUrl = company.photo;
-      response.aboutCompany.videoUrl = company.video;
+
+      if (company.firstVideoMediaId != null) {
+        const row = await this.mediaRepository.findById(
+          company.firstVideoMediaId,
+        );
+        const firstVideoMediaDto = new MediaDto(row);
+        response.aboutCompany.videoUrl = firstVideoMediaDto.url;
+      }
+
+      if (company.secondVideoMediaId != null) {
+        const row = await this.mediaRepository.findById(
+          company.secondVideoMediaId,
+        );
+        const secondVideoMediaDto = new MediaDto(row);
+        response.aboutCompany.secondVideoUrl = secondVideoMediaDto.url;
+      }
 
       response.testemonies = rowsTestimonies.map(
         (item) => new TestimonyDto(item),

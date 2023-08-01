@@ -18,4 +18,11 @@ export class DatabaseService {
     const [results] = await this.pool.execute(sql, params);
     return results as any[];
   }
+
+  async executeMultiple(sql: string, params?: any[][]): Promise<any[]> {
+    // Flatten the parameters array for the MySQL library
+    const flatParams = params?.reduce((acc, val) => acc.concat(val), []);
+    const [results] = await this.pool.execute(sql, flatParams);
+    return results as any[];
+  }
 }

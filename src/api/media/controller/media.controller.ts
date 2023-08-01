@@ -4,15 +4,15 @@ import {
   Delete,
   Get,
   Param,
-  Patch,
   Post,
+  Put,
+  Query,
   Req,
 } from '@nestjs/common';
 
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { MediaService } from '../service/media.service';
 import { MediaDto } from '../dto/create-media.dto';
-import { UpdateMediaDto } from '../dto/update-media.dto';
 import { AccessTokenModel } from 'src/models/access-token-user.model';
 
 @ApiTags('Media')
@@ -42,18 +42,72 @@ export class MediaController {
     return this.mediaService.findAll(user.clientIdCompany);
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.mediaService.findOne(+id);
+  @Get('/pagined')
+  @ApiOperation({ summary: 'Get Meet App Screen information' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successful request with Meet App Screen information',
+    type: MediaDto,
+  })
+  findAllPagined(
+    @Req() request: Request,
+    @Query('page') page: number,
+    @Query('itemsPerPage') itemsPerPage: number,
+    @Query('mediaType') mediaType: string,
+    @Query('title') title: string,
+  ) {
+    const user = new AccessTokenModel(request['user']);
+
+    return this.mediaService.findAllPagined(
+      user.clientIdCompany,
+      page,
+      itemsPerPage,
+      mediaType,
+      title,
+    );
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateMediaDto: UpdateMediaDto) {
-    return this.mediaService.update(+id, updateMediaDto);
+  @Get('/photos')
+  @ApiOperation({ summary: 'Get Meet App Screen information' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successful request with Meet App Screen information',
+    type: MediaDto,
+  })
+  findAllPhotos(@Req() request: Request) {
+    const user = new AccessTokenModel(request['user']);
+
+    return this.mediaService.findAllPhotos(user.clientIdCompany);
+  }
+
+  @Get('/videos')
+  @ApiOperation({ summary: 'Get Meet App Screen information' })
+  @ApiResponse({
+    status: 200,
+    description: 'Successful request with Meet App Screen information',
+    type: MediaDto,
+  })
+  findAllVideos(@Req() request: Request) {
+    const user = new AccessTokenModel(request['user']);
+
+    return this.mediaService.findAllVideos(user.clientIdCompany);
+  }
+
+  @Put(':id')
+  update(
+    @Param('id') id: string,
+    @Body() updateMedia: MediaDto,
+    @Req() request: Request,
+  ) {
+    const user = new AccessTokenModel(request['user']);
+
+    return this.mediaService.update(updateMedia);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.mediaService.remove(+id);
+  remove(@Param('id') id: string, @Req() request: Request) {
+    const user = new AccessTokenModel(request['user']);
+
+    return this.mediaService.remove(id);
   }
 }

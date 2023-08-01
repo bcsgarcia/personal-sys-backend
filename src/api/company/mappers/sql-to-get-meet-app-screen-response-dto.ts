@@ -8,6 +8,7 @@ export function mapperSqlResultToResponseObject(
       imageUrl: '',
       description: '',
       videoUrl: '',
+      secondVideoUrl: '',
     },
     testemonies: [],
     photosBeforeAndAfter: [],

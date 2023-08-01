@@ -1,10 +1,10 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Param,
+  Controller,
   Delete,
+  Get,
+  Param,
+  Post,
   Put,
   Req,
 } from '@nestjs/common';
@@ -16,7 +16,6 @@ import { AppAuthDto } from '../dto/request/app-auth.dto';
 import { Public } from '../jwt.decorator';
 import { AccessTokenModel } from 'src/models/access-token-user.model';
 import { Request } from 'express';
-import { AccessTokenDto } from '../dto/response/access-token-dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -48,8 +47,8 @@ export class AuthController {
 
   @Public()
   @Post('/admin/refresh')
-  refreshTokenAdmin(@Body() authDto: AppAuthDto) {
-    return this.authService.adminAuth(authDto);
+  refreshTokenAdmin(@Body() token: string) {
+    return this.authService.refreshToken(token['token']);
   }
 
   @Get()

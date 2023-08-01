@@ -24,14 +24,21 @@ export class CompanyDTO {
     example: 'https://www.example.com/company-logo.png',
     type: String,
   })
-  photo: string;
+  photoMediaId?: string;
 
   @ApiProperty({
     description: 'A demo video of the company',
-    example: 'https://www.example.com/company-video.mp4',
+    example: 'UUID',
     type: String,
   })
-  video: string;
+  firstVideoMediaId?: string;
+
+  @ApiProperty({
+    description: 'A demo video of the company',
+    example: 'UUID',
+    type: String,
+  })
+  secondVideoMediaId?: string;
 
   @ApiProperty({
     description: 'Whatsapp number contact of the company',
@@ -51,8 +58,9 @@ export class CompanyDTO {
     this.id = company.id;
     this.name = company.name;
     this.about = company.about;
-    this.photo = company.photo;
-    this.video = company.video;
+    this.photoMediaId = company.photoMediaId;
+    this.firstVideoMediaId = company.firstVideoMediaId;
+    this.secondVideoMediaId = company.secondVideoMediaId;
     this.whatsapp = company.whatsapp;
     this.instagram = company.instagram;
   }

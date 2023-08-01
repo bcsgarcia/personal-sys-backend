@@ -4,7 +4,7 @@ import { NextFunction, Request, Response } from 'express';
 @Injectable()
 export class MyMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
-    console.log(`original url ${req.headers.origin}`);
+    console.log(`original url ${req.baseUrl}`);
 
     console.log('Middleware executed');
     next();
