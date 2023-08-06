@@ -1,5 +1,5 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
 
 export class CreateCompanyMainInformationDto {
   @ApiProperty({
@@ -20,6 +20,15 @@ export class CreateCompanyMainInformationDto {
   @IsNotEmpty()
   @IsString()
   description: string;
+
+  @ApiProperty({
+    description: 'Order of the information',
+    example: '1',
+    type: Number,
+  })
+  @IsNotEmpty()
+  @IsNumber()
+  infoOrder: number;
 
   @ApiHideProperty()
   idCompany: string;

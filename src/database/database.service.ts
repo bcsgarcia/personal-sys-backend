@@ -14,15 +14,39 @@ export class DatabaseService {
     });
   }
 
-  async execute(sql: string, params?: any[]): Promise<any[]> {
-    const [results] = await this.pool.execute(sql, params);
+  // async execute(sql: string, params?: any[]): Promise<any[]> {
+  //   const [results] = await this.pool.execute(sql, params);
+  //   return results as any[];
+  // }
+
+  async execute(
+    sql: string,
+    params?: any[],
+    conn?: mysql.PoolConnection,
+  ): Promise<any[]> {
+    const connection = conn || this.pool;
+    const [results] = await connection.execute(sql, params);
     return results as any[];
   }
 
-  async executeMultiple(sql: string, params?: any[][]): Promise<any[]> {
-    // Flatten the parameters array for the MySQL library
-    const flatParams = params?.reduce((acc, val) => acc.concat(val), []);
-    const [results] = await this.pool.execute(sql, flatParams);
-    return results as any[];
+  async transaction<T>(
+    callback: (conn: mysql.PoolConnection) => Promise<T>,
+  ): Promise<T> {
+    const conn = await this.pool.getConnection();
+
+    try {
+      await conn.beginTransaction();
+
+      const result = await callback(conn);
+
+      await conn.commit();
+
+      return result;
+    } catch (error) {
+      await conn.rollback();
+      throw error;
+    } finally {
+      conn.release();
+    }
   }
 }

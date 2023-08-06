@@ -3,13 +3,14 @@ import { DatabaseService } from 'src/database/database.service';
 import { Company } from 'src/models/company.model';
 import { CompanyDTO } from '../dto/company.dto';
 import { CreateCompanyMainInformationDto } from '../dto/request/create-company-main-information.dto';
-import { UpdateCompanyMainInformationDto } from '../dto/request/update-company-main-information.dto';
 import { CreatePosturalPatternDto } from '../dto/request/create-company-postural-pattern.dto';
-import { UpdatePosturalPatternDto } from '../dto/request/update-company-postural-pattern.dto';
 import { CreateBeforeAndAfterImageDto } from '../../screens/admin/introduction-page/dto/create-before-and-after-image.dto';
 import { DeleteBeforeAndAfterImageDto } from '../../screens/admin/introduction-page/dto/delete-before-and-after-image.dto';
 import { CreateTestimonyDto } from '../../screens/admin/introduction-page/dto/create-testimony.dto';
 import { DeleteTestimonyDto } from '../../screens/admin/introduction-page/dto/delete-testimony.dto';
+import { DeleteItemDto } from '../dto/request/delete-item.dto';
+import { UpdateMainInformationListDto } from '../dto/request/update-main-information-list.dto';
+import { UpdatePosturalPatternListDto } from '../dto/request/update-postural-pattern-list.dto';
 
 @Injectable()
 export class CompanyRepository {
@@ -82,7 +83,7 @@ export class CompanyRepository {
          FROM companyMainInformation
          WHERE idCompany = '${idCompany}'
            AND isActive = 1
-         ORDER BY title ASC`,
+         ORDER BY infoOrder ASC`,
       );
     } catch (error) {
       throw error;
@@ -95,14 +96,15 @@ export class CompanyRepository {
     try {
       const querie = `
           insert into companyMainInformation
-              (title, description, idCompany)
-          values (?, ?, ?);
+              (title, description, idCompany, infoOrder)
+          values (?, ?, ?, ?);
       `;
 
       await this.databaseService.execute(querie, [
         item.title,
         item.description,
         item.idCompany,
+        item.infoOrder,
       ]);
     } catch (error) {
       throw error;
@@ -110,26 +112,44 @@ export class CompanyRepository {
   }
 
   async deleteCompanyMainInformation(
-    idCompanyMainInformation: string,
+    deleteItemDto: DeleteItemDto,
   ): Promise<void> {
     try {
-      await this.databaseService.execute(
-        'UPDATE companyMainInformation SET isActive = 0 WHERE id = ?',
-        [idCompanyMainInformation],
-      );
+      const placeholders = deleteItemDto.idList.map(() => '?').join(',');
+
+      const query = `delete
+                     from companyMainInformation
+                     WHERE id in (${placeholders})
+                       and idCompany = ?`;
+
+      await this.databaseService.execute(query, [
+        ...deleteItemDto.idList,
+        deleteItemDto.idCompany,
+      ]);
     } catch (error) {
       throw error;
     }
   }
 
   async updateCompanyMainInformation(
-    item: UpdateCompanyMainInformationDto,
+    updateMainInformationList: UpdateMainInformationListDto,
   ): Promise<void> {
     try {
-      await this.databaseService.execute(
-        'UPDATE companyMainInformation SET title = ?, description = ? WHERE id = ?',
-        [item.title, item.description, item.idCompanyMainInformation],
-      );
+      await this.databaseService.transaction(async (conn) => {
+        for (const item of updateMainInformationList.mainInformationList) {
+          await this.databaseService.execute(
+            'UPDATE companyMainInformation SET title = ?, description = ?, infoOrder = ? WHERE id = ? and idCompany = ?',
+            [
+              item.title,
+              item.description,
+              item.infoOrder,
+              item.id,
+              updateMainInformationList.idCompany,
+            ],
+            conn,
+          );
+        }
+      });
     } catch (error) {
       throw error;
     }
@@ -142,7 +162,7 @@ export class CompanyRepository {
          FROM posturalPattern pp
          WHERE pp.idCompany = '${idCompany}'
            AND pp.isActive = 1
-         ORDER BY pp.order ASC`,
+         ORDER BY pp.posturalPatternOrder ASC`,
       );
       return rows;
     } catch (error) {
@@ -152,15 +172,15 @@ export class CompanyRepository {
 
   async createPosturalPatterns(item: CreatePosturalPatternDto): Promise<void> {
     try {
-      const querie = `
-          insert into posturalPattern (title, description, imageUrl, idCompany)
-          values (?, ?, ?, ?);
+      const query = `
+          insert into posturalPattern (title, description, idMedia, idCompany, posturalPatternOrder)
+          values (?, ?, ?, ?, ?);
       `;
 
-      await this.databaseService.execute(querie, [
+      await this.databaseService.execute(query, [
         item.title,
         item.description,
-        item.imageUrl,
+        item.idMedia,
         item.idCompany,
       ]);
     } catch (error) {
@@ -169,24 +189,54 @@ export class CompanyRepository {
   }
 
   async updateCompanyPosturalPatterns(
-    item: UpdatePosturalPatternDto,
+    updatePosturalPatternList: UpdatePosturalPatternListDto,
   ): Promise<void> {
     try {
-      await this.databaseService.execute(
-        'UPDATE posturalPattern SET title = ?, description = ?, imageUrl = ? WHERE id = ?',
-        [item.title, item.description, item.imageUrl, item.id],
-      );
+      await this.databaseService.transaction(async (conn) => {
+        for (const item of updatePosturalPatternList.posturalPatternList) {
+          await this.databaseService.execute(
+            'UPDATE posturalPattern SET title = ?, description = ?, posturalPatternOrder = ?, idMedia = ? WHERE id = ? and idCompany = ?',
+            [
+              item.title,
+              item.description,
+              item.posturalPatternOrder,
+              item.idMedia,
+              item.id,
+              updatePosturalPatternList.idCompany,
+            ],
+            conn,
+          );
+        }
+      });
     } catch (error) {
       throw error;
     }
+
+    // try {
+    //   await this.databaseService.execute(
+    //     'UPDATE posturalPattern SET title = ?, description = ?, imageUrl = ? WHERE id = ?',
+    //     [item.title, item.description, item.imageUrl, item.id],
+    //   );
+    // } catch (error) {
+    //   throw error;
+    // }
   }
 
-  async deleteCompanyPosturalPattern(id: string): Promise<void> {
+  async deleteCompanyPosturalPattern(
+    deleteItemDto: DeleteItemDto,
+  ): Promise<void> {
     try {
-      await this.databaseService.execute(
-        'UPDATE posturalPattern SET isActive = 0 WHERE id = ?',
-        [id],
-      );
+      const placeholders = deleteItemDto.idList.map(() => '?').join(',');
+
+      const query = `delete
+                     from posturalPattern
+                     WHERE id in (${placeholders})
+                       and idCompany = ?`;
+
+      await this.databaseService.execute(query, [
+        ...deleteItemDto.idList,
+        deleteItemDto.idCompany,
+      ]);
     } catch (error) {
       throw error;
     }

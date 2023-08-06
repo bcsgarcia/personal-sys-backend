@@ -39,11 +39,18 @@ export class PosturalPatternDto {
   description: string;
 
   @ApiProperty({
-    description: 'The URL of the image representing the postural pattern.',
-    example: 'https://example.com/images/forward-head-posture.jpg',
+    description: 'Id Media.',
+    example: '1234',
     type: String,
   })
-  imageUrl: string;
+  idMedia: string;
+
+  @ApiProperty({
+    description: 'Order.',
+    example: '1',
+    type: Number,
+  })
+  posturalPatternOrder: number;
 
   @ApiHideProperty()
   idCompany: string;
@@ -54,7 +61,8 @@ export class PosturalPatternDto {
     this.lastUpdate = data.lastUpdate;
     this.title = data.title;
     this.description = data.description;
-    this.imageUrl = data.imageUrl;
+    this.idMedia = data.idMedia;
     this.idCompany = data.idCompany;
+    this.posturalPatternOrder = data.posturalPatternOrder;
   }
 }

@@ -9,6 +9,13 @@ export class UpdatePosturalPatternDto {
   id: string;
 
   @ApiProperty({
+    description: 'Id media.',
+    example: '1234',
+    type: String,
+  })
+  idMedia: string;
+
+  @ApiProperty({
     description: 'The updated title of the postural pattern.',
     example: 'Updated Forward Head Posture',
     type: String,
@@ -24,17 +31,17 @@ export class UpdatePosturalPatternDto {
   description: string;
 
   @ApiProperty({
-    description:
-      'The updated URL of the image representing the postural pattern.',
-    example: 'https://example.com/images/updated-forward-head-posture.jpg',
-    type: String,
+    description: 'Order.',
+    example: '1',
+    type: Number,
   })
-  imageUrl: string;
+  posturalPatternOrder: number;
 
   constructor(data: any) {
     this.id = data.id;
     this.title = data.title;
     this.description = data.description;
-    this.imageUrl = data.imageUrl;
+    this.idMedia = data.idMedia;
+    this.posturalPatternOrder = data.posturalPatternOrder;
   }
 }

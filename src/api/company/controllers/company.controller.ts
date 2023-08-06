@@ -21,13 +21,14 @@ import { CompanyDTO } from '../dto/company.dto';
 import { Request } from 'express';
 import { CompanyMainInformationDto } from '../dto/response/company-main-information.dto';
 import { CreateCompanyMainInformationDto } from '../dto/request/create-company-main-information.dto';
-import { UpdateCompanyMainInformationDto } from '../dto/request/update-company-main-information.dto';
 import { CreatePosturalPatternDto } from '../dto/request/create-company-postural-pattern.dto';
 import { PosturalPatternDto } from '../dto/response/company-postural-pattern.dto';
-import { UpdatePosturalPatternDto } from '../dto/request/update-company-postural-pattern.dto';
 import { AccessTokenModel } from 'src/models/access-token-user.model';
 import { GetMeetAppScreenResponseDto } from '../dto/response/get-meet-app-screen-response.dto';
 import { Public } from 'src/api/auth/jwt.decorator';
+import { UpdateMainInformationListDto } from '../dto/request/update-main-information-list.dto';
+import { DeleteItemDto } from '../dto/request/delete-item.dto';
+import { UpdatePosturalPatternListDto } from '../dto/request/update-postural-pattern-list.dto';
 
 @ApiTags('company')
 @Controller('company')
@@ -75,7 +76,7 @@ export class CompanyController {
     type: GetMeetAppScreenResponseDto,
   })
   @Public()
-  async getMeetAppScreen(@Param('id') id: string, @Req() request: Request) {
+  async getMeetAppScreen(@Param('id') id: string) {
     try {
       return await this.companyService.getMeetAppScreen(id);
     } catch (error) {
@@ -133,11 +134,22 @@ export class CompanyController {
     }
   }
 
-  @Delete('/main-information/:id')
+  @Post('/delete-company-main-information')
   @ApiBearerAuth()
-  removeMainInformationById(@Param('id') id: string) {
+  @ApiOperation({ summary: 'delete main information' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+  })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request.' })
+  removeMainInformationById(
+    @Req() request: Request,
+    @Body() deleteItemDto: DeleteItemDto,
+  ) {
     try {
-      return this.companyService.deleteCompanyMainInformation(id);
+      const user = new AccessTokenModel(request['user']);
+      deleteItemDto.idCompany = user.clientIdCompany;
+
+      return this.companyService.deleteCompanyMainInformation(deleteItemDto);
     } catch (error) {
       throw error;
     }
@@ -147,12 +159,11 @@ export class CompanyController {
   @ApiBearerAuth()
   updateMainInformation(
     @Req() request: Request,
-    @Body() updateCompanyMainInformation: UpdateCompanyMainInformationDto,
+    @Body() updateCompanyMainInformation: UpdateMainInformationListDto,
   ) {
     try {
       const user = new AccessTokenModel(request['user']);
-      updateCompanyMainInformation.idCompanyMainInformation =
-        user.clientIdCompany;
+      updateCompanyMainInformation.idCompany = user.clientIdCompany;
 
       return this.companyService.updateCompanyMainInformation(
         updateCompanyMainInformation,
@@ -209,11 +220,21 @@ export class CompanyController {
     }
   }
 
-  @Delete('/postural-pattern/:id')
+  @Post('/delete-postural-pattern')
   @ApiBearerAuth()
-  removePosturalPatternById(@Param('id') id: string) {
+  @ApiOperation({ summary: 'delete postural pattern' })
+  @ApiResponse({
+    status: HttpStatus.OK,
+  })
+  removePosturalPatternById(
+    @Req() request: Request,
+    @Body() deleteItemDto: DeleteItemDto,
+  ) {
     try {
-      return this.companyService.deleteCompanyPosturalPattern(id);
+      const user = new AccessTokenModel(request['user']);
+      deleteItemDto.idCompany = user.clientIdCompany;
+
+      return this.companyService.deleteCompanyPosturalPattern(deleteItemDto);
     } catch (error) {
       throw error;
     }
@@ -223,11 +244,14 @@ export class CompanyController {
   @ApiBearerAuth()
   updatePosturalPattern(
     @Req() request: Request,
-    @Body() posturalPattern: UpdatePosturalPatternDto,
+    @Body() posturalPatternList: UpdatePosturalPatternListDto,
   ) {
     try {
       const user = new AccessTokenModel(request['user']);
-      return this.companyService.updateCompanyPosturalPattern(posturalPattern);
+      posturalPatternList.idCompany = user.clientIdCompany;
+      return this.companyService.updateCompanyPosturalPattern(
+        posturalPatternList,
+      );
     } catch (error) {
       throw error;
     }

@@ -7,7 +7,7 @@ export class UpdateCompanyMainInformationDto {
     example: '123e4567-e89b-12d3-a456-426614174000',
     type: String,
   })
-  idCompanyMainInformation: string;
+  id: string;
 
   @ApiProperty({
     description: 'The updated title of the company main information.',
@@ -23,9 +23,17 @@ export class UpdateCompanyMainInformationDto {
   })
   description: string;
 
+  @ApiProperty({
+    description: 'Order.',
+    example: '1',
+    type: Number,
+  })
+  infoOrder: number;
+
   constructor(data: any) {
-    this.idCompanyMainInformation = data.idCompanyMainInformation;
+    this.id = data.id;
     this.title = data.title;
     this.description = data.description;
+    this.infoOrder = data.infoOrder;
   }
 }

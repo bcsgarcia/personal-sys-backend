@@ -4,10 +4,8 @@ import { CompanyRepository } from '../respository/company.repository';
 import { CompanyDTO } from '../dto/company.dto';
 import { CompanyMainInformationDto } from '../dto/response/company-main-information.dto';
 import { CreateCompanyMainInformationDto } from '../dto/request/create-company-main-information.dto';
-import { UpdateCompanyMainInformationDto } from '../dto/request/update-company-main-information.dto';
 import { CreatePosturalPatternDto } from '../dto/request/create-company-postural-pattern.dto';
 import { PosturalPatternDto } from '../dto/response/company-postural-pattern.dto';
-import { UpdatePosturalPatternDto } from '../dto/request/update-company-postural-pattern.dto';
 import {
   GetMeetAppScreenResponseDto,
   TestimonyDto,
@@ -16,6 +14,9 @@ import { Company } from 'src/models/company.model';
 import { PartnershipDTO } from '../dto/response/partnership-dto';
 import { MediaRepository } from '../../media/repository/media.repository';
 import { MediaDto } from '../../media/dto/create-media.dto';
+import { DeleteItemDto } from '../dto/request/delete-item.dto';
+import { UpdateMainInformationListDto } from '../dto/request/update-main-information-list.dto';
+import { UpdatePosturalPatternListDto } from '../dto/request/update-postural-pattern-list.dto';
 
 @Injectable()
 export class CompanyService {
@@ -55,11 +56,12 @@ export class CompanyService {
 
   async createCompanyInformation(
     companyMainInformation: CreateCompanyMainInformationDto,
-  ): Promise<void> {
+  ) {
     try {
-      return await this.companyRepository.createCompanyMainInformation(
+      await this.companyRepository.createCompanyMainInformation(
         companyMainInformation,
       );
+      return { status: 'success' };
     } catch (error) {
       throw error;
     }
@@ -81,21 +83,25 @@ export class CompanyService {
     }
   }
 
-  async deleteCompanyMainInformation(id: string): Promise<void> {
+  async deleteCompanyMainInformation(deleteItemDto: DeleteItemDto) {
     try {
-      return await this.companyRepository.deleteCompanyMainInformation(id);
+      await this.companyRepository.deleteCompanyMainInformation(deleteItemDto);
+
+      return { status: 'success' };
     } catch (error) {
       throw error;
     }
   }
 
   async updateCompanyMainInformation(
-    updateCompanyMainInformation: UpdateCompanyMainInformationDto,
-  ): Promise<void> {
+    updateCompanyMainInformationList: UpdateMainInformationListDto,
+  ) {
     try {
-      return await this.companyRepository.updateCompanyMainInformation(
-        updateCompanyMainInformation,
+      await this.companyRepository.updateCompanyMainInformation(
+        updateCompanyMainInformationList,
       );
+
+      return { status: 'success' };
     } catch (error) {
       throw error;
     }
@@ -121,27 +127,42 @@ export class CompanyService {
         idCompany,
       );
 
-      return rows.map((row) => new PosturalPatternDto(row));
+      const posturalPatternList = rows.map(
+        (row) => new PosturalPatternDto(row),
+      );
+
+      const mediaList = await this.mediaRepository.findAll(idCompany);
+
+      const retorno = posturalPatternList.map((item) => {
+        item.media = mediaList.find((media) => media.id === item.idMedia);
+        return item;
+      });
+
+      return retorno;
     } catch (error) {
       throw error;
     }
   }
 
-  async deleteCompanyPosturalPattern(id: string): Promise<void> {
+  async deleteCompanyPosturalPattern(deleteItemDto: DeleteItemDto) {
     try {
-      return await this.companyRepository.deleteCompanyPosturalPattern(id);
+      await this.companyRepository.deleteCompanyPosturalPattern(deleteItemDto);
+
+      return { status: 'success' };
     } catch (error) {
       throw error;
     }
   }
 
   async updateCompanyPosturalPattern(
-    posturalPattern: UpdatePosturalPatternDto,
-  ): Promise<void> {
+    posturalPatternListDto: UpdatePosturalPatternListDto,
+  ) {
     try {
-      return await this.companyRepository.updateCompanyPosturalPatterns(
-        posturalPattern,
+      await this.companyRepository.updateCompanyPosturalPatterns(
+        posturalPatternListDto,
       );
+
+      return { status: 'success' };
     } catch (error) {
       throw error;
     }

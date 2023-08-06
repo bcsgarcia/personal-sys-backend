@@ -19,7 +19,7 @@ import { MediaRepository } from '../media/repository/media.repository';
     {
       provide: MediaRepository,
       useFactory: (databaseService: DatabaseService) =>
-        new CompanyRepository(databaseService),
+        new MediaRepository(databaseService),
       inject: [DatabaseService],
     },
   ],

@@ -38,6 +38,13 @@ export class CompanyMainInformationDto {
   description: string;
 
   @ApiProperty({
+    description: 'Order of information',
+    example: '1',
+    type: Number,
+  })
+  infoOrder: number;
+
+  @ApiProperty({
     description: 'The unique identifier of the associated company.',
     example: '987e6543-e21a-98b7-c654-547896325000',
     type: String,
@@ -51,5 +58,6 @@ export class CompanyMainInformationDto {
     this.title = data.title;
     this.description = data.description;
     this.idCompany = data.idCompany;
+    this.infoOrder = data.infoOrder;
   }
 }
