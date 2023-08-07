@@ -192,6 +192,7 @@ export class CompanyController {
 
       return this.companyService.createCompanyPosturalPattern(posturalPattern);
     } catch (error) {
+      console.log(error);
       throw error;
     }
   }
