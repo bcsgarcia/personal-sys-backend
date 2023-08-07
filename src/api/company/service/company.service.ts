@@ -109,11 +109,11 @@ export class CompanyService {
 
   async createCompanyPosturalPattern(
     posturalPattern: CreatePosturalPatternDto,
-  ): Promise<void> {
+  ) {
     try {
-      return await this.companyRepository.createPosturalPatterns(
-        posturalPattern,
-      );
+      await this.companyRepository.createPosturalPatterns(posturalPattern);
+
+      return { status: 'success' };
     } catch (error) {
       throw error;
     }
