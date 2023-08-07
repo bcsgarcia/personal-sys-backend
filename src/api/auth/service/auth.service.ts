@@ -149,6 +149,10 @@ export class AuthService {
         clientPhotoUrl: rows[0]['clientPhotoUrl'],
       };
 
+      // const accessToken = await this.jwtService.signAsync(payload, {
+      //   expiresIn: '60s',
+      // });
+
       const accessToken = await this.jwtService.signAsync(payload);
 
       return new AccessTokenDto(accessToken);

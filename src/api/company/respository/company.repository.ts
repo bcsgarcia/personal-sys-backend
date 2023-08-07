@@ -182,6 +182,7 @@ export class CompanyRepository {
         item.description,
         item.idMedia,
         item.idCompany,
+        item.posturalPatternOrder,
       ]);
     } catch (error) {
       throw error;
