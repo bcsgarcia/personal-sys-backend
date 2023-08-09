@@ -107,6 +107,8 @@ export class MediaService {
       const row = await this.mediaRepository.findById(idMedia);
       const mediaDto = new MediaDto(row);
 
+      await this.mediaRepository.deleteById(idMedia);
+
       const fileName = `${mediaDto.id}.${mediaDto.fileFormat}`;
 
       await this.ftpService.removeFile(fileName, mediaDto.type);
@@ -114,8 +116,6 @@ export class MediaService {
       if (mediaDto.type == 'video') {
         await this.ftpService.removeFile(fileName, 'thumbnail');
       }
-
-      await this.mediaRepository.deleteById(idMedia);
 
       return { status: 'success' };
     } catch (error) {
