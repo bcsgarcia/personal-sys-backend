@@ -1,7 +1,16 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty, IsString } from 'class-validator';
+import { CreateWorkoutMediaDto } from './create-workout-media.dto';
 
 export class UpdateWorkoutDto {
+  @ApiProperty({
+    description: 'workout id',
+    example: 'uyffudhfjkshfk',
+  })
+  @IsNotEmpty()
+  @IsString()
+  id: string;
+
   @ApiProperty({
     description: 'Title of the workout',
     example: 'Strength Training',
@@ -16,7 +25,7 @@ export class UpdateWorkoutDto {
   })
   @IsNotEmpty()
   @IsString()
-  subTitle: string;
+  subtitle: string;
 
   @ApiProperty({
     description: 'Description of the workout',
@@ -27,18 +36,11 @@ export class UpdateWorkoutDto {
   description: string;
 
   @ApiProperty({
-    description: 'video url of the workout',
-    example: 'https://www.videoworkout1.com/company',
+    description: '',
+    example: [],
   })
-  @IsString()
-  @IsOptional()
-  videoUrl: string;
+  workoutMediaList: CreateWorkoutMediaDto[];
 
-  @ApiProperty({
-    description: 'imagem url of the workout',
-    example: 'https://www.imageworkout1.com/company',
-  })
-  @IsString()
-  @IsOptional()
-  imageUrl: string;
+  @ApiHideProperty()
+  idCompany: string;
 }

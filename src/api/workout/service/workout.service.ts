@@ -3,14 +3,30 @@ import { Workout } from 'src/models/workout.model';
 import { WorkoutRepository } from 'src/api/workout/repository/workout.repository';
 import { CreateWorkoutDto } from '../dto/create-workout.dto';
 import { UpdateWorkoutDto } from '../dto/update-workout.dto';
+import { MediaRepository } from '../../media/repository/media.repository';
 
 @Injectable()
 export class WorkoutService {
-  constructor(private readonly workoutRepository: WorkoutRepository) {}
+  constructor(
+    private readonly workoutRepository: WorkoutRepository,
+    private readonly mediaRepository: MediaRepository,
+  ) {}
 
-  async create(createWorkoutDto: CreateWorkoutDto): Promise<void> {
+  async create(createWorkoutDto: CreateWorkoutDto) {
     try {
-      return await this.workoutRepository.create(createWorkoutDto);
+      await this.workoutRepository.create(createWorkoutDto);
+
+      const workout = await this.workoutRepository.findLastInseted(
+        createWorkoutDto,
+      );
+
+      await this.workoutRepository.createWorkoutMedia(
+        createWorkoutDto.workoutMediaList,
+        workout[0].id,
+        createWorkoutDto.idCompany,
+      );
+
+      return { status: 'success' };
     } catch (error) {
       throw error;
     }
@@ -32,12 +48,21 @@ export class WorkoutService {
     }
   }
 
-  async update(
-    idWorkout: string,
-    updateWorkoutDto: UpdateWorkoutDto,
-  ): Promise<void> {
+  async update(updateWorkoutDto: UpdateWorkoutDto) {
     try {
-      return await this.workoutRepository.update(idWorkout, updateWorkoutDto);
+      await this.workoutRepository.update(updateWorkoutDto);
+
+      await this.workoutRepository.deleteWorkoutMedia(updateWorkoutDto.id);
+
+      if (updateWorkoutDto.workoutMediaList.length > 0) {
+        await this.workoutRepository.createWorkoutMedia(
+          updateWorkoutDto.workoutMediaList,
+          updateWorkoutDto.id,
+          updateWorkoutDto.idCompany,
+        );
+      }
+
+      return { status: 'success' };
     } catch (error) {
       throw error;
     }
@@ -46,16 +71,43 @@ export class WorkoutService {
   async findAll(idCompany: string): Promise<Workout[]> {
     try {
       const rows = await this.workoutRepository.findAll(idCompany);
+      const workoutMediaList = await this.workoutRepository.findAllWorkoutMedia(
+        idCompany,
+      );
+      const workoutList = rows.map((row) => new Workout(row));
+      const mediaList = await this.mediaRepository.findAll(idCompany);
 
-      return rows.map((row) => new Workout(row));
+      const retorno = workoutList.map((item) => {
+        // Obter todos os workoutMedia que correspondem ao item.id
+        const workoutMediaMatches = workoutMediaList.filter(
+          (workoutMedia) => workoutMedia.idWorkout == item.id,
+        );
+
+        // Pegar os IDs de todos os workoutMediaMatches
+        item.workoutMediaList = workoutMediaMatches.map((wm) => {
+          return {
+            media: mediaList.find((media) => media.id === wm.idMedia),
+            mediaOrder: wm.mediaOrder,
+          };
+        });
+
+        // Filtrar os mediaList que correspondem aos IDs obtidos
+        return item;
+      });
+
+      return retorno;
     } catch (error) {
       throw error;
     }
   }
 
-  async remove(idWorkout: string): Promise<void> {
+  async remove(idWorkout: string) {
     try {
-      return await this.workoutRepository.deleteById(idWorkout);
+      await this.workoutRepository.deleteWorkoutMedia(idWorkout);
+
+      await this.workoutRepository.deleteById(idWorkout);
+
+      return { status: 'success' };
     } catch (error) {
       throw error;
     }

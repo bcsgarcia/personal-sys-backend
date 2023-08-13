@@ -1,6 +1,6 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
-import { Workout } from 'src/models/workout.model';
+import { IsNotEmpty, IsString } from 'class-validator';
+import { CreateWorkoutMediaDto } from './create-workout-media.dto';
 
 export class CreateWorkoutDto {
   @ApiProperty({
@@ -17,7 +17,7 @@ export class CreateWorkoutDto {
   })
   @IsNotEmpty()
   @IsString()
-  subTitle: string;
+  subtitle: string;
 
   @ApiProperty({
     description: 'Description of the workout',
@@ -27,31 +27,20 @@ export class CreateWorkoutDto {
   @IsString()
   description: string;
 
+  @ApiProperty({
+    description: '',
+    example: [],
+  })
+  workoutMediaList: CreateWorkoutMediaDto[];
+
   @ApiHideProperty()
   idCompany: string;
 
-  @ApiProperty({
-    description: 'video url of the workout',
-    example: 'https://www.videoworkout1.com/company',
-  })
-  @IsString()
-  @IsOptional()
-  videoUrl: string;
-
-  @ApiProperty({
-    description: 'imagem url of the workout',
-    example: 'https://www.imageworkout1.com/company',
-  })
-  @IsString()
-  @IsOptional()
-  imageUrl: string;
-
-  constructor(workout: Workout) {
-    this.title = workout.title;
-    this.subTitle = workout.subTitle;
-    this.description = workout.description;
-    this.idCompany = workout.idCompany;
-    this.videoUrl = workout.videoUrl;
-    this.imageUrl = workout.imageUrl;
+  constructor(data: any) {
+    this.title = data.title;
+    this.subtitle = data.subTitle;
+    this.description = data.description;
+    this.idCompany = data.idCompany;
+    this.workoutMediaList = data.workoutMediaList;
   }
 }

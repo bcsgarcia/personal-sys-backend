@@ -6,8 +6,6 @@ export class Workout {
   subTitle: string;
   description: string;
   idCompany: string;
-  videoUrl: string | null;
-  imageUrl: string | null;
 
   constructor(data: any) {
     this.id = data.id;
@@ -17,7 +15,5 @@ export class Workout {
     this.subTitle = data.subTitle;
     this.description = data.description;
     this.idCompany = data.idCompany;
-    this.videoUrl = data.videoUrl;
-    this.imageUrl = data.imageUrl;
   }
 }

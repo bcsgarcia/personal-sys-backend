@@ -1,12 +1,12 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Param,
+  Controller,
   Delete,
-  Req,
+  Get,
+  Param,
+  Post,
   Put,
+  Req,
 } from '@nestjs/common';
 import { WorkoutService } from '../service/workout.service';
 import { CreateWorkoutDto } from '../dto/create-workout.dto';
@@ -38,7 +38,8 @@ export class WorkoutController {
   })
   create(@Body() createWorkoutDto: CreateWorkoutDto, @Req() request: Request) {
     try {
-      createWorkoutDto.idCompany = request.headers['idcompany'] as string;
+      const user = new AccessTokenModel(request['user']);
+      createWorkoutDto.idCompany = user.clientIdCompany;
 
       return this.workoutService.create(createWorkoutDto);
     } catch (error) {
@@ -71,7 +72,7 @@ export class WorkoutController {
     }
   }
 
-  @Put(':idWorkout')
+  @Put()
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Update an existing workout' })
   @ApiResponse({
@@ -81,13 +82,13 @@ export class WorkoutController {
   @ApiBadRequestResponse({
     description: 'Invalid or missing data in the request.',
   })
-  update(
-    @Req() request: Request,
-    @Param('idWorkout') idWorkout: string,
-    @Body() updateWorkoutDto: UpdateWorkoutDto,
-  ) {
+  update(@Req() request: Request, @Body() updateWorkoutDto: UpdateWorkoutDto) {
     try {
-      return this.workoutService.update(idWorkout, updateWorkoutDto);
+      const user = new AccessTokenModel(request['user']);
+
+      updateWorkoutDto.idCompany = user.clientIdCompany;
+
+      return this.workoutService.update(updateWorkoutDto);
     } catch (error) {
       throw error;
     }
@@ -97,9 +98,9 @@ export class WorkoutController {
   @ApiBearerAuth()
   findAll(@Req() request: Request) {
     try {
-      const idCompany = request.headers['idcompany'] as string;
+      const user = new AccessTokenModel(request['user']);
 
-      return this.workoutService.findAll(idCompany);
+      return this.workoutService.findAll(user.clientIdCompany);
     } catch (error) {
       throw error;
     }
@@ -119,6 +120,7 @@ export class WorkoutController {
   })
   remove(@Req() request: Request, @Param('idWorkout') idWorkout: string) {
     try {
+      const user = new AccessTokenModel(request['user']);
       return this.workoutService.remove(idWorkout);
     } catch (error) {
       throw error;
