@@ -1,13 +1,13 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Param,
+  Controller,
   Delete,
-  Req,
+  Get,
   HttpStatus,
+  Param,
+  Post,
   Put,
+  Req,
 } from '@nestjs/common';
 import { WorkoutsheetService } from '../service/workoutsheet.service';
 import { CreateWorkoutsheetDefaultDto } from '../dto/request/create.workoutsheet.default.dto';
@@ -45,7 +45,7 @@ export class WorkoutsheetController {
   createWorkoutSheetDefault(
     @Body() createWorkoutsheetDto: CreateWorkoutsheetDefaultDto,
     @Req() request: Request,
-  ): Promise<void> {
+  ) {
     try {
       const user = new AccessTokenModel(request['user']);
       createWorkoutsheetDto.idCompany = user.clientIdCompany;

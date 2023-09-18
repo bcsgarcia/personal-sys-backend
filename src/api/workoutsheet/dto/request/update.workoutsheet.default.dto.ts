@@ -7,15 +7,31 @@ export class UpdateWorkoutsheetDefaultDto {
   @IsNotEmpty()
   idWorkoutSheetDefault: string;
 
+  @ApiProperty({ description: 'The title of the WorkoutSheetDefault' })
+  @IsNotEmpty()
+  title: string;
+
   @ApiHideProperty()
   idCompany: string;
 
   @ApiProperty({
     description: 'An array of workout UUIDs related to the worktouSheetDefault',
     type: 'array',
-    items: { type: 'string', format: 'uuid' },
+    items: {
+      type: 'UpdateWorkoutsheetDefaultWorkoutDto',
+      format: 'UpdateWorkoutsheetDefaultWorkoutDto',
+    },
   })
   @IsNotEmpty()
-  @IsUUID()
-  workouts: string[];
+  workoutList: UpdateWorkoutsheetDefaultWorkoutDto[];
+}
+
+export class UpdateWorkoutsheetDefaultWorkoutDto {
+  @ApiProperty({ description: 'Workout ID' })
+  @IsNotEmpty()
+  idWorkout: string;
+
+  @ApiProperty({ description: 'Workout order' })
+  @IsNotEmpty()
+  order: string;
 }

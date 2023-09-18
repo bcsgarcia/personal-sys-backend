@@ -23,5 +23,6 @@ import { MediaRepository } from '../media/repository/media.repository';
       inject: [DatabaseService],
     },
   ],
+  exports: [WorkoutService, WorkoutRepository],
 })
 export class WorkoutModule {}

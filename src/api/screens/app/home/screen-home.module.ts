@@ -15,11 +15,14 @@ import { NotificationRepository } from 'src/api/notification/repository/notifica
 import { FtpService } from 'src/common-services/ftp-service.service';
 import { ImageService } from 'src/common-services/image-service.service';
 import { MediaRepository } from '../../../media/repository/media.repository';
+import { WorkoutService } from '../../../workout/service/workout.service';
+import { WorkoutRepository } from '../../../workout/repository/workout.repository';
 
 @Module({
   controllers: [AppHomeScreenController],
   providers: [
     AppHomeScreenService,
+    WorkoutService,
     WorkoutsheetService,
     DatabaseService,
     CompanyService,
@@ -32,6 +35,7 @@ import { MediaRepository } from '../../../media/repository/media.repository';
     ClientRepository,
     CompanyRepository,
     WorkoutsheetRepository,
+    WorkoutRepository,
     NotificationRepository,
     MediaRepository,
   ],
