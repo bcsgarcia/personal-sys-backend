@@ -25,7 +25,7 @@ export class ClientRepository {
   async findAll(idCompany: string): Promise<any> {
     try {
       return this.databaseService.execute(
-        'SELECT c.*, a.email FROM client c inner join auth a on c.idAuth = a.id where c.idCompany = ?',
+        'SELECT c.*, a.email FROM client c inner join auth a on c.idAuth = a.id and a.isAdmin = 0 where c.idCompany = ?',
         [idCompany],
       );
     } catch (error) {
@@ -64,7 +64,7 @@ export class ClientRepository {
           updateClientDto.phone,
           updateClientDto.gender,
           updateClientDto.photoUrl,
-          updateClientDto.isActive,
+          updateClientDto.isActive ? 1 : 0,
           idClient,
         ],
       );

@@ -1,6 +1,4 @@
 import { Injectable } from '@nestjs/common';
-// import { CreateIntroductionPageDto } from './dto/create-introduction-page.dto';
-// import { UpdateIntroductionPageDto } from './dto/update-introduction-page.dto';
 import { CompanyRepository } from 'src/api/company/respository/company.repository';
 import { MediaRepository } from '../../../../media/repository/media.repository';
 import { CreateBeforeAndAfterImageDto } from '../dto/create-before-and-after-image.dto';

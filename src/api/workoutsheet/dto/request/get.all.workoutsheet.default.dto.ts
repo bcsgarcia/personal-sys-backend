@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Workout } from 'src/models/workout.model';
+import { WorkoutModel } from 'src/models/workout.model';
 
 export class GetAllWorkoutSheetDefaultDto {
   @ApiProperty({
@@ -15,10 +15,10 @@ export class GetAllWorkoutSheetDefaultDto {
   titleWorkoutSheetDefault: string;
 
   @ApiProperty({
-    type: [Workout],
+    type: [WorkoutModel],
     description: 'The list of workouts for this workout sheet default.',
   })
-  workouts: Workout[];
+  workouts: WorkoutModel[];
 
   constructor(data: any) {
     this.idWorkoutSheetDefault = data.idWorkoutSheetDefault;

@@ -12,7 +12,7 @@ export class WorkoutSheetResponseDto {
   name: string;
 
   @ApiProperty({ description: 'The order of the workoutsheet' })
-  order: number;
+  workoutsheetOrder: number;
 
   @ApiProperty({
     description:
@@ -25,7 +25,7 @@ export class WorkoutSheetResponseDto {
     this.id = data.id;
     this.date = data.date === undefined ? null : new Date(data.date);
     this.name = data.name;
-    this.order = data.order;
+    this.workoutsheetOrder = data.workoutsheetOrder;
     this.workouts = data.workouts
       ? data.workouts.map((item: any) => new WorkoutResponseDto(item))
       : [];

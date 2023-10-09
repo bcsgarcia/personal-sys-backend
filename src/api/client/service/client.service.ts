@@ -41,6 +41,8 @@ export class ClientService {
       const auth = await this.createAuth(createClientDto);
 
       await this.clientRepository.create(createClientDto, auth);
+
+      return { status: 'success' };
     } catch (error) {
       throw error;
     }
@@ -74,17 +76,19 @@ export class ClientService {
     }
   }
 
-  async update(id: string, updateClientDto: UpdateClientDto): Promise<any> {
+  async update(id: string, updateClientDto: UpdateClientDto) {
     try {
       await this.clientRepository.update(id, updateClientDto);
 
       await this.authService.updateEmailByIdClient(id, updateClientDto.email);
+
+      return { status: 'success' };
     } catch (error) {
       throw error;
     }
   }
 
-  async uploadPhoto(@UploadedFile() file, uuid: string): Promise<void> {
+  async uploadPhoto(@UploadedFile() file, uuid: string) {
     try {
       if (!file.mimetype.includes('image') || file.mimetype.includes('heic')) {
         throw new HttpException(
@@ -102,9 +106,12 @@ export class ClientService {
       const user = await this.clientRepository.findById(uuid);
 
       const userDto = new UpdateClientDto(user[0]);
-      userDto.photoUrl = `https://treinadoraamanda.bcsgarcia.com.br/client_image/${uuid}.png`;
+
+      userDto.photoUrl = `${process.env.CLIENT_IMAGE_BASE_PATH}/${uuid}.png`;
 
       await this.clientRepository.update(uuid, userDto);
+
+      return { status: 'success' };
     } catch (error) {
       throw error;
     }

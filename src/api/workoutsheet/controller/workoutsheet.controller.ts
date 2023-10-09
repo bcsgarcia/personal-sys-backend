@@ -23,12 +23,107 @@ import { Request } from 'express';
 import { UpdateWorkoutsheetDefaultDto } from '../dto/request/update.workoutsheet.default.dto';
 import { GetAllWorkoutSheetDefaultDto } from '../dto/request/get.all.workoutsheet.default.dto';
 import { AccessTokenModel } from 'src/models/access-token-user.model';
+import { GetAllWorkoutSheetDto } from '../dto/request/get.all.workoutsheet.dto';
+import { DeleteWorkoutsheetDto } from '../dto/request/delete.workoutsheet.dto';
+import { CreateWorkoutsheetDto } from '../dto/request/create.workoutsheet.dto';
 
 @ApiTags('workoutsheet')
 @Controller('workoutsheet')
 export class WorkoutsheetController {
   constructor(private readonly workoutsheetService: WorkoutsheetService) {}
 
+  @Get('all/:idClient')
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Get all workoutsheet by idClient',
+    description:
+      'This endpoint retrieves an array of workoutsheetDefault to be displayed web platform workoutSheetDefault screen.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'An array of workoutSheetDefault successfully retrieved.',
+    type: GetAllWorkoutSheetDto,
+  })
+  @ApiBadRequestResponse({
+    description: 'Bad request, unable to retrieve workoutSheet.',
+  })
+  findAllWorkoutSheetByIdClient(
+    @Param('idClient') idClient: string,
+    @Req() request: Request,
+  ) {
+    try {
+      const user = new AccessTokenModel(request['user']);
+
+      return this.workoutsheetService.getAllWorkoutSheetByIdClient(
+        idClient,
+        user.clientIdCompany,
+      );
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Delete()
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Deactivate a workoutsheetdefault by setting isActivate to false',
+    description:
+      'This endpoint receives an workoutSheetDefault id and updates the isActivate column to false, effectively deactivating the workoutsheetdefault.',
+  })
+  @ApiResponse({
+    status: 200,
+    description:
+      'Successfully deactivated the workoutsheetdefault by setting isActivate to false.',
+  })
+  @ApiBadRequestResponse({
+    description: 'Bad request, unable to deactivate the workout sheet default.',
+  })
+  deleteWorkoutsheet(
+    @Body() deleteWorkoutsheetDto: DeleteWorkoutsheetDto,
+    @Req() request: Request,
+  ) {
+    try {
+      const user = new AccessTokenModel(request['user']);
+
+      deleteWorkoutsheetDto.idCompany = user.clientIdCompany;
+      return this.workoutsheetService.deleteWorkoutsheet(deleteWorkoutsheetDto);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Post()
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Create a default workout sheet' })
+  @ApiBody({ type: CreateWorkoutsheetDefaultDto })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+    description: 'The default workout sheet has been successfully created.',
+  })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request.' })
+  @ApiResponse({
+    status: HttpStatus.CONFLICT,
+    description: 'A duplicate key was found in the database.',
+  })
+  createWorkoutSheet(
+    @Body() createWorkoutsheetDto: CreateWorkoutsheetDto,
+    @Req() request: Request,
+  ) {
+    try {
+      const user = new AccessTokenModel(request['user']);
+      createWorkoutsheetDto.idCompany = user.clientIdCompany;
+
+      if (createWorkoutsheetDto.workoutsheetDefaultIdList.length == 0) {
+        return { status: 'no workoutsheet to insert' };
+      }
+
+      return this.workoutsheetService.createWorkoutSheet(createWorkoutsheetDto);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // WokoutsheetDefault --------------------------------------------------------------------------------------------------------------
   @Post('default')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a default workout sheet' })

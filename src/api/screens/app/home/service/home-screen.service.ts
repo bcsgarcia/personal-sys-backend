@@ -48,7 +48,8 @@ export class AppHomeScreenService {
 
       // Check if the user has already completed today's workout
       const lastWorkout = myTrainingPlan[myTrainingPlan.length - 1];
-      const todaysWorkoutHasBeenDone = isToday(lastWorkout.date);
+      const todaysWorkoutHasBeenDone =
+        lastWorkout == undefined ? false : isToday(lastWorkout.date);
       if (todaysWorkoutHasBeenDone) {
         return {
           myTrainingPlan: myTrainingPlan,
@@ -65,11 +66,11 @@ export class AppHomeScreenService {
 
       // Determine the order of the next workout sheet
       const orders = allMyCurrentWorkoutSheets.map(
-        (workoutSheet) => workoutSheet.order,
+        (workoutSheet) => workoutSheet.workoutsheetOrder,
       );
       const nextWorkoutSheetOrder = this.getNextWorkoutOrder(
         orders,
-        lastWorkout.order,
+        lastWorkout == undefined ? 0 : lastWorkout.workoutsheetOrder,
       );
 
       // Add the next workout sheet to the user's training plan and return it

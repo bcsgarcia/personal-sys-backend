@@ -1,4 +1,4 @@
-export class Company {
+export class CompanyModel {
   id: string;
   isActive: boolean;
   lastUpdate: Date;

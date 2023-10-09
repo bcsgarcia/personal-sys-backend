@@ -10,7 +10,7 @@ import {
   GetMeetAppScreenResponseDto,
   TestimonyDto,
 } from '../dto/response/response';
-import { Company } from 'src/models/company.model';
+import { CompanyModel } from 'src/models/company.model';
 import { PartnershipDTO } from '../dto/response/partnership-dto';
 import { MediaRepository } from '../../media/repository/media.repository';
 import { MediaDto } from '../../media/dto/create-media.dto';
@@ -35,10 +35,10 @@ export class CompanyService {
     return companyList.map((company) => new CompanyDTO(company));
   }
 
-  async findOne(id: string): Promise<Company> {
+  async findOne(id: string): Promise<CompanyModel> {
     const company = await this.companyRepository.findById(id);
 
-    return new Company(company);
+    return new CompanyModel(company);
   }
 
   async update(updateCompanyDto: CompanyDTO) {
@@ -134,7 +134,10 @@ export class CompanyService {
       const mediaList = await this.mediaRepository.findAll(idCompany);
 
       const retorno = posturalPatternList.map((item) => {
-        item.media = mediaList.find((media) => media.id === item.idMedia);
+        item.media =
+          item.idMedia == null
+            ? null
+            : mediaList.find((media) => media.id === item.idMedia);
         return item;
       });
 

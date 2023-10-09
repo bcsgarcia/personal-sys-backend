@@ -25,5 +25,5 @@ export class CreateWorkoutsheetDefaultWorkoutDto {
 
   @ApiProperty({ description: 'Workout order' })
   @IsNotEmpty()
-  order: string;
+  workoutOrder: string;
 }

@@ -16,10 +16,10 @@ export class CreateWorkoutMediaDto {
   })
   @IsNotEmpty()
   @IsString()
-  idMedia: string;
+  id: string;
 
   constructor(data: any) {
     this.mediaOrder = data.mediaOrder;
-    this.idMedia = data.idMedia;
+    this.id = data.id;
   }
 }

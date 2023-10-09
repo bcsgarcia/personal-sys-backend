@@ -1,4 +1,4 @@
-export class Workout {
+export class WorkoutModel {
   id: string;
   isActive: boolean;
   lastUpdate: Date;
@@ -6,6 +6,7 @@ export class Workout {
   subTitle: string;
   description: string;
   idCompany: string;
+  mediaList: any;
 
   constructor(data: any) {
     this.id = data.id;
@@ -15,5 +16,6 @@ export class Workout {
     this.subTitle = data.subTitle;
     this.description = data.description;
     this.idCompany = data.idCompany;
+    this.mediaList = data.mediaList;
   }
 }

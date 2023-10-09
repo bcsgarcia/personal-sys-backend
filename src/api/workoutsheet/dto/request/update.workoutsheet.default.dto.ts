@@ -33,5 +33,5 @@ export class UpdateWorkoutsheetDefaultWorkoutDto {
 
   @ApiProperty({ description: 'Workout order' })
   @IsNotEmpty()
-  order: string;
+  workoutOrder: string;
 }

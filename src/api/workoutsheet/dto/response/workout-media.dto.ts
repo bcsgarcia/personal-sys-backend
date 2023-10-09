@@ -16,11 +16,15 @@ export class WorkoutMediaDto {
   @ApiProperty({ description: 'The url of the media' })
   url: string;
 
+  @ApiProperty({ description: 'The order of the media' })
+  mediaOrder: number;
+
   constructor(data: any) {
     this.id = data.id || data.mediaId;
     this.title = data.title || data.mediaTitle;
     this.format = data.format || data.mediaFormat;
     this.type = data.type || data.mediaType;
     this.url = data.url || data.mediaUrl;
+    this.mediaOrder = data.mediaOrder || data.mediaOrder;
   }
 }

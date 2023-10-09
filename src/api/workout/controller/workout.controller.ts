@@ -20,6 +20,7 @@ import {
 } from '@nestjs/swagger';
 import { Request } from 'express';
 import { AccessTokenModel } from 'src/models/access-token-user.model';
+import { CreateWorkoutClientDto } from '../dto/create-workout-client.dto';
 
 @ApiTags('workout')
 @Controller('workout')
@@ -122,6 +123,55 @@ export class WorkoutController {
     try {
       const user = new AccessTokenModel(request['user']);
       return this.workoutService.remove(idWorkout);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // ---------- WORKOUT CLIENT --------------
+  @Post('/client')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Create a new workoutClient' })
+  @ApiResponse({
+    status: 201,
+    description: 'The workout has been successfully created.',
+  })
+  @ApiBadRequestResponse({
+    description: 'Invalid or missing data in the header/request.',
+  })
+  createWorkoutClient(
+    @Body() createWorkoutClientDto: CreateWorkoutClientDto,
+    @Req() request: Request,
+  ) {
+    try {
+      const user = new AccessTokenModel(request['user']);
+      createWorkoutClientDto.idCompany = user.clientIdCompany;
+
+      return this.workoutService.createWorkoutClient(createWorkoutClientDto);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Delete('/client/:idWorkoutClient')
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Deactivate a workout by setting isActive to false',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'The workout has been successfully deactivated.',
+  })
+  @ApiBadRequestResponse({
+    description: 'Invalid or missing data in the request.',
+  })
+  removeWorkoutClient(
+    @Req() request: Request,
+    @Param('idWorkoutClient') idWorkout: string,
+  ) {
+    try {
+      const user = new AccessTokenModel(request['user']);
+      return this.workoutService.removeWorkoutClient(idWorkout);
     } catch (error) {
       throw error;
     }

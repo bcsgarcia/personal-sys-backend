@@ -39,7 +39,7 @@ export class UpdateWorkoutDto {
     description: '',
     example: [],
   })
-  workoutMediaList: CreateWorkoutMediaDto[];
+  mediaList: CreateWorkoutMediaDto[];
 
   @ApiHideProperty()
   idCompany: string;

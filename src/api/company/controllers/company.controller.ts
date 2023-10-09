@@ -78,7 +78,8 @@ export class CompanyController {
   @Public()
   async getMeetAppScreen(@Param('id') id: string) {
     try {
-      return await this.companyService.getMeetAppScreen(id);
+      const retorno = await this.companyService.getMeetAppScreen(id);
+      return retorno;
     } catch (error) {
       throw error;
     }

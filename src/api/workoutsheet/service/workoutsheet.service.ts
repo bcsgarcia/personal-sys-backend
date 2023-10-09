@@ -10,13 +10,82 @@ import { WorkoutSheetResponseDto } from '../dto/response/workoutsheet-response.d
 import { WorkoutMediaDto } from '../dto/response/workout-media.dto';
 import { MediaForSyncDto } from '../dto/response/media-for-sync.dto';
 import { WorkoutService } from '../../workout/service/workout.service';
+import { DeleteWorkoutsheetDto } from '../dto/request/delete.workoutsheet.dto';
+import { CreateWorkoutsheetDto } from '../dto/request/create.workoutsheet.dto';
+import { WorkoutsheetModel } from '../../../models/workoutsheet.model';
+import { WorkoutClientModel } from '../../../models/workout.client.model';
+import { WorkoutRepository } from '../../workout/repository/workout.repository';
 
 @Injectable()
 export class WorkoutsheetService {
   constructor(
     private readonly workoutService: WorkoutService,
-    private readonly workoutSheetRepository: WorkoutsheetRepository,
+    private readonly workoutsheetRepository: WorkoutsheetRepository,
+    private readonly workoutRepository: WorkoutRepository,
   ) {}
+
+  async getAllWorkoutSheetByIdClient(idClient: string, idCompany: string) {
+    try {
+      const workoutSheetRows =
+        await this.workoutsheetRepository.getAllWorkoutsheetByIdClientAdmin(
+          idClient,
+          idCompany,
+        );
+
+      if (workoutSheetRows.length == 0) {
+        return [];
+      }
+
+      const idWorkoutsheetDefaultList = workoutSheetRows.map(
+        (item) => item.idWorkoutsheetDefault,
+      );
+
+      const workoutsheetDefaultList =
+        await this.workoutsheetRepository.getWorkoutsheetDefaultByIdList(
+          idCompany,
+          idWorkoutsheetDefaultList,
+        );
+
+      const idWorkoutsheetList = workoutSheetRows.map((item) => item.id);
+
+      const workoutList =
+        await this.workoutService.findWorkoutClientByWorkoutSheet(
+          idWorkoutsheetList,
+          idCompany,
+        );
+
+      let mediaList = [];
+      if (workoutList.length > 0) {
+        const idWorkoutList = workoutList.map((w) => w.idWorkout);
+
+        mediaList = await this.workoutRepository.findManyMediaByIdWorkout(
+          idWorkoutList,
+          idCompany,
+        );
+      }
+
+      // mapeando workout no workoutSheetDefaultWorkout
+      const retorno = workoutSheetRows.map((item) => {
+        item.workoutClientList = workoutList
+          .filter((workout) => workout.idWorkoutSheet == item.id)
+          .map((w) => {
+            w.mediaList = mediaList.filter((m) => m.idWorkout == w.idWorkout);
+            return w;
+          });
+
+        item.workoutsheetDefault = workoutsheetDefaultList.find(
+          (workoutsheetDefault) =>
+            workoutsheetDefault.id == item.idWorkoutsheetDefault,
+        );
+
+        return item;
+      });
+
+      return retorno;
+    } catch (error) {
+      throw error;
+    }
+  }
 
   async createWorkoutSheetDefault(
     createWorkoutsheetDefaultDto: CreateWorkoutsheetDefaultDto,
@@ -33,21 +102,145 @@ export class WorkoutsheetService {
       const idCompany = createWorkoutsheetDefaultDto.idCompany;
 
       const idWorkoutSheetDefault =
-        await this.workoutSheetRepository.createWorkoutSheetDefault(
+        await this.workoutsheetRepository.createWorkoutSheetDefault(
           title,
           idCompany,
         );
 
-      await this.workoutSheetRepository.createWorkoutSheetDefaultWorkout(
+      await this.workoutsheetRepository.createWorkoutSheetDefaultWorkout(
         idWorkoutSheetDefault,
         createWorkoutsheetDefaultDto.idCompany,
         createWorkoutsheetDefaultDto.workoutList,
       );
 
-      // await this._createWorkoutSheetDefaultWorkout(
-      //   idWorkoutSheetDefault,
-      //   createWorkoutsheetDefaultDto.workoutList,
-      // );
+      return { status: 'success' };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async createWorkoutSheet(createWorkoutsheetDto: CreateWorkoutsheetDto) {
+    try {
+      if (hasDuplicates(createWorkoutsheetDto.workoutsheetDefaultIdList)) {
+        throw new HttpException(
+          DomainError.DUPLICATE_ITEMS,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      const workoutsheetClientList =
+        await this.workoutsheetRepository.getAllWorkoutsheetByIdClientAdmin(
+          createWorkoutsheetDto.idClient,
+          createWorkoutsheetDto.idCompany,
+        );
+
+      let order =
+        workoutsheetClientList.length == 0
+          ? 0
+          : workoutsheetClientList[workoutsheetClientList.length - 1]
+              .workoutsheetOrder + 1;
+
+      const workoutsheetDefaultList =
+        await this.workoutsheetRepository.getWorkoutsheetDefaultByIdList(
+          createWorkoutsheetDto.idCompany,
+          createWorkoutsheetDto.workoutsheetDefaultIdList,
+        );
+
+      const workoutsheetListToInsert: WorkoutsheetModel[] = [];
+
+      workoutsheetDefaultList.forEach((workoutsheetDefault) => {
+        const alreadyExistsToClient = workoutsheetClientList.find((w) => {
+          return w.idWorkoutSheetDefault == workoutsheetDefault.id;
+        });
+
+        if (alreadyExistsToClient == undefined) {
+          // create workoutsheet
+          workoutsheetListToInsert.push(
+            new WorkoutsheetModel({
+              name: workoutsheetDefault.title,
+              idCompany: createWorkoutsheetDto.idCompany,
+              idClient: createWorkoutsheetDto.idClient,
+              idWorkoutsheetDefault: workoutsheetDefault.id,
+              workoutsheetOrder: order++,
+            }),
+          );
+        }
+      });
+
+      if (workoutsheetListToInsert.length != 0) {
+        await this.workoutsheetRepository.createWorkoutSheet(
+          workoutsheetListToInsert,
+        );
+      }
+
+      // retrieving all Workoutsheet by this client
+      const _allWorkoutsheetClientList =
+        await this.getAllWorkoutSheetByIdClient(
+          createWorkoutsheetDto.idClient,
+          createWorkoutsheetDto.idCompany,
+        );
+
+      // filtering just inserted workoutsheet
+      const allInsertedWorkoutsheetClientList =
+        _allWorkoutsheetClientList.filter((e) =>
+          createWorkoutsheetDto.workoutsheetDefaultIdList.includes(
+            e.workoutsheetDefault.id,
+          ),
+        );
+
+      // retrieving workout by workoutsheetDefault id
+      const workoutListByWorkoutsheetDefault =
+        await this.workoutService.findManyWorkoutByIdWorkoutheetList(
+          allInsertedWorkoutsheetClientList.map(
+            (w) => w.workoutsheetDefault.id,
+          ),
+          createWorkoutsheetDto.idCompany,
+        );
+
+      const workoutClientToInsert: WorkoutClientModel[] = [];
+
+      // mapping workout to workoutClient
+      allInsertedWorkoutsheetClientList.forEach((workoutsheet) => {
+        const workoutList = workoutListByWorkoutsheetDefault.filter(
+          (w) => w.idWorkoutSheetDefault == workoutsheet.idWorkoutsheetDefault,
+        );
+
+        workoutList.forEach((w) => {
+          workoutClientToInsert.push(
+            new WorkoutClientModel({
+              idWorkout: w.idWorkout,
+              title: w.title,
+              subtitle: w.subtitle,
+              description: w.description,
+              idWorkoutSheet: workoutsheet.id,
+              idCompany: w.idCompany,
+              workoutOrder: w.workoutOrder,
+            }),
+          );
+        });
+      });
+
+      if (workoutClientToInsert.length > 0) {
+        await this.workoutsheetRepository.createWorkoutClient(
+          workoutClientToInsert,
+        );
+      }
+
+      return { status: 'success' };
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  async deleteWorkoutsheet(deleteWorkoutsheetDto: DeleteWorkoutsheetDto) {
+    try {
+      //delete workoutsheet based on workoutsheetdefault id and id client
+      await this.workoutsheetRepository.deleteWorkoutsheetByIdWorkoutsheetDefaultList(
+        deleteWorkoutsheetDto.idList,
+        deleteWorkoutsheetDto.idClient,
+        deleteWorkoutsheetDto.idCompany,
+      );
 
       return { status: 'success' };
     } catch (error) {
@@ -59,16 +252,16 @@ export class WorkoutsheetService {
     updateWorkoutsheetDefaultDto: UpdateWorkoutsheetDefaultDto,
   ) {
     try {
-      await this.workoutSheetRepository.updateWorkoutSheetDefault(
+      await this.workoutsheetRepository.updateWorkoutSheetDefault(
         updateWorkoutsheetDefaultDto.title,
         updateWorkoutsheetDefaultDto.idWorkoutSheetDefault,
       );
 
-      await this.workoutSheetRepository.deleteWorkoutSheetDefaultWorkout(
+      await this.workoutsheetRepository.deleteWorkoutSheetDefaultWorkout(
         updateWorkoutsheetDefaultDto.idWorkoutSheetDefault,
       );
 
-      await this.workoutSheetRepository.createWorkoutSheetDefaultWorkout(
+      await this.workoutsheetRepository.createWorkoutSheetDefaultWorkout(
         updateWorkoutsheetDefaultDto.idWorkoutSheetDefault,
         updateWorkoutsheetDefaultDto.idCompany,
         updateWorkoutsheetDefaultDto.workoutList,
@@ -83,11 +276,11 @@ export class WorkoutsheetService {
   async getAllWorkoutSheetDefaultByIdCompany(idCompany: string) {
     try {
       const workoutSheetDefaultRows =
-        await this.workoutSheetRepository.getAllWorkoutSheetDefaultByIdCompanyAdmin(
+        await this.workoutsheetRepository.getAllWorkoutsheetDefaultByIdCompanyAdmin(
           idCompany,
         );
       const workoutSheetDefaultWorkoutRows =
-        await this.workoutSheetRepository.getAllWorkoutSheetDefaultWorkoutByIdCompanyAdmin(
+        await this.workoutsheetRepository.getAllWorkoutsheetDefaultWorkoutByIdCompanyAdmin(
           idCompany,
         );
 
@@ -154,11 +347,11 @@ export class WorkoutsheetService {
 
   async deleteWorkoutSheetDefault(idWorkoutSheetDefault: string) {
     try {
-      await this.workoutSheetRepository.deleteWorkoutSheetDefaultWorkout(
+      await this.workoutsheetRepository.deleteWorkoutSheetDefaultWorkout(
         idWorkoutSheetDefault,
       );
 
-      await this.workoutSheetRepository.deleteById(idWorkoutSheetDefault);
+      await this.workoutsheetRepository.deleteById(idWorkoutSheetDefault);
 
       return { status: 'success' };
     } catch (error) {
@@ -172,13 +365,13 @@ export class WorkoutsheetService {
   async getMyTrainingProgram(
     user: AccessTokenModel,
   ): Promise<WorkoutSheetResponseDto[]> {
-    const rows = await this.workoutSheetRepository.getMyTrainingProgram(user);
+    const rows = await this.workoutsheetRepository.getMyTrainingProgram(user);
     return this._convertRowsToMyTrainingProgramResponseDto(rows);
   }
 
   async getAllMyCurrentWorkoutSheetsWithWorkouts(user: AccessTokenModel) {
     const rows =
-      await this.workoutSheetRepository.getAllMyCurrentWorkoutSheetsWithWorkouts(
+      await this.workoutsheetRepository.getAllMyCurrentWorkoutSheetsWithWorkouts(
         user,
       );
     return this._convertRowsToWorkoutSheetResponseDto(rows);
@@ -206,6 +399,7 @@ export class WorkoutsheetService {
         mediaFormat: row.mediaFormat,
         mediaType: row.mediaType,
         mediaUrl: row.mediaUrl,
+        mediaOrder: row.mediaOrder,
       });
 
       if (
@@ -254,18 +448,22 @@ export class WorkoutsheetService {
           id: row.workoutSheetId,
           date: row.workoutSheedConclusionDate,
           name: row.workoutSheetName,
-          order: row.workoutSheetOrder,
+          workoutsheetOrder: row.workoutSheetOrder,
           workouts: {},
         };
       }
 
-      const workoutMediaDto = new WorkoutMediaDto({
-        mediaId: row.mediaId,
-        mediaTitle: row.mediaTitle,
-        mediaFormat: row.mediaFormat,
-        mediaType: row.mediaType,
-        mediaUrl: row.mediaUrl,
-      });
+      const workoutMediaDto =
+        row.mediaId == null
+          ? undefined
+          : new WorkoutMediaDto({
+              mediaId: row.mediaId,
+              mediaTitle: row.mediaTitle,
+              mediaFormat: row.mediaFormat,
+              mediaType: row.mediaType,
+              mediaUrl: row.mediaUrl,
+              mediaOrder: row.mediaOrder,
+            });
 
       if (!workoutSheetsMap[row.workoutSheetId].workouts[row.workoutId]) {
         workoutSheetsMap[row.workoutSheetId].workouts[row.workoutId] = {
@@ -273,16 +471,18 @@ export class WorkoutsheetService {
           title: row.workoutTitle,
           subtitle: row.workoutSubtitle,
           description: row.workoutDescription,
-          order: row.workoutOrder,
+          workoutOrder: row.workoutOrder,
           breaktime: row.workoutBreakTime,
           serie: row.workoutSeries,
           media: [],
         };
       }
 
-      workoutSheetsMap[row.workoutSheetId].workouts[row.workoutId].media.push(
-        workoutMediaDto,
-      );
+      if (workoutMediaDto != undefined) {
+        workoutSheetsMap[row.workoutSheetId].workouts[row.workoutId].media.push(
+          workoutMediaDto,
+        );
+      }
     }
 
     // Convert each grouped workout sheet object and its workouts to DTOs
@@ -314,7 +514,7 @@ export class WorkoutsheetService {
 
   async getUrlMidiaForSync(user: AccessTokenModel): Promise<MediaForSyncDto[]> {
     try {
-      const rows = await this.workoutSheetRepository.getUrlMediasForSync(user);
+      const rows = await this.workoutsheetRepository.getUrlMediasForSync(user);
       const allMidias = rows.map((media) => new MediaForSyncDto(media));
 
       const uniqueMedias: MediaForSyncDto[] = Array.from(
@@ -337,7 +537,7 @@ export class WorkoutsheetService {
     user: AccessTokenModel,
   ): Promise<void> {
     try {
-      await this.workoutSheetRepository.workoutSheetDone(
+      await this.workoutsheetRepository.workoutSheetDone(
         idWorkoutsheet,
         user.clientIdCompany,
       );
@@ -351,7 +551,7 @@ export class WorkoutsheetService {
     idWorkoutsheet: string,
   ): Promise<void> {
     try {
-      return await this.workoutSheetRepository.createWorkoutsheetFeedback(
+      return await this.workoutsheetRepository.createWorkoutsheetFeedback(
         feedback,
         idWorkoutsheet,
       );

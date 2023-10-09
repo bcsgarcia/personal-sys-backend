@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
-import { Company } from 'src/models/company.model';
+import { CompanyModel } from 'src/models/company.model';
 import { CompanyDTO } from '../dto/company.dto';
 import { CreateCompanyMainInformationDto } from '../dto/request/create-company-main-information.dto';
 import { CreatePosturalPatternDto } from '../dto/request/create-company-postural-pattern.dto';
@@ -34,9 +34,9 @@ export class CompanyRepository {
     return row[0];
   }
 
-  async findAll(): Promise<Company[]> {
+  async findAll(): Promise<CompanyModel[]> {
     const rows = await this.databaseService.execute('SELECT * FROM company');
-    const companies = rows.map((row) => new Company(row));
+    const companies = rows.map((row) => new CompanyModel(row));
     return companies;
   }
 
@@ -268,11 +268,12 @@ export class CompanyRepository {
 
   async getTestimonyByIdCompany(idCompany: string): Promise<any> {
     const query = `
-        SELECT name,
-               description,
-               imageUrl
-        FROM testimony
-        WHERE idCompany = '${idCompany}'
+        SELECT t.name,
+               t.description,
+               m.url as imageUrl
+        FROM testimony t
+                 left join media m on t.idMedia = m.id
+        WHERE t.idCompany = '${idCompany}'
     `;
 
     return await this.databaseService.execute(query);
@@ -293,7 +294,7 @@ export class CompanyRepository {
 
   async getPhotosBeforeAndAfterByIdCompany(idCompany: string): Promise<any> {
     const query = `
-        SELECT m.url
+        SELECT m.url as imageUrl
         FROM photosBeforeAndAfter b
                  left join media m on m.id = b.idMedia
         WHERE b.idCompany = '${idCompany}'

@@ -1,5 +1,5 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { Company } from 'src/models/company.model';
+import { CompanyModel } from 'src/models/company.model';
 
 export class CompanyDTO {
   @ApiHideProperty()
@@ -54,7 +54,7 @@ export class CompanyDTO {
   })
   instagram?: string;
 
-  constructor(company: Company) {
+  constructor(company: CompanyModel) {
     this.id = company.id;
     this.name = company.name;
     this.about = company.about;

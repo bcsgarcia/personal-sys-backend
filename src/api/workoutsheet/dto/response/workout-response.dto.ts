@@ -18,7 +18,7 @@ export class WorkoutResponseDto {
   media: WorkoutMediaDto[];
 
   @ApiProperty({ description: 'The order of the workout in the workout sheet' })
-  order: number;
+  workoutOrder: number;
 
   @ApiProperty({ description: 'The breaktime of the workout in seconds' })
   breaktime: number;
@@ -36,7 +36,7 @@ export class WorkoutResponseDto {
     this.media = data.media
       ? data.media.map((item: any) => new WorkoutMediaDto(item))
       : [];
-    this.order = data.order;
+    this.workoutOrder = data.workoutOrder;
     this.breaktime = data.breaktime;
     this.serie = data.serie;
   }

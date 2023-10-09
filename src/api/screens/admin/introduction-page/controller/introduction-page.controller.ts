@@ -35,7 +35,6 @@ export class IntroductionPageController {
   getCompanyInformation(@Req() request: Request) {
     try {
       const user = new AccessTokenModel(request['user']);
-      // const idCompany = '7c576f1d-d78e-11ed-ba77-0242ac110002';
       return this.introductionPageService.getCompanyInformation(
         user.clientIdCompany,
       );
