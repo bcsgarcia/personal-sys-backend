@@ -3,7 +3,7 @@ FROM node:latest
 WORKDIR /home/node/personalsysbackend
 
 COPY . .
-COPY ./.env.prod ./.env
+# COPY ./.env.prod ./.env
 
 RUN npm install --quiet --no-optional --no-fund --loglevel=error
 
