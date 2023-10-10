@@ -10,9 +10,10 @@ import { AuthGuard } from './api/auth/auth.guard';
 import { MyMiddleware } from './myMiddleware.middleware';
 import { FtpService } from './common-services/ftp-service.service';
 import { ImageService } from './common-services/image-service.service';
+import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [DatabaseModule, ApiModule],
+  imports: [ConfigModule.forRoot(), DatabaseModule, ApiModule],
   controllers: [AppController, RecordsController],
   providers: [
     AppService,

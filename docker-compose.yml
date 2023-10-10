@@ -1,0 +1,12 @@
+version: "1"
+services:
+  node:
+    build: .
+    command: "npm run start"
+    working_dir: /home/node/personalsysbackend
+    environment:
+      - NODE_ENV=prod
+    expose:
+      - "3000"
+    ports:
+      - "3000:3000"

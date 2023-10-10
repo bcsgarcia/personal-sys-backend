@@ -1,0 +1,33 @@
+name: Deploy
+
+   on:
+     push:
+       branches:
+         - main
+
+   jobs:
+     deploy:
+       runs-on: ubuntu-latest
+
+       steps:
+         - name: Checkout repository
+           uses: actions/checkout@v2
+
+         - name: Build and push Docker image
+           uses: docker/build-push-action@v2
+           with:
+             context: .
+             push: true
+             tags: bcsgarcia/personal-sys-backend:latest
+
+         - name: SSH into server
+           uses: appleboy/ssh-action@master
+           with:
+             host: ${{ secrets.SERVER_IP }}
+             username: ${{ secrets.SERVER_USERNAME }}
+             key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+         - name: Deploy to server
+           run: |
+             ssh ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} "docker-compose pull"
+             ssh ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} "docker-compose up -d"
