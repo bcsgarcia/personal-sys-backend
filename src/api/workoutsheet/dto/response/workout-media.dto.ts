@@ -16,6 +16,9 @@ export class WorkoutMediaDto {
   @ApiProperty({ description: 'The url of the media' })
   url: string;
 
+  @ApiProperty({ description: 'The thumbnailurl of the media' })
+  thumbnailUrl: string;
+
   @ApiProperty({ description: 'The order of the media' })
   mediaOrder: number;
 
@@ -25,6 +28,7 @@ export class WorkoutMediaDto {
     this.format = data.format || data.mediaFormat;
     this.type = data.type || data.mediaType;
     this.url = data.url || data.mediaUrl;
-    this.mediaOrder = data.mediaOrder || data.mediaOrder;
+    this.mediaOrder = data.mediaOrder || 0;
+    this.thumbnailUrl = data.thumbnailUrl || '';
   }
 }

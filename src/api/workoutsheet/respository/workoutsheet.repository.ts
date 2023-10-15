@@ -308,17 +308,20 @@ export class WorkoutsheetRepository {
                  m.title              as mediaTitle,
                  m.fileFormat         as mediaFormat,
                  m.type               as mediaType,
-                 m.url                as mediaUrl
+                 m.url                as mediaUrl,
+                 m.thumbnailUrl       as thumbnailUrl,
+                 wm.mediaOrder        as mediaOrder
           FROM workoutSheetDone wsd
-                   LEFT JOIN workoutSheet ws on wsd.idWorkoutSheet = ws.id
-                   INNER JOIN workoutClient wc on ws.id = wc.idWorkoutSheet
-                   INNER JOIN workout w on wc.idWorkout = w.id
-                   INNER JOIN workoutMedia wm on w.id = wm.idWorkout
-                   INNER JOIN media m on wm.idMedia = m.id
+                   INNER JOIN workoutSheet ws on wsd.idWorkoutSheet = ws.id
+                   INNER JOIN workoutClient wc on ws.id = wc.idWorkoutSheet and wc.isActive = 1
+                   INNER JOIN workout w on wc.idWorkout = w.id and w.isActive = 1
+                   LEFT JOIN workoutMedia wm on w.id = wm.idWorkout
+                   LEFT JOIN media m on wm.idMedia = m.id and m.isActive = 1
 
           WHERE ws.idClient = '${user.clientId}'
             AND ws.idCompany = '${user.clientIdCompany}'
             AND ws.isActive = 1
+            AND wsd.date > ADDDATE(NOW(), -10)
 
           ORDER BY wsd.date ASC;`;
 
@@ -350,6 +353,7 @@ export class WorkoutsheetRepository {
                  m.fileFormat         as mediaFormat,
                  m.type               as mediaType,
                  m.url                as mediaUrl,
+                 m.thumbnailUrl       as thumbnailUrl,
                  wm.mediaOrder        as mediaOrder
           FROM workoutSheet ws
 
@@ -376,7 +380,8 @@ export class WorkoutsheetRepository {
     try {
       const query = `SELECT m.id,
                             m.url,
-                            m.type
+                            m.type,
+                            m.thumbnailUrl
 
                      FROM workoutSheet ws
 

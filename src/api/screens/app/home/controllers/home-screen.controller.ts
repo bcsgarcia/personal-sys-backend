@@ -5,11 +5,11 @@ import { Request } from 'express';
 import { AccessTokenModel } from 'src/models/access-token-user.model';
 
 @ApiTags('AppHomeScreen')
-@Controller('app/home/screen')
+@Controller('app/home')
 export class AppHomeScreenController {
   constructor(private readonly appHomeScreenService: AppHomeScreenService) {}
 
-  @Get('')
+  @Get('/screen')
   @ApiOperation({ summary: 'Get the home screen to app' })
   @ApiResponse({
     status: 200,

@@ -229,7 +229,7 @@ export class WorkoutsheetController {
     }
   }
 
-  @Get('all/medias-sync')
+  @Get('media-sync')
   @ApiBearerAuth()
   getAllUrlMediaForSync(@Req() request: Request) {
     try {

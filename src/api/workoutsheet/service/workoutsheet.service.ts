@@ -388,7 +388,7 @@ export class WorkoutsheetService {
           id: row.workoutSheetId,
           date: row.workoutSheedConclusionDate,
           name: row.workoutSheetName,
-          order: row.workoutSheetOrder,
+          workoutsheetOrder: row.workoutSheetOrder,
           workouts: {},
         };
       }
@@ -400,6 +400,7 @@ export class WorkoutsheetService {
         mediaType: row.mediaType,
         mediaUrl: row.mediaUrl,
         mediaOrder: row.mediaOrder,
+        thumbnailUrl: row.thumbnailUrl,
       });
 
       if (
@@ -414,7 +415,7 @@ export class WorkoutsheetService {
           title: row.workoutTitle,
           subtitle: row.workoutSubtitle,
           description: row.workoutDescription,
-          order: row.workoutOrder,
+          workoutOrder: row.workoutOrder,
           breaktime: row.workoutBreakTime,
           serie: row.workoutSeries,
           media: [],
@@ -462,6 +463,7 @@ export class WorkoutsheetService {
               mediaFormat: row.mediaFormat,
               mediaType: row.mediaType,
               mediaUrl: row.mediaUrl,
+              thumbnailUrl: row.thumbnailUrl,
               mediaOrder: row.mediaOrder,
             });
 
