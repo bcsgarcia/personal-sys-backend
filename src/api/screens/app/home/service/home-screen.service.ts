@@ -64,17 +64,21 @@ export class AppHomeScreenService {
         };
       }
 
+      let counter = 0;
+
       // Determine the order of the next workout sheet
-      const orders = allMyCurrentWorkoutSheets.map(
-        (workoutSheet) => workoutSheet.workoutsheetOrder,
-      );
+      const orders = allMyCurrentWorkoutSheets.map((workoutSheet) => counter++);
       const nextWorkoutSheetOrder = this.getNextWorkoutOrder(
         orders,
-        lastWorkout == undefined ? 0 : lastWorkout.workoutsheetOrder,
+        lastWorkout == undefined
+          ? 0
+          : allMyCurrentWorkoutSheets.indexOf(
+              allMyCurrentWorkoutSheets.find((i) => i.id == lastWorkout.id),
+            ),
       );
 
       // Add the next workout sheet to the user's training plan and return it
-      myTrainingPlan.push(allMyCurrentWorkoutSheets[nextWorkoutSheetOrder - 1]);
+      myTrainingPlan.push(allMyCurrentWorkoutSheets[nextWorkoutSheetOrder]);
 
       return {
         myTrainingPlan: myTrainingPlan,
