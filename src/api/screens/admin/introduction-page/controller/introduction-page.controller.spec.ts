@@ -11,9 +11,7 @@ describe('IntroductionPageController', () => {
       providers: [IntroductionPageService],
     }).compile();
 
-    controller = module.get<IntroductionPageController>(
-      IntroductionPageController,
-    );
+    controller = module.get<IntroductionPageController>(IntroductionPageController);
   });
 
   it('should be defined', () => {

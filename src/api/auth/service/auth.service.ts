@@ -1,9 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
 import { Auth } from 'src/models/auth.model';
 import { AuthDto } from '../dto/request/auth.dto';
 import { AuthRepository } from '../repository/auth.repository';
@@ -13,10 +8,7 @@ import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
-  constructor(
-    private readonly authRepository: AuthRepository,
-    private readonly jwtService: JwtService,
-  ) {}
+  constructor(private readonly authRepository: AuthRepository, private readonly jwtService: JwtService) {}
 
   async create(authDto: AuthDto): Promise<Auth> {
     try {
@@ -48,10 +40,7 @@ export class AuthService {
 
   async emailAlreadyExists(email: string, idCompany: string): Promise<boolean> {
     try {
-      const rows = await this.authRepository.emailAlreadyExists(
-        email,
-        idCompany,
-      );
+      const rows = await this.authRepository.emailAlreadyExists(email, idCompany);
 
       if (rows.length > 0) {
         return true;
@@ -184,21 +173,14 @@ export class AuthService {
     }
   }
 
-  async updatePassByIdClient(
-    idClient: string,
-    oldpass: string,
-    newpass: string,
-  ): Promise<void> {
+  async updatePassByIdClient(idClient: string, oldpass: string, newpass: string): Promise<void> {
     try {
       const currentPass = await this.authRepository.validateOldPass(idClient);
 
       if (oldpass == currentPass['pass']) {
         return this.authRepository.updatePassByIdClient(idClient, newpass);
       } else {
-        throw new HttpException(
-          'Wrong current password',
-          HttpStatus.BAD_REQUEST,
-        );
+        throw new HttpException('Wrong current password', HttpStatus.BAD_REQUEST);
       }
     } catch (error) {
       throw error;

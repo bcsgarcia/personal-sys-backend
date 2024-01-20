@@ -1,21 +1,5 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpStatus,
-  Param,
-  Post,
-  Put,
-  Req,
-} from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Req } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { CompanyService } from '../service/company.service';
 import { CompanyDTO } from '../dto/company.dto';
 import { Request } from 'express';
@@ -94,18 +78,13 @@ export class CompanyController {
     status: HttpStatus.CREATED,
   })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request.' })
-  createMainInformation(
-    @Body() companyMainInformationDto: CreateCompanyMainInformationDto,
-    @Req() request: Request,
-  ) {
+  createMainInformation(@Body() companyMainInformationDto: CreateCompanyMainInformationDto, @Req() request: Request) {
     try {
       const user = new AccessTokenModel(request['user']);
 
       companyMainInformationDto.idCompany = user.clientIdCompany;
 
-      return this.companyService.createCompanyInformation(
-        companyMainInformationDto,
-      );
+      return this.companyService.createCompanyInformation(companyMainInformationDto);
     } catch (error) {
       throw error;
     }
@@ -118,8 +97,7 @@ export class CompanyController {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description:
-      'The company main information has been successfully retrieved.',
+    description: 'The company main information has been successfully retrieved.',
     type: [CompanyMainInformationDto],
   })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request.' })
@@ -127,9 +105,7 @@ export class CompanyController {
     try {
       const user = new AccessTokenModel(request['user']);
 
-      return this.companyService.findAllCompanyMainInformation(
-        user.clientIdCompany,
-      );
+      return this.companyService.findAllCompanyMainInformation(user.clientIdCompany);
     } catch (error) {
       throw error;
     }
@@ -142,10 +118,7 @@ export class CompanyController {
     status: HttpStatus.OK,
   })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request.' })
-  removeMainInformationById(
-    @Req() request: Request,
-    @Body() deleteItemDto: DeleteItemDto,
-  ) {
+  removeMainInformationById(@Req() request: Request, @Body() deleteItemDto: DeleteItemDto) {
     try {
       const user = new AccessTokenModel(request['user']);
       deleteItemDto.idCompany = user.clientIdCompany;
@@ -158,17 +131,12 @@ export class CompanyController {
 
   @Put('/company-main-information')
   @ApiBearerAuth()
-  updateMainInformation(
-    @Req() request: Request,
-    @Body() updateCompanyMainInformation: UpdateMainInformationListDto,
-  ) {
+  updateMainInformation(@Req() request: Request, @Body() updateCompanyMainInformation: UpdateMainInformationListDto) {
     try {
       const user = new AccessTokenModel(request['user']);
       updateCompanyMainInformation.idCompany = user.clientIdCompany;
 
-      return this.companyService.updateCompanyMainInformation(
-        updateCompanyMainInformation,
-      );
+      return this.companyService.updateCompanyMainInformation(updateCompanyMainInformation);
     } catch (error) {
       throw error;
     }
@@ -183,10 +151,7 @@ export class CompanyController {
     description: 'created',
   })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request.' })
-  createPosturalPattern(
-    @Body() posturalPattern: CreatePosturalPatternDto,
-    @Req() request: Request,
-  ) {
+  createPosturalPattern(@Body() posturalPattern: CreatePosturalPatternDto, @Req() request: Request) {
     try {
       const user = new AccessTokenModel(request['user']);
       posturalPattern.idCompany = user.clientIdCompany;
@@ -205,8 +170,7 @@ export class CompanyController {
   })
   @ApiResponse({
     status: HttpStatus.OK,
-    description:
-      'The company postural pattern has been successfully retrieved.',
+    description: 'The company postural pattern has been successfully retrieved.',
     type: [PosturalPatternDto],
   })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request.' })
@@ -214,9 +178,7 @@ export class CompanyController {
     try {
       const user = new AccessTokenModel(request['user']);
 
-      return this.companyService.findAllCompanyPosturalPattern(
-        user.clientIdCompany,
-      );
+      return this.companyService.findAllCompanyPosturalPattern(user.clientIdCompany);
     } catch (error) {
       throw error;
     }
@@ -228,10 +190,7 @@ export class CompanyController {
   @ApiResponse({
     status: HttpStatus.OK,
   })
-  removePosturalPatternById(
-    @Req() request: Request,
-    @Body() deleteItemDto: DeleteItemDto,
-  ) {
+  removePosturalPatternById(@Req() request: Request, @Body() deleteItemDto: DeleteItemDto) {
     try {
       const user = new AccessTokenModel(request['user']);
       deleteItemDto.idCompany = user.clientIdCompany;
@@ -244,16 +203,11 @@ export class CompanyController {
 
   @Put('/postural-pattern')
   @ApiBearerAuth()
-  updatePosturalPattern(
-    @Req() request: Request,
-    @Body() posturalPatternList: UpdatePosturalPatternListDto,
-  ) {
+  updatePosturalPattern(@Req() request: Request, @Body() posturalPatternList: UpdatePosturalPatternListDto) {
     try {
       const user = new AccessTokenModel(request['user']);
       posturalPatternList.idCompany = user.clientIdCompany;
-      return this.companyService.updateCompanyPosturalPattern(
-        posturalPatternList,
-      );
+      return this.companyService.updateCompanyPosturalPattern(posturalPatternList);
     } catch (error) {
       throw error;
     }

@@ -37,8 +37,7 @@ export class CreateNotificationDto {
   idCompany: string;
 
   @ApiProperty({
-    description:
-      'The unique identifier of the client associated with the notification',
+    description: 'The unique identifier of the client associated with the notification',
     example: '9a9c5f7d-2265-4f07-a3fa-bbc5a5d72c5b',
     type: String,
     required: false,

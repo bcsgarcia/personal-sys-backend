@@ -32,12 +32,7 @@ export class CreateTestimonyDto {
   @ApiHideProperty()
   idCompany: string;
 
-  constructor(
-    idMedia: string,
-    description: string,
-    name: string,
-    idCompany: string,
-  ) {
+  constructor(idMedia: string, description: string, name: string, idCompany: string) {
     this.idMedia = idMedia;
     this.description = description;
     this.name = name;

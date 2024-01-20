@@ -7,19 +7,15 @@ export class MediaRepository {
   constructor(private databaseService: DatabaseService) {}
 
   async findById(id: string): Promise<any> {
-    const row = await this.databaseService.execute(
-      'SELECT * FROM media WHERE id = ?',
-      [id],
-    );
+    const row = await this.databaseService.execute('SELECT * FROM media WHERE id = ?', [id]);
 
     return row[0];
   }
 
   async findAll(idCompany: string): Promise<any> {
-    const rows = await this.databaseService.execute(
-      'SELECT * FROM media where idCompany = ? order by title',
-      [idCompany],
-    );
+    const rows = await this.databaseService.execute('SELECT * FROM media where idCompany = ? order by title', [
+      idCompany,
+    ]);
     return rows;
   }
 
@@ -33,9 +29,7 @@ export class MediaRepository {
     const rows = await this.databaseService.execute(
       `SELECT *
        FROM media
-       WHERE idCompany = '${idCompany}' ${
-        mediaType == 'null' ? '' : ` AND type = '${mediaType}' `
-      }
+       WHERE idCompany = '${idCompany}' ${mediaType == 'null' ? '' : ` AND type = '${mediaType}' `}
        AND title like '%${title}%'
        ORDER BY title LIMIT ${itemsPerPage}
        OFFSET ${offset}`,
@@ -47,14 +41,7 @@ export class MediaRepository {
   async create(mediaDto: MediaDto): Promise<any> {
     await this.databaseService.execute(
       'INSERT INTO media (title, url, fileFormat, type, thumbnailUrl, idCompany) VALUES (?, ?, ?, ?, ?, ?)',
-      [
-        mediaDto.title,
-        mediaDto.url,
-        mediaDto.fileFormat,
-        mediaDto.type,
-        mediaDto.thumbnailUrl,
-        mediaDto.idCompany,
-      ],
+      [mediaDto.title, mediaDto.url, mediaDto.fileFormat, mediaDto.type, mediaDto.thumbnailUrl, mediaDto.idCompany],
     );
 
     const row = await this.databaseService.execute(
@@ -66,10 +53,11 @@ export class MediaRepository {
 
   async updateUrlMedia(mediaDto: MediaDto): Promise<void> {
     try {
-      await this.databaseService.execute(
-        'UPDATE media SET url = ?, thumbnailUrl = ? WHERE id = ?',
-        [mediaDto.url, mediaDto.thumbnailUrl, mediaDto.id],
-      );
+      await this.databaseService.execute('UPDATE media SET url = ?, thumbnailUrl = ? WHERE id = ?', [
+        mediaDto.url,
+        mediaDto.thumbnailUrl,
+        mediaDto.id,
+      ]);
     } catch (error) {
       throw error;
     }
@@ -77,10 +65,7 @@ export class MediaRepository {
 
   async update(mediaDto: MediaDto): Promise<void> {
     try {
-      await this.databaseService.execute(
-        'UPDATE media SET title = ? WHERE id = ?',
-        [mediaDto.title, mediaDto.id],
-      );
+      await this.databaseService.execute('UPDATE media SET title = ? WHERE id = ?', [mediaDto.title, mediaDto.id]);
     } catch (error) {
       throw error;
     }

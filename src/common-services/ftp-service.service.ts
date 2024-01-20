@@ -66,11 +66,7 @@ export class FtpService {
     // });
   }
 
-  async uploadFile(
-    fileBuffer: Buffer,
-    fileName: string,
-    mediaType: string,
-  ): Promise<void> {
+  async uploadFile(fileBuffer: Buffer, fileName: string, mediaType: string): Promise<void> {
     const client = new basicFtp.Client();
     const stream = new Readable();
     stream.push(fileBuffer);

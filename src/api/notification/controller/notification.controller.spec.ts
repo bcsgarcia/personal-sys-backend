@@ -26,9 +26,7 @@ describe('AppController', () => {
   describe('validateHeader', () => {
     it('should throw an exception if an invalid idCompany is received', async () => {
       const invalidIdCompany = '';
-      const response = await request(app.getHttpServer())
-        .post(' notification')
-        .set('idcompany', invalidIdCompany);
+      const response = await request(app.getHttpServer()).post(' notification').set('idcompany', invalidIdCompany);
 
       expect(response.status).toBe(HttpStatus.BAD_REQUEST);
       expect(response.body.message).toBe('Invalid idCompany');
@@ -36,9 +34,7 @@ describe('AppController', () => {
 
     it('should return success if a valid idCompany is received', async () => {
       const validIdCompany = '0e71f0d1-c7da-11ed-86dc-0242ac110002';
-      const response = await request(app.getHttpServer())
-        .get(' notification')
-        .set('idcompany', validIdCompany);
+      const response = await request(app.getHttpServer()).get(' notification').set('idcompany', validIdCompany);
 
       expect(response.status).toBe(HttpStatus.OK);
       expect(response.body.message).toBe('Success');

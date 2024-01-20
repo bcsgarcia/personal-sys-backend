@@ -7,9 +7,13 @@ import { AppModule } from './app.module';
 import * as bodyParser from 'body-parser';
 import { AuthGuard } from './api/auth/auth.guard';
 import * as cors from 'cors';
+import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  // app.useGlobalPipes(new ValidationPipe());
+  // app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
+
   app.useGlobalGuards();
   const config = new DocumentBuilder()
     .setTitle('Personal Sys API')
@@ -17,6 +21,7 @@ async function bootstrap() {
       'The Personal Sys API is a RESTful web service that provides a simple way for personal trainers to manage their client workout sheets. With this API, personal trainers can create, read, update, and delete workout sheets for their clients. Clients can also view their workout sheets and track their progress over time.',
     ) // TODO create a description
     .setVersion('1.0')
+    .addTag('tag')
     .addBearerAuth(
       { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
       'access-token', // Name of the security scheme, you can choose any name

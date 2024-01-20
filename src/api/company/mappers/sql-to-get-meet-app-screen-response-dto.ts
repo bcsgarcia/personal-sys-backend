@@ -1,8 +1,6 @@
 import { GetMeetAppScreenResponseDto } from '../dto/response/response';
 
-export function mapperSqlResultToResponseObject(
-  sqlResult: any[],
-): GetMeetAppScreenResponseDto {
+export function mapperSqlResultToResponseObject(sqlResult: any[]): GetMeetAppScreenResponseDto {
   const response: GetMeetAppScreenResponseDto = {
     aboutCompany: {
       imageUrl: '',

@@ -16,14 +16,12 @@ import { MediaRepository } from '../../../media/repository/media.repository';
     DatabaseService,
     {
       provide: CompanyRepository,
-      useFactory: (databaseService: DatabaseService) =>
-        new CompanyRepository(databaseService),
+      useFactory: (databaseService: DatabaseService) => new CompanyRepository(databaseService),
       inject: [DatabaseService],
     },
     {
       provide: MediaRepository,
-      useFactory: (databaseService: DatabaseService) =>
-        new MediaRepository(databaseService),
+      useFactory: (databaseService: DatabaseService) => new MediaRepository(databaseService),
       inject: [DatabaseService],
     },
   ],

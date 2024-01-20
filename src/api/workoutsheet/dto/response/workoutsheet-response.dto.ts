@@ -15,8 +15,7 @@ export class WorkoutSheetResponseDto {
   workoutsheetOrder: number;
 
   @ApiProperty({
-    description:
-      'An array of workout objects associated with the workout sheet',
+    description: 'An array of workout objects associated with the workout sheet',
     type: [WorkoutResponseDto],
   })
   workouts: WorkoutResponseDto[];
@@ -26,8 +25,6 @@ export class WorkoutSheetResponseDto {
     this.date = data.date === undefined ? null : new Date(data.date);
     this.name = data.name;
     this.workoutsheetOrder = data.workoutsheetOrder;
-    this.workouts = data.workouts
-      ? data.workouts.map((item: any) => new WorkoutResponseDto(item))
-      : [];
+    this.workouts = data.workouts ? data.workouts.map((item: any) => new WorkoutResponseDto(item)) : [];
   }
 }

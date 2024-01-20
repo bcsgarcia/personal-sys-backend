@@ -1,9 +1,4 @@
-import {
-  HttpException,
-  HttpStatus,
-  Injectable,
-  UploadedFile,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable, UploadedFile } from '@nestjs/common';
 import { Auth } from 'src/models/auth.model';
 import { AuthDto } from 'src/api/auth/dto/request/auth.dto';
 import { AuthService } from 'src/api/auth/service/auth.service';
@@ -26,16 +21,8 @@ export class ClientService {
 
   async create(createClientDto: CreateClientDto) {
     try {
-      if (
-        await this.authService.emailAlreadyExists(
-          createClientDto.email,
-          createClientDto.idCompany,
-        )
-      ) {
-        throw new HttpException(
-          `SQL error: 'Email already exists'`,
-          HttpStatus.BAD_REQUEST,
-        );
+      if (await this.authService.emailAlreadyExists(createClientDto.email, createClientDto.idCompany)) {
+        throw new HttpException(`SQL error: 'Email already exists'`, HttpStatus.BAD_REQUEST);
       }
 
       const auth = await this.createAuth(createClientDto);
@@ -91,10 +78,7 @@ export class ClientService {
   async uploadPhoto(@UploadedFile() file, uuid: string) {
     try {
       if (!file.mimetype.includes('image') || file.mimetype.includes('heic')) {
-        throw new HttpException(
-          DomainError.INTERNAL_SERVER_ERROR,
-          HttpStatus.BAD_REQUEST,
-        );
+        throw new HttpException(DomainError.INTERNAL_SERVER_ERROR, HttpStatus.BAD_REQUEST);
       }
 
       const imageBuffer = file.mimetype.includes('png')

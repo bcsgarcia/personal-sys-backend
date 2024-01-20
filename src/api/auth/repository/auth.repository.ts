@@ -9,9 +9,7 @@ export class AuthRepository {
 
   findById(id: string): Promise<any> {
     try {
-      return this.databaseService.execute('SELECT * FROM auth WHERE id = ?', [
-        id,
-      ]);
+      return this.databaseService.execute('SELECT * FROM auth WHERE id = ?', [id]);
     } catch (error) {
       throw error;
     }
@@ -19,10 +17,7 @@ export class AuthRepository {
 
   async emailAlreadyExists(email: string, idCompany: string): Promise<any> {
     try {
-      return this.databaseService.execute(
-        'SELECT * FROM auth WHERE email = ? and idCompany = ? ',
-        [email, idCompany],
-      );
+      return this.databaseService.execute('SELECT * FROM auth WHERE email = ? and idCompany = ? ', [email, idCompany]);
     } catch (error) {
       throw error;
     }
@@ -30,10 +25,11 @@ export class AuthRepository {
 
   async findByEmailAndPass(authDto: AuthDto): Promise<any> {
     try {
-      return this.databaseService.execute(
-        'SELECT * FROM auth WHERE email = ? and pass = ? and isAdmin = ?',
-        [authDto.email, authDto.pass, authDto.isAdmin],
-      );
+      return this.databaseService.execute('SELECT * FROM auth WHERE email = ? and pass = ? and isAdmin = ?', [
+        authDto.email,
+        authDto.pass,
+        authDto.isAdmin,
+      ]);
     } catch (error) {
       throw error;
     }
@@ -118,15 +114,16 @@ export class AuthRepository {
 
   async create(authDto: AuthDto): Promise<any> {
     try {
-      await this.databaseService.execute(
-        'INSERT INTO auth (email, pass, idCompany) VALUES (?, ?, ?)',
-        [authDto.email, authDto.pass, authDto.idCompany],
-      );
+      await this.databaseService.execute('INSERT INTO auth (email, pass, idCompany) VALUES (?, ?, ?)', [
+        authDto.email,
+        authDto.pass,
+        authDto.idCompany,
+      ]);
 
-      const [rows] = await this.databaseService.execute(
-        'SELECT * FROM auth WHERE email = ? and idCompany = ?',
-        [authDto.email, authDto.idCompany],
-      );
+      const [rows] = await this.databaseService.execute('SELECT * FROM auth WHERE email = ? and idCompany = ?', [
+        authDto.email,
+        authDto.idCompany,
+      ]);
 
       return rows;
     } catch (error) {
@@ -136,10 +133,11 @@ export class AuthRepository {
 
   async update(authDto: AuthDto): Promise<void> {
     try {
-      await this.databaseService.execute(
-        'UPDATE auth SET email = ?, pass = ? WHERE id = ?',
-        [authDto.email, authDto.pass, authDto.id],
-      );
+      await this.databaseService.execute('UPDATE auth SET email = ?, pass = ? WHERE id = ?', [
+        authDto.email,
+        authDto.pass,
+        authDto.id,
+      ]);
     } catch (error) {
       throw error;
     }
@@ -147,10 +145,10 @@ export class AuthRepository {
 
   async updateEmailByIdClient(idClient: string, email: string): Promise<void> {
     try {
-      this.databaseService.execute(
-        'UPDATE auth SET email = ? WHERE id in (select idAuth from client where id = ?)',
-        [email, idClient],
-      );
+      this.databaseService.execute('UPDATE auth SET email = ? WHERE id in (select idAuth from client where id = ?)', [
+        email,
+        idClient,
+      ]);
     } catch (error) {
       throw error;
     }
@@ -158,25 +156,21 @@ export class AuthRepository {
 
   async updatePassByIdClient(idClient: string, pass: string): Promise<void> {
     try {
-      this.databaseService.execute(
-        'UPDATE auth SET pass = ? WHERE id in (select idAuth from client where id = ?)',
-        [pass, idClient],
-      );
+      this.databaseService.execute('UPDATE auth SET pass = ? WHERE id in (select idAuth from client where id = ?)', [
+        pass,
+        idClient,
+      ]);
     } catch (error) {
       throw error;
     }
   }
 
   async deleteById(id: string): Promise<void> {
-    await this.databaseService.execute(
-      'update client set isActive=false WHERE id = ?',
-      [id],
-    );
+    await this.databaseService.execute('update client set isActive=false WHERE id = ?', [id]);
   }
 
   async validateOldPass(idClient: string): Promise<string> {
-    const querie =
-      'SELECT pass FROM client c INNER JOIN auth a on a.id = c.idAuth WHERE c.id = ?';
+    const querie = 'SELECT pass FROM client c INNER JOIN auth a on a.id = c.idAuth WHERE c.id = ?';
 
     const rows = await this.databaseService.execute(querie, [idClient]);
 

@@ -12,8 +12,7 @@ import { NotificationRepository } from './repository/notification.repository';
     DatabaseService,
     {
       provide: NotificationRepository,
-      useFactory: (databaseService: DatabaseService) =>
-        new NotificationRepository(databaseService),
+      useFactory: (databaseService: DatabaseService) => new NotificationRepository(databaseService),
       inject: [DatabaseService],
     },
   ],

@@ -5,21 +5,16 @@ import { FtpService } from '../../../common-services/ftp-service.service';
 
 @Injectable()
 export class MediaService {
-  constructor(
-    private readonly mediaRepository: MediaRepository,
-    private readonly ftpService: FtpService,
-  ) {}
+  constructor(private readonly mediaRepository: MediaRepository, private readonly ftpService: FtpService) {}
 
   async create(mediaDto: MediaDto): Promise<MediaDto> {
     try {
       const row = await this.mediaRepository.create(mediaDto);
       const createdMediaDto = new MediaDto(row);
 
-      createdMediaDto.url = `${
-        mediaDto.type == 'image'
-          ? process.env.IMAGE_BASE_PATH
-          : process.env.VIDEO_BASE_PATH
-      }/${createdMediaDto.id}.${createdMediaDto.fileFormat}`;
+      createdMediaDto.url = `${mediaDto.type == 'image' ? process.env.IMAGE_BASE_PATH : process.env.VIDEO_BASE_PATH}/${
+        createdMediaDto.id
+      }.${createdMediaDto.fileFormat}`;
 
       if (mediaDto.type == 'video') {
         createdMediaDto.thumbnailUrl = `${process.env.THUMBNAIL_BASE_PATH}/${createdMediaDto.id}.png`;
@@ -43,23 +38,11 @@ export class MediaService {
     }
   }
 
-  async findAllPagined(
-    idCompany: string,
-    page: number,
-    itemsPerPage: number,
-    mediaType: string,
-    title: string,
-  ) {
+  async findAllPagined(idCompany: string, page: number, itemsPerPage: number, mediaType: string, title: string) {
     try {
       const offset = (page - 1) * itemsPerPage;
 
-      const rows = await this.mediaRepository.findAllPagined(
-        idCompany,
-        offset,
-        itemsPerPage,
-        mediaType,
-        title,
-      );
+      const rows = await this.mediaRepository.findAllPagined(idCompany, offset, itemsPerPage, mediaType, title);
       const mediaList = rows.map((row) => new MediaDto(row));
 
       return mediaList;
@@ -71,9 +54,7 @@ export class MediaService {
   async findAllPhotos(idCompany: string) {
     try {
       const mediaList = await this.findAll(idCompany);
-      return (mediaList as [MediaDto]).filter(
-        (media) => media.type === 'image',
-      );
+      return (mediaList as [MediaDto]).filter((media) => media.type === 'image');
     } catch (error) {
       throw new InternalServerErrorException();
     }
@@ -82,9 +63,7 @@ export class MediaService {
   async findAllVideos(idCompany: string) {
     try {
       const mediaList = await this.findAll(idCompany);
-      return (mediaList as [MediaDto]).filter(
-        (media) => media.type === 'video',
-      );
+      return (mediaList as [MediaDto]).filter((media) => media.type === 'video');
     } catch (error) {
       throw new InternalServerErrorException();
     }

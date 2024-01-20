@@ -6,11 +6,7 @@ import * as path from 'path';
 export class UploadService {
   constructor(private readonly ftpService: FtpService) {}
 
-  async uploadFile(
-    @UploadedFile() file,
-    mediaType: string,
-    idMedia: string,
-  ): Promise<void> {
+  async uploadFile(@UploadedFile() file, mediaType: string, idMedia: string): Promise<void> {
     try {
       const fileBuffer = file.buffer;
       const fileName = `${idMedia}.${this.getExtension(file.originalname)}`;
@@ -28,13 +24,7 @@ export class UploadService {
   }
 
   validateFile(@UploadedFile() file): boolean {
-    const imageMimeTypes = [
-      'image/png',
-      'image/jpeg',
-      'image/jpg',
-      'image/gif',
-      'image/webp',
-    ];
+    const imageMimeTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp'];
 
     const videoMimeTypes = ['video/mp4', 'video/mpeg'];
 

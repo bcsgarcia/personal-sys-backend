@@ -1,11 +1,5 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import {
-  IsBoolean,
-  IsNotEmpty,
-  IsOptional,
-  IsString,
-  IsUUID,
-} from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UpdateAppointmentDto {
   @ApiProperty({
@@ -71,8 +65,7 @@ export class UpdateAppointmentDto {
   idCompany: string;
 
   @ApiProperty({
-    description:
-      'If you want to send a notification to any client regarding the appointment',
+    description: 'If you want to send a notification to any client regarding the appointment',
     type: Array<string>,
     required: false,
   })

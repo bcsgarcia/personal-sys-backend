@@ -1,10 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
-import {
-  convertDateToTimestamp,
-  getMessage,
-  SqlError,
-} from 'src/api/utils/utils';
+import { convertDateToTimestamp, getMessage, SqlError } from 'src/api/utils/utils';
 import { AccessTokenModel } from 'src/models/access-token-user.model';
 import { CreateWorkoutsheetDefaultWorkoutDto } from '../dto/request/create.workoutsheet.default.dto';
 import { WorkoutsheetModel } from '../../../models/workoutsheet.model';
@@ -14,10 +10,7 @@ import { WorkoutClientModel } from '../../../models/workout.client.model';
 export class WorkoutsheetRepository {
   constructor(private databaseService: DatabaseService) {}
 
-  async createWorkoutSheetDefault(
-    title: string,
-    idCompany: string,
-  ): Promise<any> {
+  async createWorkoutSheetDefault(title: string, idCompany: string): Promise<any> {
     try {
       const createQuery = `insert into workoutSheetDefault (title, idCompany)
                            values (?, ?);`;
@@ -35,18 +28,13 @@ export class WorkoutsheetRepository {
     } catch (error) {
       if (error.code == SqlError.DuplicateKey) {
         const errorMessage = getMessage(SqlError.DuplicateKey);
-        throw new HttpException(
-          `SQL error: ${errorMessage}`,
-          HttpStatus.CONFLICT,
-        );
+        throw new HttpException(`SQL error: ${errorMessage}`, HttpStatus.CONFLICT);
       }
       throw error;
     }
   }
 
-  async createWorkoutSheet(
-    workoutsheetList: WorkoutsheetModel[],
-  ): Promise<any> {
+  async createWorkoutSheet(workoutsheetList: WorkoutsheetModel[]): Promise<any> {
     try {
       const params = workoutsheetList
         .map(
@@ -62,18 +50,13 @@ export class WorkoutsheetRepository {
     } catch (error) {
       if (error.code == SqlError.DuplicateKey) {
         const errorMessage = getMessage(SqlError.DuplicateKey);
-        throw new HttpException(
-          `SQL error: ${errorMessage}`,
-          HttpStatus.CONFLICT,
-        );
+        throw new HttpException(`SQL error: ${errorMessage}`, HttpStatus.CONFLICT);
       }
       throw error;
     }
   }
 
-  async createWorkoutClient(
-    workoutClientList: WorkoutClientModel[],
-  ): Promise<any> {
+  async createWorkoutClient(workoutClientList: WorkoutClientModel[]): Promise<any> {
     try {
       const params = workoutClientList
         .map(
@@ -90,35 +73,23 @@ export class WorkoutsheetRepository {
     } catch (error) {
       if (error.code == SqlError.DuplicateKey) {
         const errorMessage = getMessage(SqlError.DuplicateKey);
-        throw new HttpException(
-          `SQL error: ${errorMessage}`,
-          HttpStatus.CONFLICT,
-        );
+        throw new HttpException(`SQL error: ${errorMessage}`, HttpStatus.CONFLICT);
       }
       throw error;
     }
   }
 
-  async updateWorkoutSheetDefault(
-    title: string,
-    idWorkout: string,
-  ): Promise<any> {
+  async updateWorkoutSheetDefault(title: string, idWorkout: string): Promise<any> {
     try {
       const createQuery = `update workoutSheetDefault
                            set title = ?
                            where id = ?;`;
 
-      return await this.databaseService.execute(createQuery, [
-        title,
-        idWorkout,
-      ]);
+      return await this.databaseService.execute(createQuery, [title, idWorkout]);
     } catch (error) {
       if (error.code == SqlError.DuplicateKey) {
         const errorMessage = getMessage(SqlError.DuplicateKey);
-        throw new HttpException(
-          `SQL error: ${errorMessage}`,
-          HttpStatus.CONFLICT,
-        );
+        throw new HttpException(`SQL error: ${errorMessage}`, HttpStatus.CONFLICT);
       }
       throw error;
     }
@@ -131,10 +102,7 @@ export class WorkoutsheetRepository {
   ): Promise<void> {
     try {
       const params = createWorkoutsheetDefaultWorkoutDto
-        .map(
-          (item) =>
-            `('${idWorkoutSheetDefault}', '${idCompany}', '${item.idWorkout}', ${item.workoutOrder})`,
-        )
+        .map((item) => `('${idWorkoutSheetDefault}', '${idCompany}', '${item.idWorkout}', ${item.workoutOrder})`)
         .join(',');
 
       const createQuery = `insert into workoutSheetDefaultWorkout (idWorkoutSheetDefault, idCompany, idWorkout, workoutOrder)
@@ -146,9 +114,7 @@ export class WorkoutsheetRepository {
     }
   }
 
-  async deleteWorkoutSheetDefaultWorkout(
-    idWorkoutSheetDefault: string,
-  ): Promise<void> {
+  async deleteWorkoutSheetDefaultWorkout(idWorkoutSheetDefault: string): Promise<void> {
     try {
       const createQuery = `delete
                            from workoutSheetDefaultWorkout
@@ -186,10 +152,7 @@ export class WorkoutsheetRepository {
     }
   }
 
-  async getAllWorkoutsheetByIdClientAdmin(
-    idClient: string,
-    idCompany: string,
-  ): Promise<any> {
+  async getAllWorkoutsheetByIdClientAdmin(idClient: string, idCompany: string): Promise<any> {
     try {
       const query = `SELECT w.*
                      FROM workoutSheet w
@@ -204,14 +167,9 @@ export class WorkoutsheetRepository {
     }
   }
 
-  async getWorkoutsheetDefaultByIdList(
-    idCompany: string,
-    idWorkoutsheetDefaultList: string[],
-  ): Promise<any> {
+  async getWorkoutsheetDefaultByIdList(idCompany: string, idWorkoutsheetDefaultList: string[]): Promise<any> {
     try {
-      const params = idWorkoutsheetDefaultList
-        .map((item) => `'${item}'`)
-        .join(',');
+      const params = idWorkoutsheetDefaultList.map((item) => `'${item}'`).join(',');
 
       const query = `SELECT *
                      FROM workoutSheetDefault
@@ -226,9 +184,7 @@ export class WorkoutsheetRepository {
     }
   }
 
-  async getAllWorkoutsheetDefaultByIdCompanyAdmin(
-    idCompany: string,
-  ): Promise<any> {
+  async getAllWorkoutsheetDefaultByIdCompanyAdmin(idCompany: string): Promise<any> {
     try {
       const query = `SELECT *
                      FROM workoutSheetDefault
@@ -242,9 +198,7 @@ export class WorkoutsheetRepository {
     }
   }
 
-  async getAllWorkoutsheetDefaultWorkoutByIdCompanyAdmin(
-    idCompany: string,
-  ): Promise<any> {
+  async getAllWorkoutsheetDefaultWorkoutByIdCompanyAdmin(idCompany: string): Promise<any> {
     try {
       const query = `SELECT *
                      FROM workoutSheetDefaultWorkout
@@ -261,9 +215,7 @@ export class WorkoutsheetRepository {
     idWorkoutsheetDefaultList: string[],
   ): Promise<any> {
     try {
-      const params = idWorkoutsheetDefaultList
-        .map((item) => `'${item}'`)
-        .join(',');
+      const params = idWorkoutsheetDefaultList.map((item) => `'${item}'`).join(',');
 
       const query = `SELECT *
                      FROM workoutSheetDefaultWorkout
@@ -331,9 +283,7 @@ export class WorkoutsheetRepository {
     }
   }
 
-  async getAllMyCurrentWorkoutSheetsWithWorkouts(
-    user: AccessTokenModel,
-  ): Promise<any> {
+  async getAllMyCurrentWorkoutSheetsWithWorkouts(user: AccessTokenModel): Promise<any> {
     try {
       const query = `
           SELECT ws.id                as workoutSheetId,
@@ -408,20 +358,13 @@ export class WorkoutsheetRepository {
            date)
           VALUES (?, ?, ?);`;
 
-      return await this.databaseService.execute(query, [
-        idWorkoutsheet,
-        idCompany,
-        convertDateToTimestamp(new Date()),
-      ]);
+      return await this.databaseService.execute(query, [idWorkoutsheet, idCompany, convertDateToTimestamp(new Date())]);
     } catch (error) {
       throw error;
     }
   }
 
-  async createWorkoutsheetFeedback(
-    feedback: string,
-    idWorkoutsheet: string,
-  ): Promise<void> {
+  async createWorkoutsheetFeedback(feedback: string, idWorkoutsheet: string): Promise<void> {
     try {
       const query = `
           INSERT INTO workoutSheetFeedback
@@ -448,9 +391,7 @@ export class WorkoutsheetRepository {
       // });
       // titleCaseString += 'END';
 
-      const params = idWorkoutSheetDefaultList
-        .map((item) => `'${item}'`)
-        .join(',');
+      const params = idWorkoutSheetDefaultList.map((item) => `'${item}'`).join(',');
 
       await this.databaseService.execute(
         `delete

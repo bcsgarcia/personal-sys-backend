@@ -7,9 +7,7 @@ import { AccessTokenModel } from 'src/models/access-token-user.model';
 
 @Injectable()
 export class NotificationService {
-  constructor(
-    private readonly notificationRepository: NotificationRepository,
-  ) {}
+  constructor(private readonly notificationRepository: NotificationRepository) {}
 
   create(createNotificationDto: CreateNotificationDto) {
     try {
@@ -29,15 +27,9 @@ export class NotificationService {
     }
   }
 
-  async findAllByIdClient(
-    idClient: string,
-    idCompany: string,
-  ): Promise<GetNotificationDto[]> {
+  async findAllByIdClient(idClient: string, idCompany: string): Promise<GetNotificationDto[]> {
     try {
-      const rows = await this.notificationRepository.findAllByIdClient(
-        idClient,
-        idCompany,
-      );
+      const rows = await this.notificationRepository.findAllByIdClient(idClient, idCompany);
 
       return rows.map((row) => new GetNotificationDto(row));
     } catch (error) {
@@ -47,9 +39,7 @@ export class NotificationService {
 
   async findAllWarningByIdCompany(idCompany: string): Promise<Notification[]> {
     try {
-      const rows = await this.notificationRepository.findAllWarningByIdCompany(
-        idCompany,
-      );
+      const rows = await this.notificationRepository.findAllWarningByIdCompany(idCompany);
 
       return rows.map((row) => new Notification(row));
     } catch (error) {
@@ -67,10 +57,7 @@ export class NotificationService {
 
   async updateUnreadNotifications(user: AccessTokenModel): Promise<void> {
     try {
-      await this.notificationRepository.updateReadDateForAllNotification(
-        user.clientId,
-        user.clientIdCompany,
-      );
+      await this.notificationRepository.updateReadDateForAllNotification(user.clientId, user.clientIdCompany);
     } catch (error) {
       throw error;
     }

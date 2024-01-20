@@ -2,8 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class UpdateCompanyMainInformationDto {
   @ApiProperty({
-    description:
-      'The unique identifier of the company main information to update.',
+    description: 'The unique identifier of the company main information to update.',
     example: '123e4567-e89b-12d3-a456-426614174000',
     type: String,
   })

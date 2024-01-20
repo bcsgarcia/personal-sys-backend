@@ -15,8 +15,7 @@ import { JwtModule } from '@nestjs/jwt';
     Reflector,
     {
       provide: AuthRepository,
-      useFactory: (databaseService: DatabaseService) =>
-        new AuthRepository(databaseService),
+      useFactory: (databaseService: DatabaseService) => new AuthRepository(databaseService),
       inject: [DatabaseService],
     },
   ],

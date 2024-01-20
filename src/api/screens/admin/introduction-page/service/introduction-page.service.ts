@@ -15,9 +15,7 @@ export class IntroductionPageService {
 
   async getCompanyInformation(idCompany: string): Promise<any> {
     try {
-      const companyInfoFind = await this.companyRepository.findByIdAdmin(
-        idCompany,
-      );
+      const companyInfoFind = await this.companyRepository.findByIdAdmin(idCompany);
 
       const companyInfo = {
         ...companyInfoFind,
@@ -29,42 +27,30 @@ export class IntroductionPageService {
       const mediaList = await this.mediaRepository.findAll(idCompany);
 
       if (companyInfo.firstVideoMediaId != null) {
-        companyInfo.firstVideoMedia = mediaList.find(
-          (media) => media.id === companyInfo.firstVideoMediaId,
-        );
+        companyInfo.firstVideoMedia = mediaList.find((media) => media.id === companyInfo.firstVideoMediaId);
       }
 
       if (companyInfo.secondVideoMediaId != null) {
-        companyInfo.secondVideoMedia = mediaList.find(
-          (media) => media.id === companyInfo.secondVideoMediaId,
-        );
+        companyInfo.secondVideoMedia = mediaList.find((media) => media.id === companyInfo.secondVideoMediaId);
       }
 
       if (companyInfo.photoMediaId != null) {
-        companyInfo.photoMedia = mediaList.find(
-          (media) => media.id === companyInfo.photoMediaId,
-        );
+        companyInfo.photoMedia = mediaList.find((media) => media.id === companyInfo.photoMediaId);
       }
 
-      const testimonyList =
-        await this.companyRepository.getTestimonyByIdCompanyAdmin(idCompany);
+      const testimonyList = await this.companyRepository.getTestimonyByIdCompanyAdmin(idCompany);
 
       const testimonyListWithMedia = testimonyList.map((item) => ({
         ...item,
         media: mediaList.find((media) => media.id === item.idMedia),
       }));
 
-      const beforeAndAfterImageList =
-        await this.companyRepository.getPhotosBeforeAndAfterByIdCompanyAdmin(
-          idCompany,
-        );
+      const beforeAndAfterImageList = await this.companyRepository.getPhotosBeforeAndAfterByIdCompanyAdmin(idCompany);
 
-      const beforeAndAfterImageListWithMedia = beforeAndAfterImageList.map(
-        (item) => ({
-          ...item,
-          media: mediaList.find((media) => media.id === item.idMedia),
-        }),
-      );
+      const beforeAndAfterImageListWithMedia = beforeAndAfterImageList.map((item) => ({
+        ...item,
+        media: mediaList.find((media) => media.id === item.idMedia),
+      }));
 
       return {
         companyInfo: companyInfo,
@@ -81,10 +67,7 @@ export class IntroductionPageService {
     idCompany: string,
   ): Promise<any> {
     try {
-      await this.companyRepository.createBeforeAndAfterImage(
-        createBeforeAndAfterImageDto,
-        idCompany,
-      );
+      await this.companyRepository.createBeforeAndAfterImage(createBeforeAndAfterImageDto, idCompany);
 
       return {
         status: 'success',
@@ -94,13 +77,9 @@ export class IntroductionPageService {
     }
   }
 
-  async deleteBeforeAndAfterImage(
-    deleteBeforeAndAfter: DeleteBeforeAndAfterImageDto,
-  ): Promise<any> {
+  async deleteBeforeAndAfterImage(deleteBeforeAndAfter: DeleteBeforeAndAfterImageDto): Promise<any> {
     try {
-      await this.companyRepository.deleteBeforeAndAfterImage(
-        deleteBeforeAndAfter,
-      );
+      await this.companyRepository.deleteBeforeAndAfterImage(deleteBeforeAndAfter);
 
       return {
         status: 'success',
@@ -110,15 +89,9 @@ export class IntroductionPageService {
     }
   }
 
-  async createTestimony(
-    createTestimonyDto: CreateTestimonyDto[],
-    idCompany: string,
-  ): Promise<any> {
+  async createTestimony(createTestimonyDto: CreateTestimonyDto[], idCompany: string): Promise<any> {
     try {
-      await this.companyRepository.createTestimony(
-        createTestimonyDto,
-        idCompany,
-      );
+      await this.companyRepository.createTestimony(createTestimonyDto, idCompany);
 
       return {
         status: 'success',

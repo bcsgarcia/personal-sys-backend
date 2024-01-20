@@ -1,23 +1,8 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  Post,
-  Put,
-  Req,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Req } from '@nestjs/common';
 import { WorkoutService } from '../service/workout.service';
 import { CreateWorkoutDto } from '../dto/create-workout.dto';
 import { UpdateWorkoutDto } from '../dto/update-workout.dto';
-import {
-  ApiBadRequestResponse,
-  ApiBearerAuth,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { AccessTokenModel } from 'src/models/access-token-user.model';
 import { CreateWorkoutClientDto } from '../dto/create-workout-client.dto';
@@ -63,11 +48,7 @@ export class WorkoutController {
       const feedback = body['feedback'];
       const user = new AccessTokenModel(request['user']);
 
-      return this.workoutService.createFeedback(
-        idWorkout,
-        user.clientIdCompany,
-        feedback,
-      );
+      return this.workoutService.createFeedback(idWorkout, user.clientIdCompany, feedback);
     } catch (error) {
       throw error;
     }
@@ -139,10 +120,7 @@ export class WorkoutController {
   @ApiBadRequestResponse({
     description: 'Invalid or missing data in the header/request.',
   })
-  createWorkoutClient(
-    @Body() createWorkoutClientDto: CreateWorkoutClientDto,
-    @Req() request: Request,
-  ) {
+  createWorkoutClient(@Body() createWorkoutClientDto: CreateWorkoutClientDto, @Req() request: Request) {
     try {
       const user = new AccessTokenModel(request['user']);
       createWorkoutClientDto.idCompany = user.clientIdCompany;
@@ -165,10 +143,7 @@ export class WorkoutController {
   @ApiBadRequestResponse({
     description: 'Invalid or missing data in the request.',
   })
-  removeWorkoutClient(
-    @Req() request: Request,
-    @Param('idWorkoutClient') idWorkout: string,
-  ) {
+  removeWorkoutClient(@Req() request: Request, @Param('idWorkoutClient') idWorkout: string) {
     try {
       const user = new AccessTokenModel(request['user']);
       return this.workoutService.removeWorkoutClient(idWorkout);

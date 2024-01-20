@@ -11,8 +11,7 @@ export class WorkoutRepository {
 
   async create(workout: CreateWorkoutDto): Promise<void> {
     try {
-      const createQuery =
-        'insert into workout (title, subTitle, description, idCompany) values (?,?,?,?);';
+      const createQuery = 'insert into workout (title, subTitle, description, idCompany) values (?,?,?,?);';
 
       await this.databaseService.execute(createQuery, [
         workout.title,
@@ -25,9 +24,7 @@ export class WorkoutRepository {
     }
   }
 
-  async createWorkoutClient(
-    workoutClientDto: CreateWorkoutClientDto,
-  ): Promise<void> {
+  async createWorkoutClient(workoutClientDto: CreateWorkoutClientDto): Promise<void> {
     try {
       const createQuery =
         'insert into workoutClient (title, subTitle, description, idCompany, idWorkout, breakTime, series, workoutOrder, idWorkoutsheet) values (?,?,?,?,?,?,?,?,?);';
@@ -55,10 +52,7 @@ export class WorkoutRepository {
   ): Promise<void> {
     try {
       const params = workoutMediaList
-        .map(
-          (item) =>
-            `('${idWorkout}', '${idCompany}', '${item.id}', ${item.mediaOrder})`,
-        )
+        .map((item) => `('${idWorkout}', '${idCompany}', '${item.id}', ${item.mediaOrder})`)
         .join(',');
 
       const query = `
@@ -92,10 +86,12 @@ export class WorkoutRepository {
 
   async update(workout: UpdateWorkoutDto): Promise<void> {
     try {
-      await this.databaseService.execute(
-        'UPDATE workout SET title = ?, subTitle = ?, description = ?  WHERE id = ?',
-        [workout.title, workout.subtitle, workout.description, workout.id],
-      );
+      await this.databaseService.execute('UPDATE workout SET title = ?, subTitle = ?, description = ?  WHERE id = ?', [
+        workout.title,
+        workout.subtitle,
+        workout.description,
+        workout.id,
+      ]);
     } catch (error) {
       throw error;
     }
@@ -129,9 +125,7 @@ export class WorkoutRepository {
     }
   }
 
-  async findManyWorkoutByIdWorkoutsheetList(
-    idWorkoutsheetList: string[],
-  ): Promise<any> {
+  async findManyWorkoutByIdWorkoutsheetList(idWorkoutsheetList: string[]): Promise<any> {
     try {
       const params = idWorkoutsheetList.map((item) => `'${item}'`).join(',');
 
@@ -148,9 +142,7 @@ export class WorkoutRepository {
     }
   }
 
-  async findWorkoutClientByWorkoutsheet(
-    workoutsheetList: string[],
-  ): Promise<any> {
+  async findWorkoutClientByWorkoutsheet(workoutsheetList: string[]): Promise<any> {
     try {
       const params = workoutsheetList.map((item) => `'${item}'`).join(',');
 
@@ -180,10 +172,7 @@ export class WorkoutRepository {
     }
   }
 
-  async findManyWorkoutMediaByIdWorkoutList(
-    idWorkoutList: string[],
-    idCompany: string,
-  ): Promise<any> {
+  async findManyWorkoutMediaByIdWorkoutList(idWorkoutList: string[], idCompany: string): Promise<any> {
     try {
       const params = idWorkoutList.map((item) => `'${item}'`).join(',');
 
@@ -215,9 +204,7 @@ export class WorkoutRepository {
 
   async deleteById(idWorkout: string): Promise<void> {
     try {
-      await this.databaseService.execute('DELETE FROM workout WHERE id = ?', [
-        idWorkout,
-      ]);
+      await this.databaseService.execute('DELETE FROM workout WHERE id = ?', [idWorkout]);
     } catch (error) {
       throw error;
     }
@@ -225,10 +212,7 @@ export class WorkoutRepository {
 
   async deleteWorkoutClientById(idWorkoutClient: string): Promise<void> {
     try {
-      await this.databaseService.execute(
-        'DELETE FROM workoutClient WHERE id = ?',
-        [idWorkoutClient],
-      );
+      await this.databaseService.execute('DELETE FROM workoutClient WHERE id = ?', [idWorkoutClient]);
     } catch (error) {
       throw error;
     }
@@ -236,29 +220,17 @@ export class WorkoutRepository {
 
   async deleteWorkoutMedia(idWorkout: string): Promise<void> {
     try {
-      await this.databaseService.execute(
-        'DELETE FROM workoutMedia WHERE idWorkout = ?',
-        [idWorkout],
-      );
+      await this.databaseService.execute('DELETE FROM workoutMedia WHERE idWorkout = ?', [idWorkout]);
     } catch (error) {
       throw error;
     }
   }
 
-  async createFeedback(
-    idWorkoutClient: string,
-    idCompany: string,
-    feedback: string,
-  ): Promise<void> {
+  async createFeedback(idWorkoutClient: string, idCompany: string, feedback: string): Promise<void> {
     try {
-      const querie =
-        'insert into workoutFeedback (feedback, idWorkoutClient, idCompany) values (?,?,?);';
+      const querie = 'insert into workoutFeedback (feedback, idWorkoutClient, idCompany) values (?,?,?);';
 
-      await this.databaseService.execute(querie, [
-        feedback,
-        idWorkoutClient,
-        idCompany,
-      ]);
+      await this.databaseService.execute(querie, [feedback, idWorkoutClient, idCompany]);
     } catch (error) {
       throw error;
     }

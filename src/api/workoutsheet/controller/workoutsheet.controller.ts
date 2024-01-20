@@ -1,24 +1,7 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  HttpStatus,
-  Param,
-  Post,
-  Put,
-  Req,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Req } from '@nestjs/common';
 import { WorkoutsheetService } from '../service/workoutsheet.service';
 import { CreateWorkoutsheetDefaultDto } from '../dto/request/create.workoutsheet.default.dto';
-import {
-  ApiBadRequestResponse,
-  ApiBearerAuth,
-  ApiBody,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { UpdateWorkoutsheetDefaultDto } from '../dto/request/update.workoutsheet.default.dto';
 import { GetAllWorkoutSheetDefaultDto } from '../dto/request/get.all.workoutsheet.default.dto';
@@ -47,17 +30,11 @@ export class WorkoutsheetController {
   @ApiBadRequestResponse({
     description: 'Bad request, unable to retrieve workoutSheet.',
   })
-  findAllWorkoutSheetByIdClient(
-    @Param('idClient') idClient: string,
-    @Req() request: Request,
-  ) {
+  findAllWorkoutSheetByIdClient(@Param('idClient') idClient: string, @Req() request: Request) {
     try {
       const user = new AccessTokenModel(request['user']);
 
-      return this.workoutsheetService.getAllWorkoutSheetByIdClient(
-        idClient,
-        user.clientIdCompany,
-      );
+      return this.workoutsheetService.getAllWorkoutSheetByIdClient(idClient, user.clientIdCompany);
     } catch (error) {
       throw error;
     }
@@ -72,16 +49,12 @@ export class WorkoutsheetController {
   })
   @ApiResponse({
     status: 200,
-    description:
-      'Successfully deactivated the workoutsheetdefault by setting isActivate to false.',
+    description: 'Successfully deactivated the workoutsheetdefault by setting isActivate to false.',
   })
   @ApiBadRequestResponse({
     description: 'Bad request, unable to deactivate the workout sheet default.',
   })
-  deleteWorkoutsheet(
-    @Body() deleteWorkoutsheetDto: DeleteWorkoutsheetDto,
-    @Req() request: Request,
-  ) {
+  deleteWorkoutsheet(@Body() deleteWorkoutsheetDto: DeleteWorkoutsheetDto, @Req() request: Request) {
     try {
       const user = new AccessTokenModel(request['user']);
 
@@ -105,10 +78,7 @@ export class WorkoutsheetController {
     status: HttpStatus.CONFLICT,
     description: 'A duplicate key was found in the database.',
   })
-  createWorkoutSheet(
-    @Body() createWorkoutsheetDto: CreateWorkoutsheetDto,
-    @Req() request: Request,
-  ) {
+  createWorkoutSheet(@Body() createWorkoutsheetDto: CreateWorkoutsheetDto, @Req() request: Request) {
     try {
       const user = new AccessTokenModel(request['user']);
       createWorkoutsheetDto.idCompany = user.clientIdCompany;
@@ -137,17 +107,12 @@ export class WorkoutsheetController {
     status: HttpStatus.CONFLICT,
     description: 'A duplicate key was found in the database.',
   })
-  createWorkoutSheetDefault(
-    @Body() createWorkoutsheetDto: CreateWorkoutsheetDefaultDto,
-    @Req() request: Request,
-  ) {
+  createWorkoutSheetDefault(@Body() createWorkoutsheetDto: CreateWorkoutsheetDefaultDto, @Req() request: Request) {
     try {
       const user = new AccessTokenModel(request['user']);
       createWorkoutsheetDto.idCompany = user.clientIdCompany;
 
-      return this.workoutsheetService.createWorkoutSheetDefault(
-        createWorkoutsheetDto,
-      );
+      return this.workoutsheetService.createWorkoutSheetDefault(createWorkoutsheetDto);
     } catch (error) {
       throw error;
     }
@@ -162,18 +127,13 @@ export class WorkoutsheetController {
     description: 'The default workout sheet has been successfully updated.',
   })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request.' })
-  updateWorkoutSheetDefault(
-    @Body() updateWorkoutsheetDto: UpdateWorkoutsheetDefaultDto,
-    @Req() request: Request,
-  ) {
+  updateWorkoutSheetDefault(@Body() updateWorkoutsheetDto: UpdateWorkoutsheetDefaultDto, @Req() request: Request) {
     try {
       const user = new AccessTokenModel(request['user']);
 
       updateWorkoutsheetDto.idCompany = user.clientIdCompany;
 
-      return this.workoutsheetService.updateWorkoutSheetDefaultWorkout(
-        updateWorkoutsheetDto,
-      );
+      return this.workoutsheetService.updateWorkoutSheetDefaultWorkout(updateWorkoutsheetDto);
     } catch (error) {
       throw error;
     }
@@ -198,9 +158,7 @@ export class WorkoutsheetController {
     try {
       const user = new AccessTokenModel(request['user']);
 
-      return this.workoutsheetService.getAllWorkoutSheetDefaultByIdCompany(
-        user.clientIdCompany,
-      );
+      return this.workoutsheetService.getAllWorkoutSheetDefaultByIdCompany(user.clientIdCompany);
     } catch (error) {
       throw error;
     }
@@ -215,8 +173,7 @@ export class WorkoutsheetController {
   })
   @ApiResponse({
     status: 200,
-    description:
-      'Successfully deactivated the workoutsheetdefault by setting isActivate to false.',
+    description: 'Successfully deactivated the workoutsheetdefault by setting isActivate to false.',
   })
   @ApiBadRequestResponse({
     description: 'Bad request, unable to deactivate the workout sheet default.',
@@ -269,18 +226,12 @@ export class WorkoutsheetController {
     description: 'The default workout sheet has been successfully created.',
   })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request.' })
-  createWorkoutsheetFeedback(
-    @Body() body: any,
-    @Req() request: Request,
-  ): Promise<void> {
+  createWorkoutsheetFeedback(@Body() body: any, @Req() request: Request): Promise<void> {
     try {
       const feedback = body['feedback'];
       const idWorkoutsheet = body['idworkoutsheet'];
 
-      return this.workoutsheetService.createWorkoutsheetFeedback(
-        feedback,
-        idWorkoutsheet,
-      );
+      return this.workoutsheetService.createWorkoutsheetFeedback(feedback, idWorkoutsheet);
     } catch (error) {
       throw error;
     }

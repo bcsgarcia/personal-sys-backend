@@ -17,10 +17,7 @@ export class CompanyRepository {
   constructor(private databaseService: DatabaseService) {}
 
   async findById(id: string): Promise<any> {
-    const row = await this.databaseService.execute(
-      'SELECT * FROM company WHERE id = ?',
-      [id],
-    );
+    const row = await this.databaseService.execute('SELECT * FROM company WHERE id = ?', [id]);
 
     return row[0];
   }
@@ -70,10 +67,7 @@ export class CompanyRepository {
   }
 
   async deleteById(id: string): Promise<void> {
-    await this.databaseService.execute(
-      'UPDATE company SET isActive = 0 WHERE id = ?',
-      [id],
-    );
+    await this.databaseService.execute('UPDATE company SET isActive = 0 WHERE id = ?', [id]);
   }
 
   async findAllCompanyMainInformation(idCompany: string): Promise<any> {
@@ -90,9 +84,7 @@ export class CompanyRepository {
     }
   }
 
-  async createCompanyMainInformation(
-    item: CreateCompanyMainInformationDto,
-  ): Promise<void> {
+  async createCompanyMainInformation(item: CreateCompanyMainInformationDto): Promise<void> {
     try {
       const querie = `
           insert into companyMainInformation
@@ -100,20 +92,13 @@ export class CompanyRepository {
           values (?, ?, ?, ?);
       `;
 
-      await this.databaseService.execute(querie, [
-        item.title,
-        item.description,
-        item.idCompany,
-        item.infoOrder,
-      ]);
+      await this.databaseService.execute(querie, [item.title, item.description, item.idCompany, item.infoOrder]);
     } catch (error) {
       throw error;
     }
   }
 
-  async deleteCompanyMainInformation(
-    deleteItemDto: DeleteItemDto,
-  ): Promise<void> {
+  async deleteCompanyMainInformation(deleteItemDto: DeleteItemDto): Promise<void> {
     try {
       const placeholders = deleteItemDto.idList.map(() => '?').join(',');
 
@@ -122,30 +107,19 @@ export class CompanyRepository {
                      WHERE id in (${placeholders})
                        and idCompany = ?`;
 
-      await this.databaseService.execute(query, [
-        ...deleteItemDto.idList,
-        deleteItemDto.idCompany,
-      ]);
+      await this.databaseService.execute(query, [...deleteItemDto.idList, deleteItemDto.idCompany]);
     } catch (error) {
       throw error;
     }
   }
 
-  async updateCompanyMainInformation(
-    updateMainInformationList: UpdateMainInformationListDto,
-  ): Promise<void> {
+  async updateCompanyMainInformation(updateMainInformationList: UpdateMainInformationListDto): Promise<void> {
     try {
       await this.databaseService.transaction(async (conn) => {
         for (const item of updateMainInformationList.mainInformationList) {
           await this.databaseService.execute(
             'UPDATE companyMainInformation SET title = ?, description = ?, infoOrder = ? WHERE id = ? and idCompany = ?',
-            [
-              item.title,
-              item.description,
-              item.infoOrder,
-              item.id,
-              updateMainInformationList.idCompany,
-            ],
+            [item.title, item.description, item.infoOrder, item.id, updateMainInformationList.idCompany],
             conn,
           );
         }
@@ -189,9 +163,7 @@ export class CompanyRepository {
     }
   }
 
-  async updateCompanyPosturalPatterns(
-    updatePosturalPatternList: UpdatePosturalPatternListDto,
-  ): Promise<void> {
+  async updateCompanyPosturalPatterns(updatePosturalPatternList: UpdatePosturalPatternListDto): Promise<void> {
     try {
       await this.databaseService.transaction(async (conn) => {
         for (const item of updatePosturalPatternList.posturalPatternList) {
@@ -223,9 +195,7 @@ export class CompanyRepository {
     // }
   }
 
-  async deleteCompanyPosturalPattern(
-    deleteItemDto: DeleteItemDto,
-  ): Promise<void> {
+  async deleteCompanyPosturalPattern(deleteItemDto: DeleteItemDto): Promise<void> {
     try {
       const placeholders = deleteItemDto.idList.map(() => '?').join(',');
 
@@ -234,10 +204,7 @@ export class CompanyRepository {
                      WHERE id in (${placeholders})
                        and idCompany = ?`;
 
-      await this.databaseService.execute(query, [
-        ...deleteItemDto.idList,
-        deleteItemDto.idCompany,
-      ]);
+      await this.databaseService.execute(query, [...deleteItemDto.idList, deleteItemDto.idCompany]);
     } catch (error) {
       throw error;
     }
@@ -303,9 +270,7 @@ export class CompanyRepository {
     return await this.databaseService.execute(query);
   }
 
-  async getPhotosBeforeAndAfterByIdCompanyAdmin(
-    idCompany: string,
-  ): Promise<any> {
+  async getPhotosBeforeAndAfterByIdCompanyAdmin(idCompany: string): Promise<any> {
     const query = `
         SELECT b.id,
                b.idMedia
@@ -343,14 +308,9 @@ export class CompanyRepository {
     }
   }
 
-  async createBeforeAndAfterImage(
-    items: CreateBeforeAndAfterImageDto[],
-    idCompany: string,
-  ): Promise<void> {
+  async createBeforeAndAfterImage(items: CreateBeforeAndAfterImageDto[], idCompany: string): Promise<void> {
     try {
-      const params = items
-        .map((item) => `('${item.idMedia}', '${idCompany}')`)
-        .join(',');
+      const params = items.map((item) => `('${item.idMedia}', '${idCompany}')`).join(',');
 
       const query = `
           insert into photosBeforeAndAfter
@@ -364,13 +324,9 @@ export class CompanyRepository {
     }
   }
 
-  async deleteBeforeAndAfterImage(
-    deleteBeforeAndAfterImageDto: DeleteBeforeAndAfterImageDto,
-  ): Promise<void> {
+  async deleteBeforeAndAfterImage(deleteBeforeAndAfterImageDto: DeleteBeforeAndAfterImageDto): Promise<void> {
     try {
-      const placeholders = deleteBeforeAndAfterImageDto.idList
-        .map(() => '?')
-        .join(',');
+      const placeholders = deleteBeforeAndAfterImageDto.idList.map(() => '?').join(',');
 
       const query = `delete
                      from photosBeforeAndAfter
@@ -386,16 +342,10 @@ export class CompanyRepository {
     }
   }
 
-  async createTestimony(
-    items: CreateTestimonyDto[],
-    idCompany: string,
-  ): Promise<void> {
+  async createTestimony(items: CreateTestimonyDto[], idCompany: string): Promise<void> {
     try {
       const params = items
-        .map(
-          (item) =>
-            `('${item.name}', '${item.description}', '${idCompany}', '${item.idMedia}')`,
-        )
+        .map((item) => `('${item.name}', '${item.description}', '${idCompany}', '${item.idMedia}')`)
         .join(',');
 
       const query = `
@@ -419,10 +369,7 @@ export class CompanyRepository {
                      WHERE id in (${placeholders})
                        and idCompany = ? `;
 
-      await this.databaseService.execute(query, [
-        ...deleteTestimonyDto.idList,
-        deleteTestimonyDto.idCompany,
-      ]);
+      await this.databaseService.execute(query, [...deleteTestimonyDto.idList, deleteTestimonyDto.idCompany]);
     } catch (error) {
       throw error;
     }

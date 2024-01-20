@@ -15,8 +15,7 @@ import { NotificationModule } from '../notification/notification.module';
     DatabaseService,
     {
       provide: AppointmentRepository,
-      useFactory: (databaseService: DatabaseService) =>
-        new AppointmentRepository(databaseService),
+      useFactory: (databaseService: DatabaseService) => new AppointmentRepository(databaseService),
       inject: [DatabaseService],
     },
   ],

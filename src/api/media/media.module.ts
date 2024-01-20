@@ -14,8 +14,7 @@ import { FtpService } from '../../common-services/ftp-service.service';
     FtpService,
     {
       provide: MediaRepository,
-      useFactory: (databaseService: DatabaseService) =>
-        new MediaRepository(databaseService),
+      useFactory: (databaseService: DatabaseService) => new MediaRepository(databaseService),
       inject: [DatabaseService],
     },
   ],

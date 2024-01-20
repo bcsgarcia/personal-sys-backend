@@ -15,15 +15,11 @@ export class NotificationRepository {
       await this.databaseService.execute(createQuery, [
         notification.title,
         notification.description,
-        notification.notificationDate == undefined
-          ? null
-          : convertDateToTimestamp(notification.notificationDate),
+        notification.notificationDate == undefined ? null : convertDateToTimestamp(notification.notificationDate),
         notification.appointmentStartDate == undefined
           ? null
           : convertDateToTimestamp(notification.appointmentStartDate),
-        notification.appointmentEndDate == undefined
-          ? null
-          : convertDateToTimestamp(notification.appointmentEndDate),
+        notification.appointmentEndDate == undefined ? null : convertDateToTimestamp(notification.appointmentEndDate),
         notification.idClient === undefined ? null : notification.idClient,
         notification.idCompany,
       ]);
@@ -68,40 +64,23 @@ export class NotificationRepository {
     }
   }
 
-  async createReadNotification(
-    idNotification: string,
-    idClient: string,
-  ): Promise<void> {
+  async createReadNotification(idNotification: string, idClient: string): Promise<void> {
     try {
-      const createQuery =
-        'insert into readNotification (readDate, idNotification, idClient) VALUES (?, ?, ?);';
+      const createQuery = 'insert into readNotification (readDate, idNotification, idClient) VALUES (?, ?, ?);';
 
-      await this.databaseService.execute(createQuery, [
-        convertDateToTimestamp(new Date()),
-        idNotification,
-        idClient,
-      ]);
+      await this.databaseService.execute(createQuery, [convertDateToTimestamp(new Date()), idNotification, idClient]);
     } catch (error) {
       throw error;
     }
   }
 
   async deleteById(id: string): Promise<void> {
-    await this.databaseService.execute(
-      'UPDATE notification SET isActive = 0 WHERE id = ?',
-      [id],
-    );
+    await this.databaseService.execute('UPDATE notification SET isActive = 0 WHERE id = ?', [id]);
 
-    await this.databaseService.execute(
-      'UPDATE readNotification SET isActive = 0 WHERE idNotification = ?',
-      [id],
-    );
+    await this.databaseService.execute('UPDATE readNotification SET isActive = 0 WHERE idNotification = ?', [id]);
   }
 
-  async updateReadDateForAllNotification(
-    idClient: string,
-    idCompany: string,
-  ): Promise<void> {
+  async updateReadDateForAllNotification(idClient: string, idCompany: string): Promise<void> {
     try {
       const createQuery = `INSERT INTO readNotification (readDate, idNotification, idClient)
                 SELECT CURRENT_TIMESTAMP, n.id, n.idClient

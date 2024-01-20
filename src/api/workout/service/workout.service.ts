@@ -18,9 +18,7 @@ export class WorkoutService {
     try {
       await this.workoutRepository.create(createWorkoutDto);
 
-      const workout = await this.workoutRepository.findLastInserted(
-        createWorkoutDto,
-      );
+      const workout = await this.workoutRepository.findLastInserted(createWorkoutDto);
 
       await this.workoutRepository.createWorkoutMedia(
         createWorkoutDto.workoutMediaList,
@@ -34,17 +32,9 @@ export class WorkoutService {
     }
   }
 
-  async createFeedback(
-    idWorkoutClient: string,
-    idCompany: string,
-    feedback: string,
-  ): Promise<void> {
+  async createFeedback(idWorkoutClient: string, idCompany: string, feedback: string): Promise<void> {
     try {
-      return await this.workoutRepository.createFeedback(
-        idWorkoutClient,
-        idCompany,
-        feedback,
-      );
+      return await this.workoutRepository.createFeedback(idWorkoutClient, idCompany, feedback);
     } catch (error) {
       throw error;
     }
@@ -75,9 +65,7 @@ export class WorkoutService {
   async findAll(idCompany: string): Promise<WorkoutModel[]> {
     try {
       const rows = await this.workoutRepository.findAll(idCompany);
-      const workoutMediaList = await this.workoutRepository.findAllWorkoutMedia(
-        idCompany,
-      );
+      const workoutMediaList = await this.workoutRepository.findAllWorkoutMedia(idCompany);
       const mediaList = await this.mediaRepository.findAll(idCompany);
 
       // Criar um mapa de media para busca rápida
@@ -150,20 +138,12 @@ export class WorkoutService {
   //   };
   // });
 
-  async findManyWorkoutByIdWorkout(
-    idWorkoutList: string[],
-    idCompany: string,
-  ): Promise<WorkoutModel[]> {
+  async findManyWorkoutByIdWorkout(idWorkoutList: string[], idCompany: string): Promise<WorkoutModel[]> {
     try {
-      const rows = await this.workoutRepository.findManyWorkoutByIdWorkout(
-        idWorkoutList,
-      );
+      const rows = await this.workoutRepository.findManyWorkoutByIdWorkout(idWorkoutList);
 
       // Carregar todos os médias de uma vez
-      const mediaList = await this.workoutRepository.findManyMediaByIdWorkout(
-        idWorkoutList,
-        idCompany,
-      );
+      const mediaList = await this.workoutRepository.findManyMediaByIdWorkout(idWorkoutList, idCompany);
 
       // Criar um mapa de media para busca rápida
       const mediaMap: { [key: string]: any } = {};
@@ -172,11 +152,10 @@ export class WorkoutService {
       });
 
       // Carregar todos os workoutMedia de uma vez
-      const workoutMediaList =
-        await this.workoutRepository.findManyWorkoutMediaByIdWorkoutList(
-          idWorkoutList,
-          idCompany,
-        );
+      const workoutMediaList = await this.workoutRepository.findManyWorkoutMediaByIdWorkoutList(
+        idWorkoutList,
+        idCompany,
+      );
 
       const retorno = rows.map((row) => {
         const workoutModel = new WorkoutModel(row);
@@ -252,15 +231,9 @@ export class WorkoutService {
   //   }
   // }
 
-  async findManyWorkoutByIdWorkoutheetList(
-    idWorkoutsheetList: string[],
-    idCompany: string,
-  ): Promise<any> {
+  async findManyWorkoutByIdWorkoutheetList(idWorkoutsheetList: string[], idCompany: string): Promise<any> {
     try {
-      const workoutList =
-        await this.workoutRepository.findManyWorkoutByIdWorkoutsheetList(
-          idWorkoutsheetList,
-        );
+      const workoutList = await this.workoutRepository.findManyWorkoutByIdWorkoutsheetList(idWorkoutsheetList);
 
       if (idWorkoutsheetList.length == 0 || workoutList.length == 0) {
         return [];
@@ -291,9 +264,7 @@ export class WorkoutService {
         //   };
         // });
 
-        item.mediaList = mediaList.filter(
-          (media) => media.idWorkout == item.id,
-        );
+        item.mediaList = mediaList.filter((media) => media.idWorkout == item.id);
         // Filtrar os mediaList que correspondem aos IDs obtidos
         return item;
       });
@@ -337,35 +308,23 @@ export class WorkoutService {
     }
   }
 
-  async findWorkoutClientByWorkoutSheet(
-    idWorkoutsheet: string[],
-    idCompany: string,
-  ): Promise<WorkoutClientModel[]> {
+  async findWorkoutClientByWorkoutSheet(idWorkoutsheet: string[], idCompany: string): Promise<WorkoutClientModel[]> {
     try {
-      const rows = await this.workoutRepository.findWorkoutClientByWorkoutsheet(
-        idWorkoutsheet,
-      );
+      const rows = await this.workoutRepository.findWorkoutClientByWorkoutsheet(idWorkoutsheet);
 
       const workoutClientList = rows.map((row) => new WorkoutClientModel(row));
 
-      const idWorkoutClientList = workoutClientList.map(
-        (item) => item.idWorkout,
-      );
+      const idWorkoutClientList = workoutClientList.map((item) => item.idWorkout);
 
       if (idWorkoutClientList.length == 0) {
         return [];
       }
 
-      const workoutModelList = await this.findManyWorkoutByIdWorkout(
-        idWorkoutClientList,
-        idCompany,
-      );
+      const workoutModelList = await this.findManyWorkoutByIdWorkout(idWorkoutClientList, idCompany);
       //
       const retorno = workoutClientList.map((item) => {
         // Obter todos os workoutMedia que correspondem ao item.id
-        const workoutModel = workoutModelList.find(
-          (workout) => workout.id == item.idWorkout,
-        );
+        const workoutModel = workoutModelList.find((workout) => workout.id == item.idWorkout);
 
         item.workout = workoutModel;
 

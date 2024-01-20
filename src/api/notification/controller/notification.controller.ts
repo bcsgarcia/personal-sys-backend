@@ -1,25 +1,8 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Delete,
-  Req,
-  Put,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Delete, Req, Put, UseGuards } from '@nestjs/common';
 import { NotificationService } from '../service/notification.service';
 import { CreateNotificationDto } from '../dto/create-notification.dto';
 import { UpdateNotificationDto } from '../dto/update-notification.dto';
-import {
-  ApiBadRequestResponse,
-  ApiBearerAuth,
-  ApiHeader,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiBearerAuth, ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { validateHeaderApi } from '../../utils/utils';
 import { CreateWarningDto } from '../dto/create-warning.dto';
@@ -40,10 +23,7 @@ export class NotificationController {
   @ApiBadRequestResponse({
     description: 'Bad request, invalid input or missing required fields.',
   })
-  create(
-    @Body() createNotificationDto: CreateNotificationDto,
-    @Req() request: Request,
-  ) {
+  create(@Body() createNotificationDto: CreateNotificationDto, @Req() request: Request) {
     try {
       createNotificationDto.idCompany = request.headers['idcompany'] as string;
 
@@ -66,10 +46,7 @@ export class NotificationController {
   @ApiBadRequestResponse({
     description: 'Bad request, invalid input or missing required fields.',
   })
-  createWarning(
-    @Body() createWarningDto: CreateWarningDto,
-    @Req() request: Request,
-  ) {
+  createWarning(@Body() createWarningDto: CreateWarningDto, @Req() request: Request) {
     try {
       const createNotification: CreateNotificationDto = {
         title: createWarningDto.title,
@@ -98,10 +75,7 @@ export class NotificationController {
   @ApiBadRequestResponse({
     description: 'Bad request, unable to retrieve notifications.',
   })
-  findAllByIdClient(
-    @Param('idClient') idClient: string,
-    @Req() request: Request,
-  ) {
+  findAllByIdClient(@Param('idClient') idClient: string, @Req() request: Request) {
     try {
       const idCompany = request.headers['idcompany'] as string;
 
@@ -143,8 +117,7 @@ export class NotificationController {
   })
   @ApiResponse({
     status: 200,
-    description:
-      'Successfully deactivated the notification by setting isActivate to false.',
+    description: 'Successfully deactivated the notification by setting isActivate to false.',
   })
   @ApiBadRequestResponse({
     description: 'Bad request, unable to deactivate the notification.',
@@ -165,8 +138,7 @@ export class NotificationController {
   })
   @ApiResponse({
     status: 200,
-    description:
-      'Successfully updated readDate for all notifications related to the client.',
+    description: 'Successfully updated readDate for all notifications related to the client.',
   })
   @ApiBadRequestResponse({
     description: 'Bad request, unable to update readDate for notifications.',

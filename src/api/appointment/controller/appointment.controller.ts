@@ -1,20 +1,5 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Delete,
-  Req,
-  Put,
-} from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiBody,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Param, Delete, Req, Put } from '@nestjs/common';
+import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AppointmentService } from '../service/appointment.service';
 import { CreateAppointmentDto } from '../dto/create-appointment.dto';
 import { UpdateAppointmentDto } from '../dto/update-appointment.dto';
@@ -36,10 +21,7 @@ export class AppointmentController {
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
   @ApiBody({ type: CreateAppointmentDto })
-  create(
-    @Body() createAppointmentDto: CreateAppointmentDto,
-    @Req() request: Request,
-  ) {
+  create(@Body() createAppointmentDto: CreateAppointmentDto, @Req() request: Request) {
     try {
       const user = new AccessTokenModel(request['user']);
 
@@ -65,10 +47,7 @@ export class AppointmentController {
   @Put(':idAppointment')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Create an appointment' })
-  update(
-    @Param('idAppointment') idAppointment: string,
-    @Body() updateAppointment: UpdateAppointmentDto,
-  ) {
+  update(@Param('idAppointment') idAppointment: string, @Body() updateAppointment: UpdateAppointmentDto) {
     try {
       return this.appointmentService.update(idAppointment, updateAppointment);
     } catch (error) {

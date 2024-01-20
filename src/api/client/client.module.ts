@@ -29,8 +29,7 @@ import { ImageService } from 'src/common-services/image-service.service';
     AuthRepository,
     {
       provide: ClientRepository,
-      useFactory: (databaseService: DatabaseService) =>
-        new ClientRepository(databaseService),
+      useFactory: (databaseService: DatabaseService) => new ClientRepository(databaseService),
       inject: [DatabaseService],
     },
   ],

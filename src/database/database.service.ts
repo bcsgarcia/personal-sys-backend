@@ -19,19 +19,13 @@ export class DatabaseService {
   //   return results as any[];
   // }
 
-  async execute(
-    sql: string,
-    params?: any[],
-    conn?: mysql.PoolConnection,
-  ): Promise<any[]> {
+  async execute(sql: string, params?: any[], conn?: mysql.PoolConnection): Promise<any[]> {
     const connection = conn || this.pool;
     const [results] = await connection.execute(sql, params);
     return results as any[];
   }
 
-  async transaction<T>(
-    callback: (conn: mysql.PoolConnection) => Promise<T>,
-  ): Promise<T> {
+  async transaction<T>(callback: (conn: mysql.PoolConnection) => Promise<T>): Promise<T> {
     const conn = await this.pool.getConnection();
 
     try {

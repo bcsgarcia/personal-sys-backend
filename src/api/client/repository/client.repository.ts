@@ -35,8 +35,7 @@ export class ClientRepository {
 
   async create(createClientDto: CreateClientDto, auth: Auth): Promise<void> {
     try {
-      const createQuery =
-        'insert into client (name, birthday, phone, gender, idCompany, idAuth) values (?,?,?,?,?,?);';
+      const createQuery = 'insert into client (name, birthday, phone, gender, idCompany, idAuth) values (?,?,?,?,?,?);';
 
       await this.databaseService.execute(createQuery, [
         createClientDto.name,
@@ -51,10 +50,7 @@ export class ClientRepository {
     }
   }
 
-  async update(
-    idClient: string,
-    updateClientDto: UpdateClientDto,
-  ): Promise<void> {
+  async update(idClient: string, updateClientDto: UpdateClientDto): Promise<void> {
     try {
       await this.databaseService.execute(
         'UPDATE client SET name = ?, birthday = ?, phone = ?, gender = ?, photoUrl = ?, isActive = ? WHERE id = ?',

@@ -11,9 +11,7 @@ export class AppointmentRepository {
 
   async create(appointment: CreateAppointmentDto): Promise<string> {
     try {
-      appointment.appointmentStartDate = new Date(
-        appointment.appointmentStartDate,
-      );
+      appointment.appointmentStartDate = new Date(appointment.appointmentStartDate);
       appointment.appointmentEndDate = new Date(appointment.appointmentEndDate);
 
       const createQuery =
@@ -30,12 +28,8 @@ export class AppointmentRepository {
         appointment.idCompany,
       ]);
 
-      const _appointmentStartDate = convertDateToTimestamp(
-        appointment.appointmentStartDate,
-      );
-      const _appointmentEndDate = convertDateToTimestamp(
-        appointment.appointmentEndDate,
-      );
+      const _appointmentStartDate = convertDateToTimestamp(appointment.appointmentStartDate);
+      const _appointmentEndDate = convertDateToTimestamp(appointment.appointmentEndDate);
 
       const getIdQuery = `SELECT id FROM appointment
             WHERE
@@ -48,55 +42,31 @@ export class AppointmentRepository {
 
       return idAppointment[0];
     } catch (error) {
-      throw new HttpException(
-        DomainError.INTERNAL_SERVER_ERROR,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException(DomainError.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  async createAppointmentClient(
-    idAppointment: string,
-    idClient: string,
-  ): Promise<void> {
+  async createAppointmentClient(idAppointment: string, idClient: string): Promise<void> {
     try {
-      const createQuery =
-        'insert into appointmentClient (idAppointment, idClient) values (?,?);';
+      const createQuery = 'insert into appointmentClient (idAppointment, idClient) values (?,?);';
 
-      await this.databaseService.execute(createQuery, [
-        idAppointment,
-        idClient,
-      ]);
+      await this.databaseService.execute(createQuery, [idAppointment, idClient]);
     } catch (error) {
-      throw new HttpException(
-        DomainError.INTERNAL_SERVER_ERROR,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException(DomainError.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
   async delete(idAppointment: string): Promise<void> {
     try {
-      await this.databaseService.execute(
-        'UPDATE appointment SET isActive = 0 WHERE id = ?',
-        [idAppointment],
-      );
+      await this.databaseService.execute('UPDATE appointment SET isActive = 0 WHERE id = ?', [idAppointment]);
     } catch (error) {
-      throw new HttpException(
-        DomainError.INTERNAL_SERVER_ERROR,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException(DomainError.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
-  async update(
-    idAppointment: string,
-    appointment: UpdateAppointmentDto,
-  ): Promise<void> {
+  async update(idAppointment: string, appointment: UpdateAppointmentDto): Promise<void> {
     try {
-      appointment.appointmentStartDate = new Date(
-        appointment.appointmentStartDate,
-      );
+      appointment.appointmentStartDate = new Date(appointment.appointmentStartDate);
       appointment.appointmentEndDate = new Date(appointment.appointmentEndDate);
 
       await this.databaseService.execute(
@@ -123,9 +93,7 @@ export class AppointmentRepository {
     }
   }
 
-  async getAllClientsAssociatedWithAppointment(
-    idAppointment: string,
-  ): Promise<any> {
+  async getAllClientsAssociatedWithAppointment(idAppointment: string): Promise<any> {
     try {
       const query = `
                 SELECT c.id FROM  client c
@@ -136,19 +104,14 @@ export class AppointmentRepository {
     } catch (error) {}
   }
 
-  async deleteAppointmentClientByIdAppointment(
-    idAppointment: string,
-  ): Promise<void> {
+  async deleteAppointmentClientByIdAppointment(idAppointment: string): Promise<void> {
     try {
       const query = `delete from appointmentClient
             where idAppointment = '${idAppointment}';`;
 
       await this.databaseService.execute(query);
     } catch (error) {
-      throw new HttpException(
-        DomainError.INTERNAL_SERVER_ERROR,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException(DomainError.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -192,10 +155,7 @@ export class AppointmentRepository {
 
       return await this.databaseService.execute(query);
     } catch (error) {
-      throw new HttpException(
-        DomainError.INTERNAL_SERVER_ERROR,
-        HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      throw new HttpException(DomainError.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 }

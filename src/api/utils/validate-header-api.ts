@@ -4,8 +4,7 @@ import { Request } from 'express';
 export function validateHeaderApi(request: Request): void {
   const idCompany = request.headers['idcompany'] as string;
 
-  const isIdCompanyInvalid =
-    idCompany === null || idCompany === '' || idCompany === undefined;
+  const isIdCompanyInvalid = idCompany === null || idCompany === '' || idCompany === undefined;
 
   if (isIdCompanyInvalid) {
     throw new BadRequestException(`Invalid header`);

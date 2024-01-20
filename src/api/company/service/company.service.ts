@@ -6,10 +6,7 @@ import { CompanyMainInformationDto } from '../dto/response/company-main-informat
 import { CreateCompanyMainInformationDto } from '../dto/request/create-company-main-information.dto';
 import { CreatePosturalPatternDto } from '../dto/request/create-company-postural-pattern.dto';
 import { PosturalPatternDto } from '../dto/response/company-postural-pattern.dto';
-import {
-  GetMeetAppScreenResponseDto,
-  TestimonyDto,
-} from '../dto/response/response';
+import { GetMeetAppScreenResponseDto, TestimonyDto } from '../dto/response/response';
 import { CompanyModel } from 'src/models/company.model';
 import { PartnershipDTO } from '../dto/response/partnership-dto';
 import { MediaRepository } from '../../media/repository/media.repository';
@@ -54,29 +51,19 @@ export class CompanyService {
     return this.companyRepository.deleteById(id);
   }
 
-  async createCompanyInformation(
-    companyMainInformation: CreateCompanyMainInformationDto,
-  ) {
+  async createCompanyInformation(companyMainInformation: CreateCompanyMainInformationDto) {
     try {
-      await this.companyRepository.createCompanyMainInformation(
-        companyMainInformation,
-      );
+      await this.companyRepository.createCompanyMainInformation(companyMainInformation);
       return { status: 'success' };
     } catch (error) {
       throw error;
     }
   }
 
-  async findAllCompanyMainInformation(
-    idCompany: string,
-  ): Promise<CompanyMainInformationDto[]> {
+  async findAllCompanyMainInformation(idCompany: string): Promise<CompanyMainInformationDto[]> {
     try {
-      const rows = await this.companyRepository.findAllCompanyMainInformation(
-        idCompany,
-      );
-      const companyMainInformations = rows.map(
-        (row) => new CompanyMainInformationDto(row),
-      );
+      const rows = await this.companyRepository.findAllCompanyMainInformation(idCompany);
+      const companyMainInformations = rows.map((row) => new CompanyMainInformationDto(row));
       return companyMainInformations;
     } catch (error) {
       throw error;
@@ -93,13 +80,9 @@ export class CompanyService {
     }
   }
 
-  async updateCompanyMainInformation(
-    updateCompanyMainInformationList: UpdateMainInformationListDto,
-  ) {
+  async updateCompanyMainInformation(updateCompanyMainInformationList: UpdateMainInformationListDto) {
     try {
-      await this.companyRepository.updateCompanyMainInformation(
-        updateCompanyMainInformationList,
-      );
+      await this.companyRepository.updateCompanyMainInformation(updateCompanyMainInformationList);
 
       return { status: 'success' };
     } catch (error) {
@@ -107,9 +90,7 @@ export class CompanyService {
     }
   }
 
-  async createCompanyPosturalPattern(
-    posturalPattern: CreatePosturalPatternDto,
-  ) {
+  async createCompanyPosturalPattern(posturalPattern: CreatePosturalPatternDto) {
     try {
       await this.companyRepository.createPosturalPatterns(posturalPattern);
 
@@ -119,25 +100,16 @@ export class CompanyService {
     }
   }
 
-  async findAllCompanyPosturalPattern(
-    idCompany: string,
-  ): Promise<PosturalPatternDto[]> {
+  async findAllCompanyPosturalPattern(idCompany: string): Promise<PosturalPatternDto[]> {
     try {
-      const rows = await this.companyRepository.findAllPosturalPatterns(
-        idCompany,
-      );
+      const rows = await this.companyRepository.findAllPosturalPatterns(idCompany);
 
-      const posturalPatternList = rows.map(
-        (row) => new PosturalPatternDto(row),
-      );
+      const posturalPatternList = rows.map((row) => new PosturalPatternDto(row));
 
       const mediaList = await this.mediaRepository.findAll(idCompany);
 
       const retorno = posturalPatternList.map((item) => {
-        item.media =
-          item.idMedia == null
-            ? null
-            : mediaList.find((media) => media.id === item.idMedia);
+        item.media = item.idMedia == null ? null : mediaList.find((media) => media.id === item.idMedia);
         return item;
       });
 
@@ -157,13 +129,9 @@ export class CompanyService {
     }
   }
 
-  async updateCompanyPosturalPattern(
-    posturalPatternListDto: UpdatePosturalPatternListDto,
-  ) {
+  async updateCompanyPosturalPattern(posturalPatternListDto: UpdatePosturalPatternListDto) {
     try {
-      await this.companyRepository.updateCompanyPosturalPatterns(
-        posturalPatternListDto,
-      );
+      await this.companyRepository.updateCompanyPosturalPatterns(posturalPatternListDto);
 
       return { status: 'success' };
     } catch (error) {
@@ -171,9 +139,7 @@ export class CompanyService {
     }
   }
 
-  async getMeetAppScreen(
-    idCompany: string,
-  ): Promise<GetMeetAppScreenResponseDto> {
+  async getMeetAppScreen(idCompany: string): Promise<GetMeetAppScreenResponseDto> {
     try {
       const response: GetMeetAppScreenResponseDto = {
         aboutCompany: {
@@ -188,18 +154,12 @@ export class CompanyService {
 
       const company = await this.findOne(idCompany);
 
-      const rowsTestimonies =
-        await this.companyRepository.getTestimonyByIdCompany(idCompany);
+      const rowsTestimonies = await this.companyRepository.getTestimonyByIdCompany(idCompany);
 
-      const rowsPhotos =
-        await this.companyRepository.getPhotosBeforeAndAfterByIdCompany(
-          idCompany,
-        );
+      const rowsPhotos = await this.companyRepository.getPhotosBeforeAndAfterByIdCompany(idCompany);
 
       if (company.photoMediaId != null && company.photoMediaId != '') {
-        const photoMedia = await this.mediaRepository.findById(
-          company.photoMediaId,
-        );
+        const photoMedia = await this.mediaRepository.findById(company.photoMediaId);
 
         response.aboutCompany.imageUrl = photoMedia.url;
       }
@@ -207,24 +167,18 @@ export class CompanyService {
       response.aboutCompany.description = company.about;
 
       if (company.firstVideoMediaId != null) {
-        const row = await this.mediaRepository.findById(
-          company.firstVideoMediaId,
-        );
+        const row = await this.mediaRepository.findById(company.firstVideoMediaId);
         const firstVideoMediaDto = new MediaDto(row);
         response.aboutCompany.videoUrl = firstVideoMediaDto.url;
       }
 
       if (company.secondVideoMediaId != null) {
-        const row = await this.mediaRepository.findById(
-          company.secondVideoMediaId,
-        );
+        const row = await this.mediaRepository.findById(company.secondVideoMediaId);
         const secondVideoMediaDto = new MediaDto(row);
         response.aboutCompany.secondVideoUrl = secondVideoMediaDto.url;
       }
 
-      response.testemonies = rowsTestimonies.map(
-        (item) => new TestimonyDto(item),
-      );
+      response.testemonies = rowsTestimonies.map((item) => new TestimonyDto(item));
 
       response.photosBeforeAndAfter = rowsPhotos.map((item) => item);
 
@@ -234,13 +188,9 @@ export class CompanyService {
     }
   }
 
-  async findAllPartnershipByIdCompany(
-    idCompany: string,
-  ): Promise<PartnershipDTO[]> {
+  async findAllPartnershipByIdCompany(idCompany: string): Promise<PartnershipDTO[]> {
     try {
-      const rows = await this.companyRepository.getAllPartnershipsByIdCompany(
-        idCompany,
-      );
+      const rows = await this.companyRepository.getAllPartnershipsByIdCompany(idCompany);
 
       return rows.map((item) => new PartnershipDTO(item));
     } catch (error) {

@@ -5,8 +5,8 @@
   "author": "",
   "private": true,
   "engines": {
-    "node": "18.12.1",
-    "npm": "9.6.5"
+    "node": "20.11.0",
+    "npm": "10.2.4"
   },
   "license": "UNLICENSED",
   "scripts": {

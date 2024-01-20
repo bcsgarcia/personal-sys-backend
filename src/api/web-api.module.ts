@@ -12,6 +12,7 @@ import { AppHomeScreenModule } from './screens/app/home/screen-home.module';
 import { IntroductionPageModule } from './screens/admin/introduction-page/introduction-page.module';
 import { MediaModule } from './media/media.module';
 import { UploadModule } from './upload/upload.module';
+import { ClientEvaluationModule } from './client-evaluation/client-evaluation.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { UploadModule } from './upload/upload.module';
     IntroductionPageModule,
     MediaModule,
     UploadModule,
+    ClientEvaluationModule,
   ],
   exports: [
     NotificationModule,
