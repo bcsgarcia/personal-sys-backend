@@ -1,4 +1,4 @@
-name: Deploy
+name: Build and Deploy Node.js App
 
 on:
   push:
@@ -6,28 +6,40 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
+    - uses: actions/checkout@v2
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          tags: bcsgarcia/personal-sys-backend:latest
+    - name: Set up Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '20.11'  # Escolha a versão do Node.js que você precisa
 
-      - name: SSH into server
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.SERVER_IP }}
-          username: ${{ secrets.SERVER_USERNAME }}
-          key: ${{ secrets.SSH_PRIVATE_KEY }}
+    - name: Install Dependencies
+      run: npm install
 
-      - name: Deploy to server
-        run: |
-          ssh ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} "docker-compose pull"
-          ssh ${{ secrets.SERVER_USERNAME }}@${{ secrets.SERVER_IP }} "docker-compose up -d"
+    - name: Build
+      run: npm run build  # Este comando deve construir sua aplicação e colocar os arquivos necessários na pasta 'dist'
+
+    - name: Copy dist folder to VPS
+      uses: appleboy/scp-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        source: "dist"
+        target: "/path/to/your/app"
+
+    - name: Restart Node.js application
+      uses: appleboy/ssh-action@master
+      with:
+        host: ${{ secrets.HOST }}
+        username: ${{ secrets.USERNAME }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: 22
+        script: |
+          cd /home/personal-api.bcsgarcia.com.br/public_html/
+          npm install --production  # Instala apenas as dependências necessárias para produção
+          pm2 restart all  # Ou qualquer outro comando para reiniciar sua aplicação
