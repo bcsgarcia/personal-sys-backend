@@ -2,10 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { MusclePerimeterDto } from './muscle-perimeter.dto';
 import { MuscoloskeletalChangesDto } from './muscoloskeletal-change.dto';
 import { ClientEvaluationPhotoDto } from './client-evaluation-photo.dto';
-import { Expose } from 'class-transformer';
 
 export class ClientEvaluationDto {
-  @Expose()
   @ApiProperty({
     description: 'Id do cliente',
     example: '123456789',
