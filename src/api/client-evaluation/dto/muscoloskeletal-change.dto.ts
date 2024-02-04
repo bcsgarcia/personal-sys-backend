@@ -1,8 +1,6 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { Exclude } from 'class-transformer';
 
 export class MuscoloskeletalChangesDto {
-  @Exclude()
   @ApiProperty({
     description: 'Id do MuscoloskeletalChanges',
     example: '123456789',
@@ -10,7 +8,6 @@ export class MuscoloskeletalChangesDto {
   })
   id: string;
 
-  @Exclude()
   @ApiProperty({
     description: 'Id do clientEvaluation',
     example: '123456789',
@@ -18,7 +15,6 @@ export class MuscoloskeletalChangesDto {
   })
   idClientEvaluation: string;
 
-  @Exclude()
   @ApiHideProperty()
   @ApiProperty({
     description: 'Id da company',
