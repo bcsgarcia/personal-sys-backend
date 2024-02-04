@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { MusclePerimeterDto } from './muscle-perimeter.dto';
-import { MuscoloskeletalChangeDto } from './muscoloskeletal-change.dto';
+import { MuscoloskeletalChangesDto } from './muscoloskeletal-change.dto';
 import { ClientEvaluationPhotoDto } from './client-evaluation-photo.dto';
 import { Expose } from 'class-transformer';
 
@@ -34,7 +34,7 @@ export class ClientEvaluationDto {
   idCompany: string;
 
   musclePerimeter: MusclePerimeterDto;
-  muscoloskeletalChange: MuscoloskeletalChangeDto;
+  muscoloskeletalChanges: MuscoloskeletalChangesDto;
   clientEvaluationPhotoList: Array<ClientEvaluationPhotoDto>;
 
   constructor(data: any) {

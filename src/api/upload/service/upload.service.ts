@@ -6,6 +6,28 @@ import * as path from 'path';
 export class UploadService {
   constructor(private readonly ftpService: FtpService) {}
 
+  async uploadClientEvaluationPhoto(@UploadedFile() file, idClient: string, idClientEvaluation: string): Promise<void> {
+    try {
+      const fileBuffer = file.buffer;
+
+      await this.ftpService.uploadClientEvaluationPhoto(fileBuffer, file.originalname, idClient, idClientEvaluation);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async deleteClientEvaluationPhoto(fileName: string, clientId: string, idClientEvaluation: string): Promise<any> {
+    try {
+      const path = `${process.env.FTP_CLIENT_IMAGE_PATH}${clientId}/${idClientEvaluation}`;
+
+      await this.ftpService.removePhoto(fileName, path);
+
+      return { status: 'success' };
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async uploadFile(@UploadedFile() file, mediaType: string, idMedia: string): Promise<void> {
     try {
       const fileBuffer = file.buffer;

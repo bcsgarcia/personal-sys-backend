@@ -5,7 +5,8 @@ import { ClientEvaluationRepository } from '../repository/client-evaluation.repo
 import { ClientEvaluationDto } from '../dto/client-evaluation.dto';
 import { rethrow } from '@nestjs/core/helpers/rethrow';
 import { MusclePerimeterDto } from '../dto/muscle-perimeter.dto';
-import { MuscoloskeletalChangeDto } from '../dto/muscoloskeletal-change.dto';
+import { MuscoloskeletalChangesDto } from '../dto/muscoloskeletal-change.dto';
+import { CreateClientEvaluationPhotoDto } from '../dto/create-client-evaluation-photo.dto';
 import { ClientEvaluationPhotoDto } from '../dto/client-evaluation-photo.dto';
 
 @Injectable()
@@ -22,11 +23,13 @@ export class ClientEvaluationService {
       await this.clientEvaluationRepository.createMusclePerimeter(
         clientEvaluation.id,
         createClientEvaluationDto.idCompany,
+        createClientEvaluationDto.musclePerimeter,
       );
 
       await this.clientEvaluationRepository.createMuscoloskeletalChange(
         clientEvaluation.id,
         createClientEvaluationDto.idCompany,
+        createClientEvaluationDto.muscoloskeletalChanges,
       );
 
       return { status: 'success' };
@@ -46,7 +49,7 @@ export class ClientEvaluationService {
         if (!clientEvaluationMap.has(key)) {
           const clientEvaluation = new ClientEvaluationDto(row);
           clientEvaluation.musclePerimeter = new MusclePerimeterDto(row);
-          clientEvaluation.muscoloskeletalChange = new MuscoloskeletalChangeDto(row);
+          clientEvaluation.muscoloskeletalChanges = new MuscoloskeletalChangesDto(row);
           clientEvaluation.clientEvaluationPhotoList = [];
           clientEvaluationMap.set(key, clientEvaluation);
         }
@@ -66,11 +69,49 @@ export class ClientEvaluationService {
     return `This action returns a #${id} clientEvaluation`;
   }
 
-  update(id: number, updateClientEvaluationDto: UpdateClientEvaluationDto) {
-    return `This action updates a #${id} clientEvaluation`;
+  async update(clientEvaluationDto: ClientEvaluationDto) {
+    try {
+      await this.clientEvaluationRepository.updateMusclePerimeter(
+        clientEvaluationDto.id,
+        clientEvaluationDto.idCompany,
+        clientEvaluationDto.musclePerimeter,
+      );
+
+      await this.clientEvaluationRepository.updateMuscoloskeletalChange(
+        clientEvaluationDto.id,
+        clientEvaluationDto.idCompany,
+        clientEvaluationDto.muscoloskeletalChanges,
+      );
+
+      return { status: 'success' };
+    } catch (error) {
+      throw new Error(`Erro client evaluation service: ${error}`);
+    }
   }
 
   remove(id: number) {
     return `This action removes a #${id} clientEvaluation`;
+  }
+
+  async addPhotoClientEvaluation(clientEvaluationPhotoDto: CreateClientEvaluationPhotoDto) {
+    try {
+      clientEvaluationPhotoDto.url = `${process.env.CLIENT_IMAGE_BASE_PATH}/${clientEvaluationPhotoDto.idClient}/${clientEvaluationPhotoDto.idClientEvaluation}/${clientEvaluationPhotoDto.fileName}`;
+
+      await this.clientEvaluationRepository.createClientEvaluationPhoto(clientEvaluationPhotoDto);
+
+      return { status: 'success' };
+    } catch (error) {
+      throw new Error(`error client-evaluation-service addPhotoClientEvaluation - ${error}`);
+    }
+  }
+
+  async deletePhotoClientEvaluation(clientEvaluationPhotoDto: ClientEvaluationPhotoDto) {
+    try {
+      await this.clientEvaluationRepository.deleteClientEvaluationPhoto(clientEvaluationPhotoDto);
+
+      return { status: 'success' };
+    } catch (error) {
+      throw new Error(`error client-evaluation-service addPhotoClientEvaluation - ${error}`);
+    }
   }
 }

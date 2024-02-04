@@ -1,6 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 
 export class MusclePerimeterDto {
+  @ApiHideProperty()
   @ApiProperty({
     description: 'Id do MusclePerimeter',
     example: '123456789',
@@ -8,6 +9,7 @@ export class MusclePerimeterDto {
   })
   id: string;
 
+  @ApiHideProperty()
   @ApiProperty({
     description: 'Id do clientEvaluation',
     example: '123456789',
@@ -15,6 +17,7 @@ export class MusclePerimeterDto {
   })
   idClientEvaluation: string;
 
+  @ApiHideProperty()
   @ApiProperty({
     description: 'Id da company',
     example: '123456789',
@@ -143,5 +146,28 @@ export class MusclePerimeterDto {
     this.rightThigh = data.rightThigh;
     this.leftCalf = data.leftCalf;
     this.rightCalf = data.rightCalf;
+  }
+
+  // criar um metodo para retornar uma instancia com dados mockados
+  static mockInstance() {
+    return new MusclePerimeterDto({
+      weight: 80,
+      height: 1.8,
+      neck: 40,
+      shoulder: 40,
+      leftForearm: 40,
+      rightForearm: 40,
+      chest: 40,
+      leftArm: 40,
+      rightArm: 40,
+      waist: 40,
+      abdome: 40,
+      hip: 40,
+      breeches: 40,
+      leftThigh: 40,
+      rightThigh: 40,
+      leftCalf: 40,
+      rightCalf: 40,
+    });
   }
 }

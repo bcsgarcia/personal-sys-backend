@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 export class ClientEvaluationPhotoDto {
   @ApiProperty({
-    description: 'Id do cliente',
+    description: 'Id da media',
     example: '123456789',
     type: String,
   })
@@ -14,6 +14,13 @@ export class ClientEvaluationPhotoDto {
     type: String,
   })
   idClientEvaluation: string;
+
+  @ApiProperty({
+    description: 'Id do Cliente',
+    example: '123456789',
+    type: String,
+  })
+  idClient: string;
 
   @ApiProperty({
     description: 'Url da photo',
@@ -29,8 +36,19 @@ export class ClientEvaluationPhotoDto {
   })
   idCompany: string;
 
+  @ApiProperty({
+    description: 'Nome do arquivo',
+    example: 'test.png',
+    type: String,
+  })
+  fileName: string;
+
   constructor(data: any) {
     this.id = data.idClientEvaluationPhoto ?? '';
-    this.url = data.url;
+    this.url = data.url ?? '';
+    this.idCompany = data.idCompany ?? '';
+    this.idClient = data.idClient ?? '';
+    this.idClientEvaluation = data.idClientEvaluation ?? '';
+    this.fileName = data.fileName ?? '';
   }
 }

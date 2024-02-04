@@ -6,10 +6,34 @@ import { rethrow } from '@nestjs/core/helpers/rethrow';
 
 @Injectable()
 export class FtpService {
-  // private client: ftp;
+  async uploadClientEvaluationPhoto(
+    fileBuffer: Buffer,
+    fileName: string,
+    clientId: string,
+    idClientEvaluation: string,
+  ): Promise<void> {
+    const client = new basicFtp.Client();
+    const stream = new Readable();
+    stream.push(fileBuffer);
+    stream.push(null);
 
-  constructor() {
-    // this.client = new ftp();
+    try {
+      await client.access({
+        host: process.env.FTP_HOST,
+        user: process.env.FTP_USER,
+        password: process.env.FTP_PASSWORD,
+      });
+
+      await client.ensureDir(`${process.env.FTP_CLIENT_IMAGE_PATH}/${clientId}/${idClientEvaluation}/`);
+
+      await client.uploadFrom(stream, fileName);
+    } catch (error) {
+      console.error('Erro ao fazer upload do vídeo:', error);
+      rethrow;
+    } finally {
+      stream.destroy();
+      client.close();
+    }
   }
 
   async uploadPhoto(fileBuffer: Buffer, fileName: string): Promise<void> {
@@ -38,32 +62,6 @@ export class FtpService {
       stream.destroy();
       client.close();
     }
-
-    // return new Promise((resolve, reject) => {
-    //   // Cria um stream de leitura a partir do buffer
-    //   const stream = new Readable();
-    //   stream.push(fileBuffer);
-    //   stream.push(null);
-    //
-    //   this.client.on('ready', () => {
-    //     this.client.cwd(process.env.FTP_CLIENT_IMAGE_PATH, (err) => {
-    //       if (err) reject(err);
-    //
-    //       this.client.put(stream, fileName, (err) => {
-    //         if (err) reject(err);
-    //
-    //         this.client.end();
-    //         resolve();
-    //       });
-    //     });
-    //   });
-    //
-    //   this.client.connect({
-    //     host: process.env.FTP_HOST,
-    //     user: process.env.FTP_USER,
-    //     password: process.env.FTP_PASSWORD,
-    //   });
-    // });
   }
 
   async uploadFile(fileBuffer: Buffer, fileName: string, mediaType: string): Promise<void> {
@@ -99,6 +97,27 @@ export class FtpService {
       rethrow;
     } finally {
       stream.destroy();
+      client.close();
+    }
+  }
+
+  async removePhoto(fileName: string, path: string): Promise<void> {
+    const client = new basicFtp.Client();
+
+    try {
+      await client.access({
+        host: process.env.FTP_HOST,
+        user: process.env.FTP_USER,
+        password: process.env.FTP_PASSWORD,
+      });
+
+      await client.cd(path);
+
+      await client.remove(fileName);
+    } catch (error) {
+      console.error('Erro ao fazer upload do vídeo:', error);
+      rethrow;
+    } finally {
       client.close();
     }
   }

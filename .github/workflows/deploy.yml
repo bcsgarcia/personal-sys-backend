@@ -40,6 +40,16 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 22
         script: |
-          cd /home/personal-api.bcsgarcia.com.br/public_html/
-          npm install --production  # Instala apenas as dependências necessárias para produção
-          pm2 restart all  # Ou qualquer outro comando para reiniciar sua aplicação
+            if ! command -v npm &> /dev/null
+            then
+                echo "npm não encontrado, instalando..."
+                # Comando para instalar npm
+            fi
+            if ! command -v pm2 &> /dev/null
+            then
+                echo "pm2 não encontrado, instalando..."
+                npm install pm2 -g
+            fi
+            cd /home/personal-api.bcsgarcia.com.br/public_html/
+            npm install --production
+            pm2 restart all

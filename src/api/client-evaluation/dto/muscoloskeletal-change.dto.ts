@@ -1,9 +1,10 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
 import { Exclude } from 'class-transformer';
 
-export class MuscoloskeletalChangeDto {
+export class MuscoloskeletalChangesDto {
+  @Exclude()
   @ApiProperty({
-    description: 'Id do MuscoloskeletalChange',
+    description: 'Id do MuscoloskeletalChanges',
     example: '123456789',
     type: String,
   })
@@ -75,7 +76,7 @@ export class MuscoloskeletalChangeDto {
   feet: string;
 
   constructor(data: any) {
-    this.id = data.idMucolosckeletalChange ?? '';
+    this.id = data.idMucolosckeletalChanges ?? '';
     this.head = data.head ?? '';
     this.spine = data.spine ?? '';
     this.sholderBlades = data.sholderBlades ?? '';
@@ -84,5 +85,19 @@ export class MuscoloskeletalChangeDto {
     this.knees = data.knees ?? '';
     this.shins = data.shins ?? '';
     this.feet = data.feet ?? '';
+  }
+
+  // criar um metodo para retornar uma instancia com dados mockados
+  static mockInstance(): MuscoloskeletalChangesDto {
+    return new MuscoloskeletalChangesDto({
+      head: 'head',
+      spine: 'spine',
+      sholderBlades: 'sholderBlades',
+      shoulders: 'shoulders',
+      pelvis: 'pelvis',
+      knees: 'knees',
+      shins: 'shins',
+      feet: 'feet',
+    });
   }
 }
