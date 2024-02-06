@@ -19,6 +19,7 @@ jobs:
         username: ${{ secrets.VPS_USERNAME }}
         password: ${{ secrets.VPS_PASSWORD }}
         script: |
+          set -x
           cd ${{ secrets.PROJECT_PATH }}
 
           pwd
