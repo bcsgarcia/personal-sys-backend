@@ -7,6 +7,6 @@ services:
     environment:
       - NODE_ENV=prod
     expose:
-      - "3005"
+      - "3006"
     ports:
-      - "3005:3005"
+      - "3006:3006"
