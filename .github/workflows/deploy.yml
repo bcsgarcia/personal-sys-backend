@@ -26,26 +26,5 @@ jobs:
 
           git pull
 
-          # Criação do arquivo .env com as secrets
-          echo "NODE_ENV=${{ secrets.NODE_ENV }}" > .env
-          echo "PORT=${{ secrets.PORT }}" >> .env
-          echo "DATABASE_HOST=${{ secrets.DATABASE_HOST }}" >> .env
-          echo "DATABASE_PORT=${{ secrets.DATABASE_PORT }}" >> .env
-          echo "DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}" >> .env
-          echo "DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}" >> .env
-          echo "DATABASE_NAME=${{ secrets.DATABASE_NAME }}" >> .env
-          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
-          echo "FTP_HOST=${{ secrets.FTP_HOST }}" >> .env
-          echo "FTP_USER=${{ secrets.FTP_USER }}" >> .env
-          echo "FTP_PASSWORD=${{ secrets.FTP_PASSWORD }}" >> .env
-          echo "FTP_CLIENT_IMAGE_PATH=${{ secrets.FTP_CLIENT_IMAGE_PATH }}" >> .env
-          echo "FTP_VIDEO_PATH=${{ secrets.FTP_VIDEO_PATH }}" >> .env
-          echo "FTP_IMAGE_PATH=${{ secrets.FTP_IMAGE_PATH }}" >> .env
-          echo "FTP_THUMBNAIL_PATH=${{ secrets.FTP_THUMBNAIL_PATH }}" >> .env
-          echo "VIDEO_BASE_PATH=${{ secrets.VIDEO_BASE_PATH }}" >> .env
-          echo "IMAGE_BASE_PATH=${{ secrets.IMAGE_BASE_PATH }}" >> .env
-          echo "THUMBNAIL_BASE_PATH=${{ secrets.THUMBNAIL_BASE_PATH }}" >> .env
-          echo "CLIENT_IMAGE_BASE_PATH=${{ secrets.CLIENT_IMAGE_BASE_PATH }}" >> .env
-
           docker-compose down
           docker-compose up -d --build
