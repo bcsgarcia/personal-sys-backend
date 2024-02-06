@@ -45,7 +45,7 @@ async function bootstrap() {
   const port = process.env.PORT || 3000;
 
   await app.listen(port, '0.0.0.0', () => {
-    console.log(`App listening on port .env: ${process.env.PORT} / port: ${port}`);
+    console.log(`App BRUNOOOOOOOOOO listening on port .env: ${process.env.PORT} / port: ${port}`);
   });
 }
 bootstrap();

@@ -20,8 +20,9 @@ jobs:
         password: ${{ secrets.VPS_PASSWORD }}
         script: |
           cd ${{ secrets.PROJECT_PATH }}
-          eval "$(ssh-agent -s)"
-          ssh-add ${{ secrets.SSH_PRIVATE_KEY }}
+
+          pwd
+
           git pull
 
           # Criação do arquivo .env com as secrets
