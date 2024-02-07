@@ -20,6 +20,10 @@ jobs:
         password: ${{ secrets.VPS_PASSWORD }}
         script: |
           set -x
+
+          eval "$(ssh-agent -s)"
+          ssh-add ${{ secrets.SSH_PRIVATE_KEY }}
+
           cd ${{ secrets.PROJECT_PATH }}
 
           pwd
