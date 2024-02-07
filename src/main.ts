@@ -33,8 +33,8 @@ async function bootstrap() {
 
   app.use(
     cors({
-      // origin: 'http://localhost:50249',
-      origin: '*',
+      origin: process.env.CORS_ORIGIN || '*',
+      // origin: '*',
     }),
   );
 
