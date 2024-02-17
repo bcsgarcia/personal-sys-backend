@@ -210,24 +210,24 @@ export class WorkoutsheetRepository {
     }
   }
 
-  async getWorkoutsheetDefaultWorkoutByIdWorkoutsheetDefaultList(
-    idCompany: string,
-    idWorkoutsheetDefaultList: string[],
-  ): Promise<any> {
-    try {
-      const params = idWorkoutsheetDefaultList.map((item) => `'${item}'`).join(',');
+  // async getWorkoutsheetDefaultWorkoutByIdWorkoutsheetDefaultList(
+  //   idCompany: string,
+  //   idWorkoutsheetDefaultList: string[],
+  // ): Promise<any> {
+  //   try {
+  //     const params = idWorkoutsheetDefaultList.map((item) => `'${item}'`).join(',');
 
-      const query = `SELECT *
-                     FROM workoutSheetDefaultWorkout
-                     WHERE idCompany = '${idCompany}'
-                       AND
-      `;
+  //     const query = `SELECT *
+  //                    FROM workoutSheetDefaultWorkout
+  //                    WHERE idCompany = '${idCompany}'
+  //                      AND
+  //     `;
 
-      return await this.databaseService.execute(query);
-    } catch (error) {
-      throw error;
-    }
-  }
+  //     return await this.databaseService.execute(query);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // }
 
   async deleteById(idWorkoutSheetDefault: string): Promise<void> {
     try {

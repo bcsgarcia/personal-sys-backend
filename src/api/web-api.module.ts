@@ -13,6 +13,7 @@ import { IntroductionPageModule } from './screens/admin/introduction-page/introd
 import { MediaModule } from './media/media.module';
 import { UploadModule } from './upload/upload.module';
 import { ClientEvaluationModule } from './client-evaluation/client-evaluation.module';
+import { ClientProfileModule } from './client-profile/client-profile.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { ClientEvaluationModule } from './client-evaluation/client-evaluation.mo
     MediaModule,
     UploadModule,
     ClientEvaluationModule,
+    ClientProfileModule,
   ],
   exports: [
     NotificationModule,

@@ -1,20 +1,17 @@
 import { config } from 'dotenv';
-config();
-
-import { NestFactory, Reflector } from '@nestjs/core';
+import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import * as bodyParser from 'body-parser';
-import { AuthGuard } from './api/auth/auth.guard';
 import * as cors from 'cors';
-import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+
+config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  // app.useGlobalPipes(new ValidationPipe());
-  // app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   app.useGlobalGuards();
+
   const config = new DocumentBuilder()
     .setTitle('Personal Sys API')
     .setDescription(
@@ -31,21 +28,21 @@ async function bootstrap() {
   app.use(bodyParser.json({ limit: '50mb' }));
   app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
+  const corsOrigin = process.env.NODE_ENV === 'dev' ? '*' : process.env.CORS_ORIGIN || '*';
+
   app.use(
     cors({
-      origin: process.env.CORS_ORIGIN || '*',
-      // origin: '*',
+      origin: corsOrigin,
     }),
   );
 
   const document = SwaggerModule.createDocument(app, config);
-
   SwaggerModule.setup('api/swagger', app, document);
-
   const port = process.env.PORT || 3000;
 
   await app.listen(port, '0.0.0.0', () => {
-    console.log(`App BRUNOOOOOOOOOO listening on port .env: ${process.env.PORT} / port: ${port}`);
+    console.log(`App listening on port .env: ${process.env.PORT} / port: ${port}`);
   });
 }
+
 bootstrap();

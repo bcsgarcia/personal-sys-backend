@@ -31,7 +31,7 @@ export class CreateWorkoutDto {
     description: '',
     example: [],
   })
-  workoutMediaList: CreateWorkoutMediaDto[];
+  mediaList: CreateWorkoutMediaDto[];
 
   @ApiHideProperty()
   idCompany: string;
@@ -41,6 +41,6 @@ export class CreateWorkoutDto {
     this.subtitle = data.subTitle;
     this.description = data.description;
     this.idCompany = data.idCompany;
-    this.workoutMediaList = data.workoutMediaList;
+    this.mediaList = data.workoutMediaList;
   }
 }

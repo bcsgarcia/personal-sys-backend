@@ -21,7 +21,7 @@ export class WorkoutService {
       const workout = await this.workoutRepository.findLastInserted(createWorkoutDto);
 
       await this.workoutRepository.createWorkoutMedia(
-        createWorkoutDto.workoutMediaList,
+        createWorkoutDto.mediaList,
         workout[0].id,
         createWorkoutDto.idCompany,
       );

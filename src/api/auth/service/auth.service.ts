@@ -146,6 +146,7 @@ export class AuthService {
 
       return new AccessTokenDto(accessToken);
     } catch (error) {
+      console.error(error);
       throw error;
     }
   }
