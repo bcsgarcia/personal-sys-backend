@@ -82,8 +82,8 @@ export class NotificationRepository {
 
   async updateReadDateForAllNotification(idClient: string, idCompany: string): Promise<void> {
     try {
-      const createQuery = `INSERT INTO readNotification (readDate, idNotification, idClient)
-                SELECT CURRENT_TIMESTAMP, n.id, n.idClient
+      const createQuery = `INSERT INTO readNotification (id, readDate, idNotification, idClient)
+                SELECT UUID(), CURRENT_TIMESTAMP, n.id, n.idClient
                 FROM notification n
                 WHERE n.idClient = '${idClient}' AND n.idCompany = '${idCompany}'
                 AND NOT EXISTS (
