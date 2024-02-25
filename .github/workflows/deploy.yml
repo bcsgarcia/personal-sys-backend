@@ -26,9 +26,37 @@ jobs:
 
           cd ${{ secrets.PROJECT_PATH }}
 
-          pwd
-
           git pull
 
-          docker-compose down
-          docker-compose up -d --build
+          # docker-compose down
+          # docker-compose up -d --build
+
+          # Substitua as variáveis de ambiente no docker-compose.yml
+          # O comando 'envsubst' substituirá as variáveis de ambiente no arquivo
+          # Necessita que o arquivo docker-compose.yml use a sintaxe de variável de shell padrão, como $VAR ou ${VAR}
+          export NODE_ENV=prod
+          export PORT=${{ secrets.PORT }}
+          export DATABASE_HOST=${{ secrets.DATABASE_HOST }}
+          export DATABASE_PORT=${{ secrets.DATABASE_PORT }}
+          export DATABASE_USERNAME=${{ secrets.DATABASE_USERNAME }}
+          export DATABASE_PASSWORD=${{ secrets.DATABASE_PASSWORD }}
+          export DATABASE_NAME=${{ secrets.DATABASE_NAME }}
+          export JWT_SECRET=${{ secrets.JWT_SECRET }}
+          export FTP_HOST=${{ secrets.FTP_HOST }}
+          export FTP_USER=${{ secrets.FTP_USER }}
+          export FTP_PASSWORD=${{ secrets.FTP_PASSWORD }}
+          export FTP_CLIENT_IMAGE_PATH=${{ secrets.FTP_CLIENT_IMAGE_PATH }}
+          export FTP_VIDEO_PATH=${{ secrets.FTP_VIDEO_PATH }}
+          export FTP_IMAGE_PATH=${{ secrets.FTP_IMAGE_PATH }}
+          export FTP_THUMBNAIL_PATH=${{ secrets.FTP_THUMBNAIL_PATH }}
+          export VIDEO_BASE_PATH=${{ secrets.VIDEO_BASE_PATH }}
+          export IMAGE_BASE_PATH=${{ secrets.IMAGE_BASE_PATH }}
+          export THUMBNAIL_BASE_PATH=${{ secrets.THUMBNAIL_BASE_PATH }}
+          export CLIENT_IMAGE_BASE_PATH=${{ secrets.CLIENT_IMAGE_BASE_PATH }}
+          export CORS_ORIGIN=${{ secrets.CORS_ORIGIN }}
+
+          envsubst < docker-compose.yml > docker-compose.prod.yml
+
+          # Utiliza o arquivo docker-compose.prod.yml com as variáveis substituídas
+          docker-compose -f docker-compose.prod.yml down
+          docker-compose -f docker-compose.prod.yml up -d --build
