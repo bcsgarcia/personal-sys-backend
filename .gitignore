@@ -38,3 +38,5 @@ lerna-debug.log*
 .env*
 uploads/temp/*
 .vscode/launch.json
+
+docker-compose.prod.yml
