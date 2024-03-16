@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, Delete, Req, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Req } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AppointmentService } from '../service/appointment.service';
 import { CreateAppointmentDto } from '../dto/create-appointment.dto';

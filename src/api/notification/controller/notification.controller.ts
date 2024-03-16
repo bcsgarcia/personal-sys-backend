@@ -1,10 +1,8 @@
-import { Controller, Get, Post, Body, Param, Delete, Req, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Req } from '@nestjs/common';
 import { NotificationService } from '../service/notification.service';
 import { CreateNotificationDto } from '../dto/create-notification.dto';
-import { UpdateNotificationDto } from '../dto/update-notification.dto';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
-import { validateHeaderApi } from '../../utils/utils';
 import { CreateWarningDto } from '../dto/create-warning.dto';
 import { GetNotificationDto } from '../dto/get-notification.dto';
 import { AccessTokenModel } from 'src/models/access-token-user.model';
@@ -53,6 +51,7 @@ export class NotificationController {
         description: createWarningDto.description,
         notificationDate: new Date(),
         idCompany: request.headers['idcompany'] as string,
+        idAppointment: null,
       };
 
       return this.notificationService.create(createNotification);

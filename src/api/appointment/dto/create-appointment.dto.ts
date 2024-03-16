@@ -1,5 +1,5 @@
 import { ApiHideProperty, ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString, IsBoolean, IsOptional, IsUUID } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CreateAppointmentDto {
   @ApiProperty({
@@ -45,6 +45,16 @@ export class CreateAppointmentDto {
   personalObservation?: string;
 
   @ApiProperty({
+    description: 'Cor de fundo do apontamento',
+    type: String,
+    required: false,
+    example: 'Cor do apontamento',
+  })
+  @IsOptional()
+  @IsString()
+  backgroundColor?: string;
+
+  @ApiProperty({
     description: 'Appointment completion status',
     type: Boolean,
     default: false,
@@ -70,7 +80,7 @@ export class CreateAppointmentDto {
     required: false,
   })
   @IsOptional()
-  idClients: string[];
+  clients: string[];
 
   @ApiProperty({
     description: 'If you want to send a notification to clients',

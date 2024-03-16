@@ -1,6 +1,7 @@
 {
     "version": "0.2.0",
     "configurations": [
+
         {
             "type": "node",
             "name": "NestJS: Debug",
@@ -17,7 +18,26 @@
                 "<node_internals>/**"
             ],
             "env": {
-                "NODE_ENV": "development"
+                "NODE_ENV": "dev",
+                "PORT":"3000",
+                "DATABASE_HOST":"192.168.1.248",
+                "DATABASE_PORT":"3306",
+                "DATABASE_USERNAME":"root",
+                "DATABASE_PASSWORD":"broad102938",
+                "DATABASE_NAME":"u408558298_personal_sys",
+                "JWT_SECRET":"2^A8$sWgRz6J0E!yHv&8p@Wd3r!q3G*U4fZDh**4w",
+                "FTP_HOST":"bcsgarcia.com.br",
+                "FTP_USER":"u408558298",
+                "FTP_PASSWORD":"jovZy3-gopryn-huspad",
+                "FTP_CLIENT_IMAGE_PATH":"/public_html/dev-personal-media/client_image/",
+                "FTP_VIDEO_PATH":"/public_html/dev-personal-media/videos/",
+                "FTP_IMAGE_PATH":"/public_html/dev-personal-media/images/",
+                "FTP_THUMBNAIL_PATH":"/public_html/dev-personal-media/thumbnails/",
+                "VIDEO_BASE_PATH":"https://dev-personal-media.bcsgarcia.com.br/videos",
+                "IMAGE_BASE_PATH":"https://dev-personal-media.bcsgarcia.com.br/images",
+                "THUMBNAIL_BASE_PATH":"https://dev-personal-media.bcsgarcia.com.br/thumbnails",
+                "CLIENT_IMAGE_BASE_PATH":"https://dev-personal-media.bcsgarcia.com.br/client_image",
+                "CORS_ORIGIN":"*",
             }
         }
     ]
