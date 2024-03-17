@@ -1,13 +1,10 @@
-import { convertTimestampToDate } from 'src/api/utils/utils';
-
 export class GetNotificationDto {
   id: string;
   title: string;
   description: string;
   notificationDate: Date;
   readDate: Date;
-  appointmentStartDate: Date | null;
-  appointmentEndDate: Date | null;
+  appointmentId: string;
 
   constructor(data: any) {
     this.id = data.id;
@@ -15,7 +12,6 @@ export class GetNotificationDto {
     this.description = data.description;
     this.notificationDate = data.notificationDate;
     this.readDate = data.readDate;
-    this.appointmentStartDate = data.appointmentStartDate;
-    this.appointmentEndDate = data.appointmentEndDate;
+    this.appointmentId = data.appointmentId;
   }
 }

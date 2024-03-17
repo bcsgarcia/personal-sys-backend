@@ -35,6 +35,14 @@ export class UpdateAppointmentDto {
   description: string;
 
   @ApiProperty({
+    description: 'Cor do apontamento',
+    type: String,
+  })
+  @IsNotEmpty()
+  @IsString()
+  backgroundColor: string;
+
+  @ApiProperty({
     description: 'Personal observation',
     type: String,
     required: false,
@@ -70,5 +78,5 @@ export class UpdateAppointmentDto {
     required: false,
   })
   @IsOptional()
-  idClients: string[];
+  clients: string[];
 }

@@ -13,7 +13,7 @@ import { ImageService } from './common-services/image-service.service';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [ConfigModule.forRoot(), DatabaseModule, ApiModule],
+  imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule, ApiModule],
   controllers: [AppController, RecordsController],
   providers: [
     AppService,

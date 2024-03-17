@@ -16,22 +16,15 @@ export class CreateNotificationDto {
   })
   description: string;
 
+  @ApiProperty({
+    description: 'ID do Appointment',
+    example: '9a9c5f7d-2265-4f07-a3fa-bbc5a5d72c5b',
+    type: String,
+  })
+  idAppointment: string;
+
   @ApiHideProperty()
   notificationDate: Date;
-
-  @ApiProperty({
-    description: 'The date of the appointment',
-    example: '2020-09-12 12:00',
-    type: Date,
-  })
-  appointmentStartDate?: Date | null;
-
-  @ApiProperty({
-    description: 'The end date of the appointment',
-    example: '2020-09-12 13:00',
-    type: Date,
-  })
-  appointmentEndDate?: Date | null;
 
   @ApiHideProperty()
   idCompany: string;
@@ -49,8 +42,8 @@ export class CreateNotificationDto {
     this.title = notification.title;
     this.description = notification.description;
     this.notificationDate = notification.notificationDate;
-    this.appointmentStartDate = notification.appointmentStartDate;
-    this.appointmentEndDate = notification.appointmentEndDate;
+    // this.appointmentStartDate = notification.appointmentStartDate;
+    // this.appointmentEndDate = notification.appointmentEndDate;
     this.idCompany = notification.idCompany;
     this.idClient = notification.idClient;
   }

@@ -10,16 +10,13 @@ export class NotificationRepository {
   async create(notification: CreateNotificationDto): Promise<void> {
     try {
       const createQuery =
-        'INSERT INTO notification (title, description, notificationDate, appointmentStartDate, appointmentEndDate, idClient, idCompany) VALUES (?, ?, ?, ?, ?, ?, ?)';
+        'INSERT INTO notification (title, description, notificationDate, appointmentId, idClient, idCompany) VALUES (?, ?, ?, ?, ?, ?)';
 
       await this.databaseService.execute(createQuery, [
         notification.title,
         notification.description,
         notification.notificationDate == undefined ? null : convertDateToTimestamp(notification.notificationDate),
-        notification.appointmentStartDate == undefined
-          ? null
-          : convertDateToTimestamp(notification.appointmentStartDate),
-        notification.appointmentEndDate == undefined ? null : convertDateToTimestamp(notification.appointmentEndDate),
+        notification.idAppointment == undefined ? null : notification.idAppointment,
         notification.idClient === undefined ? null : notification.idClient,
         notification.idCompany,
       ]);
@@ -31,16 +28,23 @@ export class NotificationRepository {
   async findAllByIdClient(idClient: string, idCompany: string): Promise<any> {
     try {
       const query = `
-            SELECT n.id, n.title, n.description, n.notificationDate, rN.readDate, rN.readDate, n.appointmentStartDate, n.appointmentEndDate FROM notification n
-            LEFT JOIN readNotification rN on n.id = rN.idNotification
-
-            WHERE
-            (n.idClient = '${idClient}' or n.idClient is null)
+          SELECT n.id,
+                 n.title,
+                 n.description,
+                 n.notificationDate,
+                 rN.readDate,
+                 rN.readDate,
+                 a.appointmentStartDate,
+                 a.appointmentEndDate
+          FROM notification n
+                   LEFT JOIN readNotification rN on n.id = rN.idNotification
+                   left join appointment a on n.appointmentId = a.id
+          WHERE (n.idClient = '${idClient}' or n.idClient is null)
             AND n.idCompany = '${idCompany}'
             AND n.isActive = 1
 
-            ORDER BY n.notificationDate desc;
-            `;
+          ORDER BY n.notificationDate desc;
+      `;
 
       return await this.databaseService.execute(query);
     } catch (error) {
@@ -51,12 +55,12 @@ export class NotificationRepository {
   async findAllWarningByIdCompany(idCompany: string): Promise<any> {
     try {
       const query = `
-                SELECT * FROM notification
-                    WHERE
-                        idClient is null
-                        AND idCompany = '${idCompany}'
-                        AND isActive = 1
-                    ORDER BY date desc`;
+          SELECT *
+          FROM notification
+          WHERE idClient is null
+            AND idCompany = '${idCompany}'
+            AND isActive = 1
+          ORDER BY date desc`;
 
       return await this.databaseService.execute(query);
     } catch (error) {
@@ -83,14 +87,14 @@ export class NotificationRepository {
   async updateReadDateForAllNotification(idClient: string, idCompany: string): Promise<void> {
     try {
       const createQuery = `INSERT INTO readNotification (id, readDate, idNotification, idClient)
-                SELECT UUID(), CURRENT_TIMESTAMP, n.id, n.idClient
-                FROM notification n
-                WHERE n.idClient = '${idClient}' AND n.idCompany = '${idCompany}'
-                AND NOT EXISTS (
-                    SELECT 1
-                    FROM readNotification rn
-                    WHERE rn.idNotification = n.id AND rn.idClient = n.idClient
-                );`;
+                           SELECT UUID(), CURRENT_TIMESTAMP, n.id, n.idClient
+                           FROM notification n
+                           WHERE n.idClient = '${idClient}'
+                             AND n.idCompany = '${idCompany}'
+                             AND NOT EXISTS (SELECT 1
+                                             FROM readNotification rn
+                                             WHERE rn.idNotification = n.id
+                                               AND rn.idClient = n.idClient);`;
 
       await this.databaseService.execute(createQuery);
     } catch (error) {
