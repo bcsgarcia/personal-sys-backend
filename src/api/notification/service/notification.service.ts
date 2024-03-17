@@ -12,14 +12,6 @@ export class NotificationService {
   create(createNotificationDto: CreateNotificationDto) {
     try {
       createNotificationDto.notificationDate = new Date();
-      createNotificationDto.appointmentStartDate =
-        createNotificationDto.appointmentStartDate == undefined
-          ? null
-          : new Date(createNotificationDto.appointmentStartDate);
-      createNotificationDto.appointmentEndDate =
-        createNotificationDto.appointmentEndDate == undefined
-          ? null
-          : new Date(createNotificationDto.appointmentEndDate);
 
       return this.notificationRepository.create(createNotificationDto);
     } catch (error) {

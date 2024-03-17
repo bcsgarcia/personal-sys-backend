@@ -84,6 +84,7 @@ export class AppointmentService {
             isDone: row.isDone === 1 ? true : false,
             clients: [],
             backgroundColor: row.backgroundColor,
+            notificated: row.notificated,
           };
 
           appoimentsMap.set(row.id, appointment);
@@ -115,8 +116,6 @@ export class AppointmentService {
         description: createAppointmentDto.description,
         idCompany: createAppointmentDto.idCompany,
         title: createAppointmentDto.title,
-        appointmentStartDate: createAppointmentDto.appointmentStartDate,
-        appointmentEndDate: createAppointmentDto.appointmentEndDate,
         notificationDate: new Date(),
         idAppointment: idAppointment,
       };
