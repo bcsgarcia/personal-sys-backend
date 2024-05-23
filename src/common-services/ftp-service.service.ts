@@ -26,9 +26,11 @@ export class FtpService {
 
       await client.ensureDir(`${process.env.FTP_CLIENT_IMAGE_PATH}/${clientId}/${idClientEvaluation}/`);
 
+      console.log(`upload uploadClientEvaluationPhoto - path: ${client.pwd()} - filename: ${fileName}`);
+
       await client.uploadFrom(stream, fileName);
     } catch (error) {
-      console.error('Erro ao fazer upload do vídeo:', error);
+      console.error(`uploadClientEvaluationPhoto - Erro ao fazer upload da foto: ${error}`);
       rethrow;
     } finally {
       stream.destroy();
@@ -51,11 +53,13 @@ export class FtpService {
 
       await client.cd(process.env.FTP_CLIENT_IMAGE_PATH);
 
+      console.log(`upload photo - path: ${client.pwd()} - filename: ${fileName}`);
+
       await client.uploadFrom(stream, fileName);
 
       // return true; // Indica que o arquivo foi salvo com sucesso
     } catch (error) {
-      console.error('Erro ao fazer upload do vídeo:', error);
+      console.error('uploadPhoto - Erro ao fazer upload da foto:', error);
       rethrow;
       // return false; // Indica que ocorreu um erro durante o processo
     } finally {
@@ -91,9 +95,11 @@ export class FtpService {
           return;
       }
 
+      console.log(`upload file ${mediaType}: path: ${client.pwd()} - filename: ${fileName}`);
+
       await client.uploadFrom(stream, fileName.toLowerCase());
     } catch (error) {
-      console.error('Erro ao fazer upload do vídeo:', error);
+      console.error(`uploadFile - Erro ao fazer upload do arquivo '${mediaType}': ${error}`);
       rethrow;
     } finally {
       stream.destroy();
@@ -115,7 +121,7 @@ export class FtpService {
 
       await client.remove(fileName);
     } catch (error) {
-      console.error('Erro ao fazer upload do vídeo:', error);
+      console.error('removePhoto - Erro ao remover foto:', error);
       rethrow;
     } finally {
       client.close();
@@ -146,9 +152,11 @@ export class FtpService {
           return;
       }
 
+      console.log(`remove file ${mediaType}: path: ${client.pwd()} - filename: ${fileName}`);
+
       await client.remove(fileName);
     } catch (error) {
-      console.error('Erro ao fazer upload do vídeo:', error);
+      console.error('Erro ao remover arquivo:', error);
       rethrow;
     } finally {
       client.close();
