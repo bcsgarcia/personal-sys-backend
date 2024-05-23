@@ -25,14 +25,17 @@ async function bootstrap() {
     )
     .build();
 
-  app.use(bodyParser.json({ limit: '50mb' }));
-  app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+  app.use(bodyParser.json({ limit: '500mb' }));
+  app.use(bodyParser.urlencoded({ limit: '500mb', extended: true }));
 
   const corsOrigin = process.env.NODE_ENV === 'dev' ? '*' : process.env.CORS_ORIGIN || '*';
 
   app.use(
     cors({
       origin: corsOrigin,
+      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+      allowedHeaders: 'Content-Type, Accept, Authorization',
+      credentials: true,
     }),
   );
 
