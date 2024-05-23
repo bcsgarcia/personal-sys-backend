@@ -28,7 +28,9 @@ async function bootstrap() {
   app.use(bodyParser.json({ limit: '500mb' }));
   app.use(bodyParser.urlencoded({ limit: '500mb', extended: true }));
 
-  const corsOrigin = process.env.NODE_ENV === 'dev' ? '*' : process.env.CORS_ORIGIN || '*';
+  const prodUrl = 'https://treinadoraamanda.bcsgarcia.com.br';
+
+  const corsOrigin = process.env.NODE_ENV === 'dev' ? '*' : process.env.CORS_ORIGIN || prodUrl;
 
   app.use(
     cors({
