@@ -12,6 +12,15 @@ async function bootstrap() {
 
   app.useGlobalGuards();
 
+  const corsOptions = {
+    origin: process.env.NODE_ENV === 'dev' ? '*' : 'https://treinadoraamanda.bcsgarcia.com.br',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    allowedHeaders: 'Content-Type, Accept, Authorization',
+    credentials: true,
+  };
+
+  app.enableCors(corsOptions);
+
   const config = new DocumentBuilder()
     .setTitle('Personal Sys API')
     .setDescription(
@@ -28,18 +37,18 @@ async function bootstrap() {
   app.use(bodyParser.json({ limit: '500mb' }));
   app.use(bodyParser.urlencoded({ limit: '500mb', extended: true }));
 
-  const prodUrl = 'https://treinadoraamanda.bcsgarcia.com.br';
+  // const prodUrl = 'https://treinadoraamanda.bcsgarcia.com.br';
 
-  const corsOrigin = process.env.NODE_ENV === 'dev' ? '*' : process.env.CORS_ORIGIN || prodUrl;
+  // const corsOrigin = process.env.NODE_ENV === 'dev' ? '*' : process.env.CORS_ORIGIN || prodUrl;
 
-  app.use(
-    cors({
-      origin: corsOrigin,
-      methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
-      allowedHeaders: 'Content-Type, Accept, Authorization',
-      credentials: true,
-    }),
-  );
+  // app.use(
+  //   cors({
+  //     origin: corsOrigin,
+  //     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  //     allowedHeaders: 'Content-Type, Accept, Authorization',
+  //     credentials: true,
+  //   }),
+  // );
 
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api/swagger', app, document);
