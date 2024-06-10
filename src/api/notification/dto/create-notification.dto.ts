@@ -23,7 +23,11 @@ export class CreateNotificationDto {
   })
   idAppointment: string;
 
-  @ApiHideProperty()
+  @ApiProperty({
+    description: 'The date of the notification',
+    example: '03/02/2024',
+    type: String,
+  })
   notificationDate: Date;
 
   @ApiHideProperty()

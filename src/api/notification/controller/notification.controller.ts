@@ -12,7 +12,7 @@ import { AccessTokenModel } from 'src/models/access-token-user.model';
 export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
-  @Post()
+  @Post('/')
   @ApiOperation({ summary: 'Create a new notification' })
   @ApiResponse({
     status: 201,
@@ -46,11 +46,14 @@ export class NotificationController {
   })
   createWarning(@Body() createWarningDto: CreateWarningDto, @Req() request: Request) {
     try {
+      const user = new AccessTokenModel(request['user']);
+
       const createNotification: CreateNotificationDto = {
         title: createWarningDto.title,
         description: createWarningDto.description,
-        notificationDate: new Date(),
-        idCompany: request.headers['idcompany'] as string,
+        notificationDate:
+          createWarningDto.notificationDate == undefined ? new Date() : new Date(createWarningDto.notificationDate),
+        idCompany: user.clientIdCompany,
         idAppointment: null,
       };
 
@@ -60,7 +63,7 @@ export class NotificationController {
     }
   }
 
-  @Get(':idClient')
+  @Get('')
   @ApiOperation({
     summary: 'Get all notifications',
     description:
@@ -74,11 +77,11 @@ export class NotificationController {
   @ApiBadRequestResponse({
     description: 'Bad request, unable to retrieve notifications.',
   })
-  findAllByIdClient(@Param('idClient') idClient: string, @Req() request: Request) {
+  findAllByIdClient(@Req() request: Request) {
     try {
-      const idCompany = request.headers['idcompany'] as string;
+      const user = new AccessTokenModel(request['user']);
 
-      return this.notificationService.findAllByIdClient(idClient, idCompany);
+      return this.notificationService.findAllByIdClient(user.clientId, user.clientIdCompany);
     } catch (error) {
       throw error;
     }
@@ -100,9 +103,9 @@ export class NotificationController {
   })
   findAllWarningByIdCompany(@Req() request: Request) {
     try {
-      const idCompany = request.headers['idcompany'] as string;
+      const user = new AccessTokenModel(request['user']);
 
-      return this.notificationService.findAllWarningByIdCompany(idCompany);
+      return this.notificationService.findAllWarningByIdCompany(user.clientIdCompany);
     } catch (error) {
       throw error;
     }

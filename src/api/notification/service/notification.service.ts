@@ -9,11 +9,13 @@ import { AccessTokenModel } from 'src/models/access-token-user.model';
 export class NotificationService {
   constructor(private readonly notificationRepository: NotificationRepository) {}
 
-  create(createNotificationDto: CreateNotificationDto) {
+  async create(createNotificationDto: CreateNotificationDto) {
     try {
-      createNotificationDto.notificationDate = new Date();
+      // createNotificationDto.notificationDate = new Date();
 
-      return this.notificationRepository.create(createNotificationDto);
+      await this.notificationRepository.create(createNotificationDto);
+
+      return { message: 'Notification created successfully' };
     } catch (error) {
       throw new InternalServerErrorException();
     }
@@ -39,9 +41,11 @@ export class NotificationService {
     }
   }
 
-  async detele(idNotification: string): Promise<void> {
+  async detele(idNotification: string) {
     try {
       await this.notificationRepository.deleteById(idNotification);
+
+      return { message: 'Notification deleted successfully' };
     } catch (error) {
       throw error;
     }

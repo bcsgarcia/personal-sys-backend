@@ -35,15 +35,17 @@ export class NotificationRepository {
                  rN.readDate,
                  rN.readDate,
                  a.appointmentStartDate,
-                 a.appointmentEndDate
+                 a.appointmentEndDate,
+                 a.id as appointmentId
           FROM notification n
                    LEFT JOIN readNotification rN on n.id = rN.idNotification
                    left join appointment a on n.appointmentId = a.id
           WHERE (n.idClient = '${idClient}' or n.idClient is null)
             AND n.idCompany = '${idCompany}'
+            AND n.notificationDate <= now()
             AND n.isActive = 1
 
-          ORDER BY n.notificationDate desc;
+          ORDER BY n.notificationDate desc limit 50;
       `;
 
       return await this.databaseService.execute(query);
@@ -60,7 +62,7 @@ export class NotificationRepository {
           WHERE idClient is null
             AND idCompany = '${idCompany}'
             AND isActive = 1
-          ORDER BY date desc`;
+          ORDER BY notificationDate desc`;
 
       return await this.databaseService.execute(query);
     } catch (error) {
@@ -79,9 +81,13 @@ export class NotificationRepository {
   }
 
   async deleteById(id: string): Promise<void> {
-    await this.databaseService.execute('UPDATE notification SET isActive = 0 WHERE id = ?', [id]);
+    try {
+      await this.databaseService.execute('UPDATE notification SET isActive = 0 WHERE id = ?', [id]);
 
-    await this.databaseService.execute('UPDATE readNotification SET isActive = 0 WHERE idNotification = ?', [id]);
+      await this.databaseService.execute('UPDATE readNotification SET isActive = 0 WHERE idNotification = ?', [id]);
+    } catch (error) {
+      throw error;
+    }
   }
 
   async updateReadDateForAllNotification(idClient: string, idCompany: string): Promise<void> {

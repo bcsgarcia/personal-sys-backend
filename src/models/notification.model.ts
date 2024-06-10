@@ -14,6 +14,7 @@ export class Notification {
     this.id = data.id;
     this.isActive = data.isActive;
     this.lastUpdate = data.lastUpdate;
+    this.title = data.title;
     this.description = data.description;
     this.notificationDate = data.notificationDate;
     this.appointmentStartDate = data.appointmentStartDate;
