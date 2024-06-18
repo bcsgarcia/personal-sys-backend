@@ -288,7 +288,10 @@ export class CompanyRepository {
           SELECT p.id          as partnershipId,
                  p.idCompany   as partnershipIdCompany,
                  p.name        as partnershipName,
-                 p.imageUrl    as partnershipImageUrl,
+                 case
+                    when p.imageUrl is not null then p.imageUrl
+                    else 'https://personal-media.bcsgarcia.com.br/partnership_logo/default_logo.png'
+                end as partnershipImageUrl,
                  p.description as partnershipDescription,
                  p.contact     as partnershipContact,
                  p.email       as partnershipEmail,
