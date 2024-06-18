@@ -85,7 +85,7 @@ export class ClientService {
         ? file.buffer
         : await this.imageService.convertToPNG(file.buffer);
 
-      await this.ftpService.uploadPhoto(imageBuffer, `${uuid}.png`);
+      await this.ftpService.uploadPhoto(imageBuffer, `${uuid}.png`, process.env.FTP_CLIENT_IMAGE_PATH);
 
       const user = await this.clientRepository.findById(uuid);
 

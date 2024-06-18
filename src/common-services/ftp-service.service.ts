@@ -38,7 +38,7 @@ export class FtpService {
     }
   }
 
-  async uploadPhoto(fileBuffer: Buffer, fileName: string): Promise<void> {
+  async uploadPartnershipLogo(fileBuffer: Buffer, fileName: string): Promise<void> {
     const client = new basicFtp.Client();
     const stream = new Readable();
     stream.push(fileBuffer);
@@ -51,7 +51,34 @@ export class FtpService {
         password: process.env.FTP_PASSWORD,
       });
 
-      await client.cd(process.env.FTP_CLIENT_IMAGE_PATH);
+      await client.ensureDir(`${process.env.FTP_PARTNERSHIP_LOGO_PATH}`);
+
+      console.log(`upload uploadPartnershipLogo - path: ${await client.pwd()} - filename: ${fileName}`);
+
+      await client.uploadFrom(stream, fileName);
+    } catch (error) {
+      console.error(`uploadPartnershipLogo - Erro ao fazer upload da foto: ${error}`);
+      rethrow;
+    } finally {
+      stream.destroy();
+      client.close();
+    }
+  }
+
+  async uploadPhoto(fileBuffer: Buffer, fileName: string, path: string): Promise<void> {
+    const client = new basicFtp.Client();
+    const stream = new Readable();
+    stream.push(fileBuffer);
+    stream.push(null);
+
+    try {
+      await client.access({
+        host: process.env.FTP_HOST,
+        user: process.env.FTP_USER,
+        password: process.env.FTP_PASSWORD,
+      });
+
+      await client.ensureDir(path);
 
       console.log(`upload photo - path: ${await client.pwd()} - filename: ${fileName}`);
 

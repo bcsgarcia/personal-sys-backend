@@ -14,6 +14,7 @@ import { MediaModule } from './media/media.module';
 import { UploadModule } from './upload/upload.module';
 import { ClientEvaluationModule } from './client-evaluation/client-evaluation.module';
 import { ClientProfileModule } from './client-profile/client-profile.module';
+import { PartnershipModule } from './partnership/partnership.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ClientProfileModule } from './client-profile/client-profile.module';
     UploadModule,
     ClientEvaluationModule,
     ClientProfileModule,
+    PartnershipModule,
   ],
   exports: [
     NotificationModule,
