@@ -6,6 +6,9 @@ import { AuthRepository } from './repository/auth.repository';
 import { AuthService } from './service/auth.service';
 import { Reflector } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 @Module({
   controllers: [AuthController],

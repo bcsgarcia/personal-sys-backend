@@ -3,9 +3,11 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import * as bodyParser from 'body-parser';
+import * as dotenv from 'dotenv';
 import * as cors from 'cors';
 
 config();
+dotenv.config();
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
