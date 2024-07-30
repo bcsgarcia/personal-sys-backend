@@ -44,6 +44,19 @@ export class ClientEvaluationRepository {
     }
   }
 
+  async deleteClientEvaluation(idCompany: string, clientEvaluationId: string): Promise<void> {
+    try {
+      await this.databaseService.execute(
+        `DELETE from clientEvaluation
+        where id = ?
+          and idCompany = ?`,
+        [clientEvaluationId, idCompany],
+      );
+    } catch (error) {
+      throw new Error(`Erro ao deletar foto da avaliação do cliente: ${error}`);
+    }
+  }
+
   async deleteClientEvaluationPhoto(clientEvaluationPhoto: ClientEvaluationPhotoDto): Promise<void> {
     try {
       await this.databaseService.execute(
@@ -51,7 +64,18 @@ export class ClientEvaluationRepository {
         [clientEvaluationPhoto.id, clientEvaluationPhoto.idCompany, clientEvaluationPhoto.idClientEvaluation],
       );
     } catch (error) {
-      throw new Error(`Erro ao inserir foto da avaliação do cliente: ${error}`);
+      throw new Error(`Erro ao deletar foto da avaliação do cliente: ${error}`);
+    }
+  }
+
+  async deleteAllClientEvaluationPhoto(idCompany: string, idClientEvaluation: string): Promise<void> {
+    try {
+      await this.databaseService.execute(
+        `DELETE from clientEvaluationPhoto where idCompany = ? and idClientEvaluation = ?`,
+        [idCompany, idClientEvaluation],
+      );
+    } catch (error) {
+      throw new Error(`Erro ao deletar todas as fotos da avaliação do cliente: ${error}`);
     }
   }
 
@@ -199,6 +223,55 @@ export class ClientEvaluationRepository {
           and ce.isActive = 1
         order by ce.date desc`,
       [idCompany, idClient],
+    );
+    return rows;
+  }
+
+  async findOne(idCompany: string, idClientEvaluation: string): Promise<any> {
+    const rows = await this.databaseService.execute(
+      `SELECT ce.id idClientEvaluation,
+              ce.date,
+              ce.idClient,
+              ce.idCompany,
+              mp.id idMusclePerimeter,
+              mp.weight,
+              mp.height,
+              mp.neck,
+              mp.shoulder,
+              mp.rightForearm,
+              mp.leftForearm,
+              mp.chest,
+              mp.leftArm,
+              mp.rightArm,
+              mp.waist,
+              mp.abdome,
+              mp.hip,
+              mp.breeches,
+              mp.leftThigh,
+              mp.rightThigh,
+              mp.leftCalf,
+              mp.rightCalf,
+              mc.id idMucolosckeletalChanges,
+              mc.head,
+              mc.spine,
+              mc.sholderBlades,
+              mc.shoulders,
+              mc.pelvis,
+              mc.knees,
+              mc.shins,
+              mc.feet,
+              cep.id idClientEvaluationPhoto,
+              cep.url,
+              cep.fileName
+        from clientEvaluation ce
+                inner join musclePerimeter mp on mp.idClientEvaluation = ce.id and mp.isActive = 1
+                inner join muscoloskeletalChange mc on mc.idClientEvaluation = ce.id and mc.isActive = 1
+                left join clientEvaluationPhoto cep on cep.idClientEvaluation = ce.id and cep.isActive = 1
+        where ce.idCompany = ?
+          and ce.id = ?
+          and ce.isActive = 1
+        order by ce.date desc`,
+      [idCompany, idClientEvaluation],
     );
     return rows;
   }

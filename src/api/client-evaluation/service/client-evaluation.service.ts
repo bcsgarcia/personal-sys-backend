@@ -8,10 +8,14 @@ import { MusclePerimeterDto } from '../dto/muscle-perimeter.dto';
 import { MuscoloskeletalChangesDto } from '../dto/muscoloskeletal-change.dto';
 import { CreateClientEvaluationPhotoDto } from '../dto/create-client-evaluation-photo.dto';
 import { ClientEvaluationPhotoDto } from '../dto/client-evaluation-photo.dto';
+import { FtpService } from 'src/common-services/ftp-service.service';
 
 @Injectable()
 export class ClientEvaluationService {
-  constructor(private readonly clientEvaluationRepository: ClientEvaluationRepository) {}
+  constructor(
+    private readonly clientEvaluationRepository: ClientEvaluationRepository,
+    private readonly ftpService: FtpService,
+  ) {}
 
   async create(createClientEvaluationDto: CreateClientEvaluationDto) {
     try {
@@ -89,8 +93,21 @@ export class ClientEvaluationService {
     }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} clientEvaluation`;
+  async remove(clientEvaluationId: string, idCompany: string) {
+    try {
+      const clientEvaluation = await this.clientEvaluationRepository.findOne(idCompany, clientEvaluationId);
+
+      // removing client evaluation photos dir from ftp
+      await this.ftpService.removeDir(
+        `${process.env.FTP_CLIENT_IMAGE_PATH}${clientEvaluation[0].idClient}/${clientEvaluationId}`,
+      );
+
+      // removing clientEvaluation
+      await this.clientEvaluationRepository.deleteClientEvaluation(idCompany, clientEvaluationId);
+      return { status: 'success' };
+    } catch (error) {
+      throw new Error(`Erro client evaluation service: ${error}`);
+    }
   }
 
   async addPhotoClientEvaluation(clientEvaluationPhotoDto: CreateClientEvaluationPhotoDto) {

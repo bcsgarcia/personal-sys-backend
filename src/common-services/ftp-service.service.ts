@@ -155,6 +155,27 @@ export class FtpService {
     }
   }
 
+  async removeDir(path: string): Promise<void> {
+    const client = new basicFtp.Client();
+
+    try {
+      await client.access({
+        host: process.env.FTP_HOST,
+        user: process.env.FTP_USER,
+        password: process.env.FTP_PASSWORD,
+      });
+
+      console.log(`removeDir - path: ${path}`);
+
+      await client.removeDir(path);
+    } catch (error) {
+      console.error('removePhoto - Erro ao remover foto:', error);
+      rethrow;
+    } finally {
+      client.close();
+    }
+  }
+
   async removeFile(fileName: string, mediaType: string): Promise<void> {
     const client = new basicFtp.Client();
 

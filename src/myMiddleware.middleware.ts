@@ -5,8 +5,6 @@ import { NextFunction, Request, Response } from 'express';
 export class MyMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
     console.log(`original url ${req.baseUrl}`);
-
-    console.log('Middleware executed');
     next();
   }
 }

@@ -63,8 +63,15 @@ export class ClientEvaluationController {
 
   @Delete(':id')
   @ApiBearerAuth()
-  remove(@Param('id') id: string) {
-    return this.clientEvaluationService.remove(+id);
+  @ApiOperation({ summary: 'delete client-evaluation' })
+  @ApiResponse({
+    status: HttpStatus.CREATED,
+  })
+  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request.' })
+  async remove(@Param('id') clientEvaluationId: string, @Req() request: Request) {
+    const user = new AccessTokenModel(request['user']);
+    await this.clientEvaluationService.remove(clientEvaluationId, user.clientIdCompany);
+    return { status: 'success' };
   }
 
   @Post(':id/photo')
