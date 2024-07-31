@@ -6,6 +6,7 @@ import { UpdateWorkoutDto } from '../dto/update-workout.dto';
 import { MediaRepository } from '../../media/repository/media.repository';
 import { WorkoutClientModel } from '../../../models/workout.client.model';
 import { CreateWorkoutClientDto } from '../dto/create-workout-client.dto';
+import { UpdateWorkoutClientDto } from '../dto/update-workout-client.dto';
 
 @Injectable()
 export class WorkoutService {
@@ -292,6 +293,15 @@ export class WorkoutService {
   async createWorkoutClient(createWorkoutClientDto: CreateWorkoutClientDto) {
     try {
       await this.workoutRepository.createWorkoutClient(createWorkoutClientDto);
+      return { status: 'success' };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateWorkoutClient(updateWorkoutClientDto: UpdateWorkoutClientDto) {
+    try {
+      await this.workoutRepository.updateWorkoutClient(updateWorkoutClientDto);
       return { status: 'success' };
     } catch (error) {
       throw error;

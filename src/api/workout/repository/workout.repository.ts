@@ -4,6 +4,7 @@ import { CreateWorkoutDto } from '../dto/create-workout.dto';
 import { UpdateWorkoutDto } from '../dto/update-workout.dto';
 import { CreateWorkoutMediaDto } from '../dto/create-workout-media.dto';
 import { CreateWorkoutClientDto } from '../dto/create-workout-client.dto';
+import { UpdateWorkoutClientDto } from '../dto/update-workout-client.dto';
 
 @Injectable()
 export class WorkoutRepository {
@@ -39,6 +40,29 @@ export class WorkoutRepository {
         workoutClientDto.series,
         workoutClientDto.workoutOrder,
         workoutClientDto.idWorkoutsheet,
+      ]);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateWorkoutClient(workoutClientDto: UpdateWorkoutClientDto): Promise<void> {
+    try {
+      const createQuery = `update workoutClient set
+          title = ?,
+          subTitle = ?,
+          description = ?,
+          breakTime = ?,
+          series = ?
+          where id = ?; `;
+
+      await this.databaseService.execute(createQuery, [
+        workoutClientDto.title,
+        workoutClientDto.subtitle,
+        workoutClientDto.description,
+        workoutClientDto.breakTime,
+        workoutClientDto.series,
+        workoutClientDto.id,
       ]);
     } catch (error) {
       throw error;

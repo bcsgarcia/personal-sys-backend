@@ -6,6 +6,7 @@ import { ApiBadRequestResponse, ApiBearerAuth, ApiOperation, ApiResponse, ApiTag
 import { Request } from 'express';
 import { AccessTokenModel } from 'src/models/access-token-user.model';
 import { CreateWorkoutClientDto } from '../dto/create-workout-client.dto';
+import { UpdateWorkoutClientDto } from '../dto/update-workout-client.dto';
 
 @ApiTags('workout')
 @Controller('workout')
@@ -126,6 +127,27 @@ export class WorkoutController {
       createWorkoutClientDto.idCompany = user.clientIdCompany;
 
       return this.workoutService.createWorkoutClient(createWorkoutClientDto);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  @Put('/client')
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Update existing workoutClient' })
+  @ApiResponse({
+    status: 200,
+    description: 'The workout has been successfully updated.',
+  })
+  @ApiBadRequestResponse({
+    description: 'Invalid or missing data in the header/request.',
+  })
+  updateWorkoutClient(@Body() updateWorkoutClientDto: UpdateWorkoutClientDto, @Req() request: Request) {
+    try {
+      const user = new AccessTokenModel(request['user']);
+      updateWorkoutClientDto.idCompany = user.clientIdCompany;
+
+      return this.workoutService.updateWorkoutClient(updateWorkoutClientDto);
     } catch (error) {
       throw error;
     }
