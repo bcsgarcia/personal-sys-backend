@@ -291,9 +291,9 @@ export class WorkoutsheetRepository {
                  ws.workoutsheetOrder as workoutSheetOrder,
 
                  wc.id                as workoutId,
-                 w.title              as workoutTitle,
-                 w.subTitle           as workoutSubtitle,
-                 w.description        as workoutDescription,
+                 wc.title              as workoutTitle,
+                 wc.subTitle           as workoutSubtitle,
+                 wc.description        as workoutDescription,
                  wc.workoutOrder      as workoutOrder,
                  wc.breakTime         as workoutBreakTime,
                  wc.series            as workoutSeries,
