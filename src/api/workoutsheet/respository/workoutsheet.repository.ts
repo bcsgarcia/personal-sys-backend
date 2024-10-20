@@ -291,9 +291,9 @@ export class WorkoutsheetRepository {
                  ws.workoutsheetOrder as workoutSheetOrder,
 
                  wc.id                as workoutId,
-                 wc.title              as workoutTitle,
-                 wc.subTitle           as workoutSubtitle,
-                 wc.description        as workoutDescription,
+                 wc.title             as workoutTitle,
+                 wc.subTitle          as workoutSubtitle,
+                 wc.description       as workoutDescription,
                  wc.workoutOrder      as workoutOrder,
                  wc.breakTime         as workoutBreakTime,
                  wc.series            as workoutSeries,
@@ -317,7 +317,7 @@ export class WorkoutsheetRepository {
           WHERE ws.idClient = '${user.clientId}'
             AND ws.idCompany = '${user.clientIdCompany}'
             AND ws.isActive = 1
-          ORDER BY ws.workoutsheetOrder ASC
+          ORDER BY ws.workoutsheetOrder, wc.workoutOrder;
       `;
 
       return await this.databaseService.execute(query);
