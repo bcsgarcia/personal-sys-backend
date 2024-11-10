@@ -113,7 +113,7 @@ export class AuthService {
 
       delete payload.exp;
 
-      const accessToken = await this.jwtService.signAsync(payload);
+      const accessToken = await this.jwtService.signAsync(payload, { expiresIn: '240m' });
 
       return new AccessTokenDto(accessToken);
     } catch (error) {

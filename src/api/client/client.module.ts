@@ -17,7 +17,7 @@ import { ImageService } from 'src/common-services/image-service.service';
     AuthModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
-      signOptions: { expiresIn: '60m' },
+      signOptions: { expiresIn: '240m' },
     }),
   ],
   providers: [
