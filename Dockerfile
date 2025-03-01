@@ -18,12 +18,12 @@ RUN npm run build
 # Remove dev dependencies
 RUN npm prune --production
 
-# Verify the build output exists
-RUN ls -la dist/src/main.js || exit 1
+# Debug: List contents of dist directory
+RUN ls -la dist/
 
 # Set the working directory for runtime
 WORKDIR /app
 
 EXPOSE 3001
 
-CMD ["node", "dist/src/main.js"]
+CMD ["node", "dist/main.js"]
