@@ -72,8 +72,6 @@ jobs:
             services:
               node:
                 image: ghcr.io/${{ github.repository }}:main
-                command: "npm run start:prod"
-                working_dir: /app
                 environment:
                   - NODE_ENV=prod
                   - PORT=${{ secrets.PORT }}
