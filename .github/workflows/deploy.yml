@@ -54,6 +54,18 @@ jobs:
           script: |
             cd ${{ secrets.PROJECT_PATH }}
 
+            # Verificar se o Docker Compose está instalado
+            if ! command -v docker-compose &> /dev/null; then
+              echo "Docker Compose não está instalado. Instalando..."
+              # Instalar Docker Compose
+              sudo curl -L "https://github.com/docker/compose/releases/download/v2.24.5/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+              sudo chmod +x /usr/local/bin/docker-compose
+              echo "Docker Compose instalado com sucesso!"
+            else
+              echo "Docker Compose já está instalado."
+              docker-compose --version
+            fi
+
             # Criar docker-compose.yml
             cat > docker-compose.prod.yml << 'EOL'
             version: "1"
