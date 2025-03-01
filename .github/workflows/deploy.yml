@@ -99,6 +99,7 @@ jobs:
                   - "3001"
                 ports:
                   - "3001:3001"
+                restart: always
             EOL
 
             # Login no GitHub Container Registry
@@ -108,7 +109,34 @@ jobs:
             docker pull ghcr.io/${{ github.repository }}:main
 
             # Parar e remover containers antigos
+            echo "Parando containers antigos..."
             docker-compose -f docker-compose.prod.yml down
 
-            # Iniciar com a nova imagem
+            # Limpar containers parados
+            echo "Limpando containers parados..."
+            docker container prune -f
+
+            # Iniciar com a nova imagem em modo detached e mostrar logs
+            echo "Iniciando novo container..."
             docker-compose -f docker-compose.prod.yml up -d
+
+            # Esperar um pouco para o container inicializar
+            sleep 10
+
+            # Verificar status dos containers
+            echo "Status dos containers:"
+            docker ps -a
+
+            # Mostrar logs do container
+            echo "Logs do container:"
+            docker-compose -f docker-compose.prod.yml logs
+
+            # Verificar se o container está rodando
+            if [ $(docker ps -q | wc -l) -eq 0 ]; then
+              echo "ERRO: Nenhum container está rodando!"
+              echo "Últimos logs de erro:"
+              docker-compose -f docker-compose.prod.yml logs --tail=50
+              exit 1
+            else
+              echo "Container está rodando com sucesso!"
+            fi
