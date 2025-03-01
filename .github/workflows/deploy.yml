@@ -50,15 +50,20 @@ jobs:
 
       - name: Copy files to VPS
         uses: appleboy/scp-action@master
+        env:
+          TERM: xterm
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
           password: ${{ secrets.VPS_PASSWORD }}
           source: "docker-compose.template.yml"
           target: "${{ secrets.PROJECT_PATH }}"
+          strip_components: 0
 
       - name: Deploy to VPS
         uses: appleboy/ssh-action@master
+        env:
+          TERM: xterm
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
