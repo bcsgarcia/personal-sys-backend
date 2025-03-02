@@ -11,7 +11,6 @@ import { MyMiddleware } from './myMiddleware.middleware';
 import { FtpService } from './common-services/ftp-service.service';
 import { ImageService } from './common-services/image-service.service';
 import { ConfigModule } from '@nestjs/config';
-import { UrlRewriteMiddleware } from './middlewares/url-rewrite.middleware';
 
 @Module({
   imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule, ApiModule],
@@ -26,14 +25,13 @@ import { UrlRewriteMiddleware } from './middlewares/url-rewrite.middleware';
       useClass: AuthGuard,
     },
     MyMiddleware,
-    UrlRewriteMiddleware,
   ],
   exports: [DatabaseService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
-      .apply(MyMiddleware, UrlRewriteMiddleware)
+      .apply(MyMiddleware)
       .exclude('api/swagger') // Excluir o Swagger da reescrita de URL
       .forRoutes('*');
   }

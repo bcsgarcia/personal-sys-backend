@@ -4,13 +4,16 @@ import { NextFunction, Request, Response } from 'express';
 @Injectable()
 export class MyMiddleware implements NestMiddleware {
   use(req: Request, res: Response, next: NextFunction) {
-    console.log(`original url ${req.baseUrl}`);
-    console.log(`original path ${req.path}`);
-    // Remove /personal do início do path se existir
-    if (req.url.includes('/personal')) {
-      req.url = req.url.replace('/personal', '');
-      console.log(`/personal removed to url:${req.url} `);
+    console.log('Original URL:', req.url);
+    console.log('Original Path:', req.path);
+    console.log('Base URL:', req.baseUrl);
+
+    // Remove /personal apenas se for o primeiro segmento da URL
+    if (req.url.startsWith('/personal/')) {
+      req.url = req.url.replace('/personal/', '/');
+      console.log('URL after removing /personal:', req.url);
     }
+
     next();
   }
 }
