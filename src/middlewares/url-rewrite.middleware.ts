@@ -5,7 +5,7 @@ import { Request, Response, NextFunction } from 'express';
 export class UrlRewriteMiddleware implements NestMiddleware {
   use(req: Request, _res: Response, next: NextFunction) {
     // Remove /personal do início da URL se existir
-    if (req.url.startsWith('/personal')) {
+    if (req.url.includes('/personal')) {
       req.url = req.url.replace('/personal', '');
     }
     next();
