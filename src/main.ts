@@ -13,6 +13,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.useGlobalGuards();
+  app.setGlobalPrefix('personal');
 
   const corsOptions = {
     origin: process.env.NODE_ENV === 'dev' ? '*' : 'https://treinadoraamanda.bcsgarcia.com.br',

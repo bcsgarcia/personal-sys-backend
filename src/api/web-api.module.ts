@@ -43,4 +43,11 @@ import { PartnershipModule } from './partnership/partnership.module';
     IntroductionPageModule,
   ],
 })
-export class ApiModule {}
+export class ApiModule {
+  configure() {
+    // Adiciona o prefixo global 'api' a todas as rotas deste módulo
+    return {
+      prefix: 'api',
+    };
+  }
+}
