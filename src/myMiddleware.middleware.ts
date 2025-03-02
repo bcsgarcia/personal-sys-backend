@@ -7,7 +7,7 @@ export class MyMiddleware implements NestMiddleware {
     console.log(`original url ${req.baseUrl}`);
     console.log(`original path ${req.path}`);
     // Remove /personal do início do path se existir
-    if (req.path.startsWith('/personal')) {
+    if (req.url.includes('/personal')) {
       req.url = req.url.replace('/personal', '');
       console.log(`/personal removed to url:${req.url} `);
     }
