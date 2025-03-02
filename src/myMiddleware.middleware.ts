@@ -8,9 +8,12 @@ export class MyMiddleware implements NestMiddleware {
     console.log('Original Path:', req.path);
     console.log('Base URL:', req.baseUrl);
 
-    // Remove /personal apenas se for o primeiro segmento da URL
-    if (req.url.startsWith('/personal/')) {
-      req.url = req.url.replace('/personal/', '/');
+    // Remove /personal do baseUrl se existir
+    if (req.baseUrl.startsWith('/personal/')) {
+      const newBaseUrl = req.baseUrl.replace('/personal/', '/');
+      // No Express, não podemos modificar o baseUrl diretamente
+      // Então vamos reconstruir a URL completa
+      req.url = newBaseUrl + (req.url === '/' ? '' : req.url);
       console.log('URL after removing /personal:', req.url);
     }
 
