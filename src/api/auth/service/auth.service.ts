@@ -41,12 +41,7 @@ export class AuthService {
   async emailAlreadyExists(email: string, idCompany: string): Promise<boolean> {
     try {
       const rows = await this.authRepository.emailAlreadyExists(email, idCompany);
-
-      if (rows.length > 0) {
-        return true;
-      }
-
-      return false;
+      return rows.length > 0;
     } catch (error) {
       throw error;
     }
