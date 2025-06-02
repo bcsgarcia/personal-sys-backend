@@ -15,7 +15,7 @@ export class IntroductionPageService {
 
   async getCompanyInformation(idCompany: string): Promise<any> {
     try {
-      const companyInfoFind = await this.companyRepository.findByIdAdmin(idCompany);
+      const companyInfoFind = await this.companyRepository.findById(idCompany);
 
       const companyInfo = {
         ...companyInfoFind,

@@ -43,7 +43,9 @@ export class ClientService {
         return [];
       }
 
-      return rows.map((row) => new ClientDto(row));
+      const retornoDto = rows.map((row) => new ClientDto(row));
+
+      return retornoDto;
     } catch (error) {
       throw error;
     }
@@ -53,11 +55,11 @@ export class ClientService {
     try {
       const rows = await this.clientRepository.findById(id);
 
-      if (rows.length === 0) {
+      if (rows === undefined) {
         return null;
       }
 
-      return new ClientDto(rows[0]);
+      return new ClientDto(rows);
     } catch (error) {
       throw error;
     }

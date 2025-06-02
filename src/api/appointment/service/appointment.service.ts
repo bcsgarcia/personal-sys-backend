@@ -18,14 +18,17 @@ export class AppointmentService {
       const idAppointment = await this.appointmentRepository.create(createAppointmentDto);
 
       if (createAppointmentDto.sendNotificationToClients && createAppointmentDto.clients.length > 0) {
-        await this._createNotificationToClient(createAppointmentDto, idAppointment['id']);
+        await this._createNotificationToClient(createAppointmentDto, idAppointment);
       }
 
       for (const clientId of createAppointmentDto.clients) {
-        await this.appointmentRepository.createAppointmentClient(idAppointment['id'], clientId);
+        await this.appointmentRepository.createAppointmentClient(idAppointment, clientId);
       }
 
-      return { status: 'success', message: 'Appointment created successfully!' };
+      return {
+        status: 'success',
+        message: 'Appointment created successfully!',
+      };
     } catch (error) {
       throw error;
     }
@@ -35,7 +38,10 @@ export class AppointmentService {
     try {
       await this.appointmentRepository.delete(idAppointment);
 
-      return { status: 'success', message: 'Appointment deleted successfully!' };
+      return {
+        status: 'success',
+        message: 'Appointment deleted successfully!',
+      };
     } catch (error) {
       throw error;
     }
@@ -56,7 +62,10 @@ export class AppointmentService {
 
       await this.appointmentRepository.update(idAppointment, appointment);
 
-      return { status: 'success', message: 'Appointment updated successfully!' };
+      return {
+        status: 'success',
+        message: 'Appointment updated successfully!',
+      };
     } catch (error) {
       throw error;
     }
@@ -67,8 +76,6 @@ export class AppointmentService {
       const rawResults = await this.appointmentRepository.getAll(idCompany);
 
       const appoimentsMap = new Map<string, any>();
-
-      console.log(rawResults);
 
       for (const row of rawResults) {
         let appointment = appoimentsMap.get(row.id);

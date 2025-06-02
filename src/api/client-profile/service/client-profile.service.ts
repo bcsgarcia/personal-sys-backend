@@ -16,7 +16,7 @@ export class ClientProfileService {
   async getProfileScreenInfo(idClient: string, idCompany: string) {
     const client = await this.clientRepository.findById(idClient);
 
-    if (client.length === 0) {
+    if (client === undefined) {
       return { status: 'error', message: 'Client not found' };
     }
 
@@ -25,7 +25,7 @@ export class ClientProfileService {
 
     return {
       status: 'success',
-      client: client[0],
+      client: client,
       clientGoals: clientGoals,
       clientFeedbacks: clientFeedbacks,
     };

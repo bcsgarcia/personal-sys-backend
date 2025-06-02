@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateClientEvaluationDto } from '../dto/create-client-evaluation.dto';
-import { UpdateClientEvaluationDto } from '../dto/update-client-evaluation.dto';
 import { ClientEvaluationRepository } from '../repository/client-evaluation.repository';
 import { ClientEvaluationDto } from '../dto/client-evaluation.dto';
 import { rethrow } from '@nestjs/core/helpers/rethrow';
@@ -48,7 +47,7 @@ export class ClientEvaluationService {
 
       const clientEvaluationMap = new Map<string, ClientEvaluationDto>();
       rows.map((row) => {
-        const key = row['idClientEvaluation'];
+        const key = row['id'];
 
         if (!clientEvaluationMap.has(key)) {
           const clientEvaluation = new ClientEvaluationDto(row);

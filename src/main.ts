@@ -1,10 +1,10 @@
+import * as dotenv from 'dotenv';
 import { config } from 'dotenv';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import * as bodyParser from 'body-parser';
-import * as dotenv from 'dotenv';
-import * as cors from 'cors';
+import { LoggingInterceptor } from './middleware/logging.interceptor';
 
 config();
 dotenv.config();
@@ -13,11 +13,16 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   app.useGlobalGuards();
+  app.useGlobalInterceptors(new LoggingInterceptor());
   app.setGlobalPrefix('personal');
 
   const corsOptions = {
-    origin: process.env.NODE_ENV === 'dev' ? '*' : 'https://treinadoraamanda.bcsgarcia.com.br',
+    origin:
+      process.env.NODE_ENV === 'dev'
+        ? '*'
+        : 'https://treinadoraamanda.bcsgarcia.com.br',
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+
     allowedHeaders: 'Content-Type, Accept, Authorization',
     credentials: true,
   };
@@ -56,7 +61,9 @@ async function bootstrap() {
   const port = process.env.PORT || 3000;
 
   await app.listen(port, '0.0.0.0', () => {
-    console.log(`App listening on port .env: ${process.env.PORT} / port: ${port}`);
+    console.log(
+      `App listening on port .env: ${process.env.PORT} / port: ${port}`,
+    );
   });
 }
 

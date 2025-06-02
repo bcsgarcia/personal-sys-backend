@@ -36,7 +36,7 @@ export class ClientEvaluationDto {
   clientEvaluationPhotoList: Array<ClientEvaluationPhotoDto>;
 
   constructor(data: any) {
-    this.id = data.idClientEvaluation ?? '';
+    this.id = data.id ?? '';
     this.date = data.date;
     this.idClient = data.idClient;
   }

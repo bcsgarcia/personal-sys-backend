@@ -1,4 +1,13 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Req,
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 
 import { AuthDto } from '../dto/request/auth.dto';
@@ -21,7 +30,11 @@ export class AuthController {
   @Public()
   @Post('/app')
   appLogin(@Body() authDto: AppAuthDto) {
-    return this.authService.appAuth(authDto);
+    try {
+      return this.authService.appAuth(authDto);
+    } catch (error) {
+      throw error;
+    }
   }
 
   @Public()
@@ -42,9 +55,12 @@ export class AuthController {
     return this.authService.refreshToken(token['token']);
   }
 
-  @Get()
+  @Get('')
   findAll() {
-    return this.authService.emailAlreadyExists('bcsgarcia@outlook.com', '0aa1e44e-cf3d-11ed-a314-0242ac110002');
+    return this.authService.emailAlreadyExists(
+      'bcsgarcia@outlook.com',
+      '0aa1e44e-cf3d-11ed-a314-0242ac110002',
+    );
   }
 
   @Get(':id')
@@ -70,7 +86,11 @@ export class AuthController {
       const oldPass = body['oldpass'];
       const newPass = body['newpass'];
 
-      return this.authService.updatePassByIdClient(user.clientId, oldPass, newPass);
+      return this.authService.updatePassByIdClient(
+        user.clientId,
+        oldPass,
+        newPass,
+      );
     } catch (error) {
       throw error;
     }

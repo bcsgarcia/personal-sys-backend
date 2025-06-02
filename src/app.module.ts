@@ -1,4 +1,4 @@
-import { MiddlewareConsumer, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { DatabaseModule } from './database/database.module';
@@ -10,9 +10,15 @@ import { AuthGuard } from './api/auth/auth.guard';
 import { FtpService } from './common-services/ftp-service.service';
 import { ImageService } from './common-services/image-service.service';
 import { ConfigModule } from '@nestjs/config';
+import { SupabaseModule } from './supabase/supabase.module';
 
 @Module({
-  imports: [ConfigModule.forRoot({ isGlobal: true }), DatabaseModule, ApiModule],
+  imports: [
+    ConfigModule.forRoot({ isGlobal: true }),
+    DatabaseModule,
+    ApiModule,
+    SupabaseModule,
+  ],
   controllers: [AppController, RecordsController],
   providers: [
     AppService,

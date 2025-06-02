@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable, UploadedFile } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UploadedFile,
+} from '@nestjs/common';
 import { CreatePartnershipDto } from '../dto/create-partnership.dto';
 import { UpdatePartnershipDto } from '../dto/update-partnership.dto';
 import { PartnershipRepository } from '../repository/parnership.repository';
@@ -21,7 +26,9 @@ export class PartnershipService {
         createPartnerDto.idCompany,
       );
 
-      const idPartnerInserted = await this.partnershipRepository.create(createPartnerDto);
+      const idPartnerInserted = await this.partnershipRepository.create(
+        createPartnerDto,
+      );
 
       return { status: 'success', idPartnership: idPartnerInserted };
     } catch (error) {
@@ -46,7 +53,10 @@ export class PartnershipService {
 
   async deletePartnershipLogo(idPartnership: string) {
     try {
-      await this.ftpService.removePhoto(`${idPartnership}.png`, process.env.FTP_PARTNERSHIP_LOGO_PATH);
+      await this.ftpService.removePhoto(
+        `${idPartnership}.png`,
+        process.env.FTP_PARTNERSHIP_LOGO_PATH,
+      );
 
       return { status: 'success' };
     } catch (error) {
@@ -57,7 +67,10 @@ export class PartnershipService {
   async uploadPartnershipLogo(@UploadedFile() file, idPartnership: string) {
     try {
       if (!file.mimetype.includes('image') || file.mimetype.includes('heic')) {
-        throw new HttpException(DomainError.INTERNAL_SERVER_ERROR, HttpStatus.BAD_REQUEST);
+        throw new HttpException(
+          DomainError.INTERNAL_SERVER_ERROR,
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       const imageBuffer = file.mimetype.includes('png')
@@ -66,7 +79,11 @@ export class PartnershipService {
 
       const filename = `${idPartnership}.png`;
 
-      await this.ftpService.uploadPhoto(imageBuffer, filename, process.env.FTP_PARTNERSHIP_LOGO_PATH);
+      await this.ftpService.uploadPhoto(
+        imageBuffer,
+        filename,
+        process.env.FTP_PARTNERSHIP_LOGO_PATH,
+      );
 
       const imageUrl = `${process.env.PARTNERSHIP_LOGO_BASE_PATH}/${filename}`;
 
@@ -80,7 +97,13 @@ export class PartnershipService {
   }
 
   validateFile(@UploadedFile() file): boolean {
-    const imageMimeTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/gif', 'image/webp'];
+    const imageMimeTypes = [
+      'image/png',
+      'image/jpeg',
+      'image/jpg',
+      'image/gif',
+      'image/webp',
+    ];
 
     if (imageMimeTypes.includes(file.mimetype)) {
       return true;
@@ -122,12 +145,21 @@ export class PartnershipService {
     }
   }
 
-  async findIdCategory(idCategoryOrName: string, idCompany: string): Promise<string> {
+  async findIdCategory(
+    idCategoryOrName: string,
+    idCompany: string,
+  ): Promise<string> {
     try {
-      const rows = await this.partnershipRepository.findCategoryByIdOrName(idCategoryOrName, idCompany);
+      const rows = await this.partnershipRepository.findCategoryByIdOrName(
+        idCategoryOrName,
+        idCompany,
+      );
 
       if (rows.length === 0) {
-        const createdCategory = await this.partnershipRepository.createCategory(idCategoryOrName, idCompany);
+        const createdCategory = await this.partnershipRepository.createCategory(
+          idCategoryOrName,
+          idCompany,
+        );
 
         return createdCategory[0]['id'];
       } else {
