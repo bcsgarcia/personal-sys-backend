@@ -1,6 +1,9 @@
 // src/supabase/supabase.repository.ts
 import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from '../dto/request/create-user.dto';
+import {
+  CreateSupabaseUserDto,
+  UpdateSupabaseUserDto,
+} from '../dto/request/create-user.dto';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 @Injectable()
@@ -51,14 +54,25 @@ export class AuthSupabaseRepository {
     return this.supabase.auth.admin.deleteUser(userId);
   }
 
-  async createUser(dto: CreateUserDto) {
+  async createUser(dto: CreateSupabaseUserDto) {
     return this.supabase.auth.admin.createUser({
       email: dto.email,
       password: dto.password,
       role: dto.role ?? 'user',
       email_confirm: dto.emailConfirmed ?? true,
-      user_metadata: dto.user_metadata,
-      app_metadata: dto.app_metadata,
+      user_metadata: dto.userMetadata,
+      app_metadata: dto.appMetadata,
+    });
+  }
+
+  async updateUser(userId: string, dto: UpdateSupabaseUserDto) {
+    return this.supabase.auth.admin.updateUserById(userId, {
+      email: dto.email,
+      password: dto.password,
+      role: dto.role ?? 'user',
+      email_confirm: dto.emailConfirmed ?? true,
+      user_metadata: dto.userMetadata,
+      app_metadata: dto.appMetadata,
     });
   }
 }

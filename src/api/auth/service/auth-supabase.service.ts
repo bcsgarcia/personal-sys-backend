@@ -1,9 +1,9 @@
 // src/supabase/supabase.service.ts
 import { Injectable } from '@nestjs/common';
 import { AuthSupabaseRepository } from '../repository/auth-supabase.repository';
-import { CreateUserDto } from '../dto/request/create-user.dto';
 import { ClientRepository } from '../../client/repository/client.repository';
 import { User } from '@supabase/supabase-js';
+import { CreateSupabaseUserDto } from '../dto/request/create-user.dto';
 
 @Injectable()
 export class AuthSupabaseService {
@@ -51,24 +51,72 @@ export class AuthSupabaseService {
     return data;
   }
 
-  async deleteUser(userId: string) {
-    const { data, error } = await this.repository.deleteUser(userId);
+  async deleteUser(supabaseAuthId: string, clientId: string) {
+    // const { data, error } = await this.repository.deleteUser(userId);
+    // if (error) throw error;
+    // return data;
+
+    await this.clientRepository.updateIdSupabaseAuth(clientId, null);
+
+    const { data, error } = await this.repository.deleteUser(supabaseAuthId);
+
     if (error) throw error;
     return data;
   }
 
-  async createUser(dto: CreateUserDto) {
-    const { data, error } = await this.repository.createUser(dto);
-    if (error) throw error;
-    return data;
-  }
+  async createUser(userDto: CreateSupabaseUserDto) {
+    // get client
+    const client = await this.clientRepository.findById(
+      userDto.userMetadata.clientId,
+    );
 
-  // try {
-  //   await this.deleteUser(client.idSupabaseAuth);
-  //   console.log(`${client.email} - ${client.idSupabaseAuth}`);
-  // } catch (err) {
-  //   console.log(err);
-  // }
+    // check if client exists
+    if (!client) {
+      throw new Error(
+        `Client with ID ${userDto.userMetadata.clientId} not found`,
+      );
+    }
+
+    // check if client has supabaseAuthId
+    // if it has, delete the supabaseAuth to creae a new one
+    if (client.idSupabaseAuth) {
+      try {
+        await this.deleteUser(client.idSupabaseAuth, client.id);
+      } catch (err) {
+        console.error(
+          `Failed to delete existing user for client ${client.id}:`,
+          err,
+        );
+      }
+    }
+
+    // verificar se o email ja está cadastrado no supabaseAuth
+    const existingUser = await this.repository.findAllUsers();
+    const userExists = existingUser.data.users?.some(
+      (user) => user.email === userDto.email,
+    );
+
+    // se ainda existir email cadastrado, é pq estamos duplicando o email para outro user
+    if (userExists) {
+      throw new Error(
+        `User with email ${userDto.email} already exists to another client`,
+      );
+    }
+
+    // finalmente cria o supabase auth user
+    const { data, error } = await this.repository.createUser(userDto);
+
+    if (error) {
+      console.warn(
+        `❌ Failed to create supabase user for client ${client.id}:`,
+        error.message,
+      );
+      return null;
+    }
+
+    // atualiza o idSupabaseAuth do client
+    await this.clientRepository.updateIdSupabaseAuth(client.id, data.user.id);
+  }
 
   async deleteAllUsers(isAdmin: boolean): Promise<void> {
     const {
@@ -173,8 +221,8 @@ export class AuthSupabaseService {
               password: '123',
               emailConfirmed: true,
               role: isAdmin ? 'admin' : 'user',
-              app_metadata: { enabled: client.isActive },
-              user_metadata: {
+              appMetadata: { enabled: client.isActive },
+              userMetadata: {
                 clientId: client.id,
                 clientIdAuth: client.idAuth || null,
                 idCompany: client.idCompany || null,
@@ -214,8 +262,8 @@ export class AuthSupabaseService {
             password: '123',
             emailConfirmed: true,
             role: isAdmin ? 'admin' : 'user',
-            app_metadata: { enabled: client.isActive },
-            user_metadata: {
+            appMetadata: { enabled: client.isActive },
+            userMetadata: {
               clientId: client.id,
               clientIdAuth: client.idAuth || null,
               idCompany: client.idCompany || null,

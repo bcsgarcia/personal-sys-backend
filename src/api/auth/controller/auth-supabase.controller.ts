@@ -1,34 +1,32 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
-import { Public } from '../jwt.decorator';
 import { AuthSupabaseService } from '../service/auth-supabase.service';
-import { CreateUserDto } from '../dto/request/create-user.dto';
 import { SyncSupabaseDto } from '../dto/request/sync-supabase.dto';
+import { CreateSupabaseUserDto } from '../dto/request/create-user.dto';
 
 @ApiTags('auth_supabase')
 @Controller('auth_supabase')
 export class AuthSupabaseController {
   constructor(private readonly authSupabaseService: AuthSupabaseService) {}
 
-  @Public()
+  // @Public()
   @Get()
   findAllSupabase() {
     return this.authSupabaseService.findAllUsers();
   }
 
-  @Public()
+  // @Public()
   @Get(':id')
   findOneSupabase(@Param('id') id: string) {
     return this.authSupabaseService.findUserById(id);
   }
 
-  @Public()
+  // @Public()
   @Post(':id/enable')
   enableSupabase(@Param('id') id: string) {
     return this.authSupabaseService.enableUser(id);
   }
 
-  @Public()
   @Post(':id/disable')
   disableSupabase(@Param('id') id: string) {
     return this.authSupabaseService.disableUser(id);
@@ -39,26 +37,25 @@ export class AuthSupabaseController {
   //   return this.authSupabaseService.sendResetPasswordEmail(body.email, body.redirectTo);
   // }
 
-  @Public()
   @Delete(':id')
-  delete(@Param('id') id: string) {
-    return this.authSupabaseService.deleteUser(id);
+  delete(
+    @Param('supabaseAuthId') idSupabase: string,
+    @Param('clientId') idClient: string,
+  ) {
+    return this.authSupabaseService.deleteUser(idSupabase, idClient);
   }
 
-  @Public()
   @Post()
-  createSupabaseUser(@Body() dto: CreateUserDto) {
+  createSupabaseUser(@Body() dto: CreateSupabaseUserDto) {
     return this.authSupabaseService.createUser(dto);
   }
 
-  @Public()
   @Post('/sync-supabase-auth')
   @ApiBody({ type: SyncSupabaseDto })
   syncSupabaseAuth(@Body() dto: SyncSupabaseDto) {
     return this.authSupabaseService.syncClientsWithAuthUsers(dto.isAdmin);
   }
 
-  @Public()
   @Post('/delete-all-supabase-auth')
   @ApiBody({ type: SyncSupabaseDto })
   deleteAllSupabaseAuth(@Body() dto: SyncSupabaseDto) {
