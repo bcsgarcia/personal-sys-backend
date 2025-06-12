@@ -13,9 +13,7 @@ export class AuthSupabaseService {
   ) {}
 
   async findAllUsers() {
-    const { data, error } = await this.repository.findAllUsers();
-    if (error) throw error;
-    return data;
+    return this.repository.findAllUsers();
   }
 
   async findUserById(userId: string) {
@@ -91,9 +89,9 @@ export class AuthSupabaseService {
     }
 
     // verificar se o email ja está cadastrado no supabaseAuth
-    const existingUser = await this.repository.findAllUsers();
-    const userExists = existingUser.data.users?.some(
-      (user) => user?.email === userDto.email,
+    const existingUsers = await this.repository.findAllUsers();
+    const userExists = existingUsers.some(
+      (user) => user.email === userDto.email,
     );
 
     // se ainda existir email cadastrado, é pq estamos duplicando o email para outro user
@@ -119,11 +117,7 @@ export class AuthSupabaseService {
   }
 
   async deleteAllUsers(isAdmin: boolean): Promise<void> {
-    const {
-      users: allAuthUsers,
-    }: {
-      users: User[];
-    } = await this.findAllUsers();
+    const allAuthUsers = await this.findAllUsers();
 
     if (!allAuthUsers.length) {
       console.log('No users found to delete');
@@ -175,11 +169,7 @@ export class AuthSupabaseService {
       throw new Error('No clients found to create users');
     }
 
-    const {
-      users: allAuthUsers,
-    }: {
-      users: User[];
-    } = await this.findAllUsers();
+    const allAuthUsers = await this.findAllUsers();
 
     const userTasks = allClients.map(async (client) => {
       try {

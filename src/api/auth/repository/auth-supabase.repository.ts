@@ -4,7 +4,7 @@ import {
   CreateSupabaseUserDto,
   UpdateSupabaseUserDto,
 } from '../dto/request/create-user.dto';
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient, User } from '@supabase/supabase-js';
 
 @Injectable()
 export class AuthSupabaseRepository {
@@ -27,8 +27,10 @@ export class AuthSupabaseRepository {
     );
   }
 
-  async findAllUsers() {
-    return this.supabase.auth.admin.listUsers();
+  async findAllUsers(): Promise<User[]> {
+    const { data, error } = await this.supabase.auth.admin.listUsers();
+    if (error) throw error;
+    return data.users;
   }
 
   async findUserById(userId: string) {
