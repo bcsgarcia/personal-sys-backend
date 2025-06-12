@@ -93,7 +93,7 @@ export class AuthSupabaseService {
     // verificar se o email ja está cadastrado no supabaseAuth
     const existingUser = await this.repository.findAllUsers();
     const userExists = existingUser.data.users?.some(
-      (user) => user.email === userDto.email,
+      (user) => user?.email === userDto.email,
     );
 
     // se ainda existir email cadastrado, é pq estamos duplicando o email para outro user
