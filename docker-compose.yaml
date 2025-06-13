@@ -7,8 +7,8 @@ services:
       dockerfile: Dockerfile
     container_name: node-app
     restart: unless-stopped
-    #    ports:
-    #      - "3000:3001"
+    ports:
+      - "3000:3000"
     environment:
       - NODE_ENV=${NODE_ENV}
       - PORT=${PORT}
