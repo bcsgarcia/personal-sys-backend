@@ -7,8 +7,6 @@ services:
       dockerfile: Dockerfile
     container_name: node-app
     restart: unless-stopped
-    ports:
-      - "3000:3000"
     environment:
       - NODE_ENV=${NODE_ENV}
       - PORT=${PORT}
@@ -35,25 +33,12 @@ services:
       - SUPABASE_URL=${SUPABASE_URL}
       - SUPABASE_KEY=${SUPABASE_KEY}
       - SUPABASE_JWT_SECRET=${SUPABASE_JWT_SECRET}
-    networks:
-      - app-network
-    dns:
-      # Configurações de DNS personalizadas
-      - 8.8.8.8
-      - 8.8.4.4
-      # Ou use DNS customizados:
-      # - 1.1.1.1
-      # - 1.0.0.1
     extra_hosts:
-      # Mapeamentos de host personalizados (se necessário)
       - "supabase-personal.raspberrypi.home:192.168.1.248"
-      # - "api.exemplo.com:192.168.1.100"
     volumes:
-      # Volumes para persistir dados (se necessário)
       - ./logs:/app/logs
-      # - app-data:/app/data
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:3001/health" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:3000/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -64,14 +49,80 @@ services:
         max-size: "10m"
         max-file: "3"
 
-networks:
-  app-network:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.20.0.0/16
-
-# Se você precisar de volumes nomeados
-volumes:
-  app-data:
-    driver: local
+#version: '3.8'
+#
+#services:
+#  app:
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    container_name: node-app
+#    restart: unless-stopped
+#    ports:
+#      - "3000:3000"
+#    environment:
+#      - NODE_ENV=${NODE_ENV}
+#      - PORT=${PORT}
+#      - DATABASE_HOST=${DATABASE_HOST}
+#      - DATABASE_PORT=${DATABASE_PORT}
+#      - DATABASE_USERNAME=${DATABASE_USERNAME}
+#      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+#      - DATABASE_NAME=${DATABASE_NAME}
+#      - JWT_SECRET=${JWT_SECRET}
+#      - FTP_HOST=${FTP_HOST}
+#      - FTP_USER=${FTP_USER}
+#      - FTP_PASSWORD=${FTP_PASSWORD}
+#      - FTP_CLIENT_IMAGE_PATH=${FTP_CLIENT_IMAGE_PATH}
+#      - FTP_PARTNERSHIP_LOGO_PATH=${FTP_PARTNERSHIP_LOGO_PATH}
+#      - FTP_VIDEO_PATH=${FTP_VIDEO_PATH}
+#      - FTP_IMAGE_PATH=${FTP_IMAGE_PATH}
+#      - FTP_THUMBNAIL_PATH=${FTP_THUMBNAIL_PATH}
+#      - VIDEO_BASE_PATH=${VIDEO_BASE_PATH}
+#      - IMAGE_BASE_PATH=${IMAGE_BASE_PATH}
+#      - THUMBNAIL_BASE_PATH=${THUMBNAIL_BASE_PATH}
+#      - CLIENT_IMAGE_BASE_PATH=${CLIENT_IMAGE_BASE_PATH}
+#      - PARTNERSHIP_LOGO_BASE_PATH=${PARTNERSHIP_LOGO_BASE_PATH}
+#      - CORS_ORIGIN=${CORS_ORIGIN}
+#      - SUPABASE_URL=${SUPABASE_URL}
+#      - SUPABASE_KEY=${SUPABASE_KEY}
+#      - SUPABASE_JWT_SECRET=${SUPABASE_JWT_SECRET}
+#    networks:
+#      - app-network
+#    dns:
+#      # Configurações de DNS personalizadas
+#      - 8.8.8.8
+#      - 8.8.4.4
+#      # Ou use DNS customizados:
+#      # - 1.1.1.1
+#      # - 1.0.0.1
+#    extra_hosts:
+#      # Mapeamentos de host personalizados (se necessário)
+#      - "supabase-personal.raspberrypi.home:192.168.1.248"
+#      # - "api.exemplo.com:192.168.1.100"
+#    volumes:
+#      # Volumes para persistir dados (se necessário)
+#      - ./logs:/app/logs
+#      # - app-data:/app/data
+#    healthcheck:
+#      test: [ "CMD", "curl", "-f", "http://localhost:3001/health" ]
+#      interval: 30s
+#      timeout: 10s
+#      retries: 3
+#      start_period: 40s
+#    logging:
+#      driver: "json-file"
+#      options:
+#        max-size: "10m"
+#        max-file: "3"
+#
+#networks:
+#  app-network:
+#    driver: bridge
+#    ipam:
+#      config:
+#        - subnet: 172.20.0.0/16
+#
+## Se você precisar de volumes nomeados
+#volumes:
+#  app-data:
+#    driver: local
