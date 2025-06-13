@@ -19,7 +19,7 @@ COPY . .
 RUN npm prune --production
 
 # Debug: List contents of dist directory
-RUN ls -la dist/
+#RUN ls -la dist/
 
 # Set the working directory for runtime
 #WORKDIR /app
