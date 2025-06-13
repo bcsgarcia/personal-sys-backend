@@ -40,4 +40,4 @@ uploads/temp/*
 .vscode/launch.json
 
 docker-compose.prod.yml
-#docker-compose.yml
+#docker-compose.yaml
