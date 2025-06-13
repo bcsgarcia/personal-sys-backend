@@ -24,6 +24,6 @@ RUN ls -la dist/
 # Set the working directory for runtime
 WORKDIR /app
 
-EXPOSE 3001
+EXPOSE 3000
 
 CMD ["node", "dist/main.js"]
