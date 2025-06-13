@@ -46,7 +46,7 @@ services:
       # - 1.0.0.1
     extra_hosts:
       # Mapeamentos de host personalizados (se necessário)
-      - "host.docker.internal:host-gateway"
+      - "supabase-personal.raspberrypi.home:192.168.1.248"
       # - "api.exemplo.com:192.168.1.100"
     volumes:
       # Volumes para persistir dados (se necessário)
@@ -63,6 +63,13 @@ services:
       options:
         max-size: "10m"
         max-file: "3"
+
+networks:
+  app-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
 
 # Se você precisar de volumes nomeados
 volumes:
