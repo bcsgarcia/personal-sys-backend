@@ -9,8 +9,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --only=production --quiet --no-optional --no-fund
+# Install ALL dependencies (including dev dependencies for build)
+RUN npm ci --quiet --no-optional --no-fund
 
 # Copy source code
 COPY . .
@@ -20,6 +20,9 @@ RUN npm run build
 
 # Debug: List contents of dist directory
 RUN ls -la dist/
+
+# Remove dev dependencies after build
+RUN npm prune --production
 
 # Create non-root user
 RUN addgroup -g 1001 -S nodejs
@@ -32,7 +35,7 @@ USER nextjs
 EXPOSE 3000
 
 # Healthcheck
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+HEALTHCHECK --interval=30s --timeout=10s --start-period=40s --retries=3 \
   CMD curl -f http://localhost:3000/health || exit 1
 
 CMD ["node", "dist/main.js"]
