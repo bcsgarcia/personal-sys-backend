@@ -1,13 +1,14 @@
-version: "1"
+version: '3.8'
+
 services:
   app:
-    extra_hosts:
-      - "supabase-personal.raspberrypi.home:192.168.1.248"
     build:
       context: .
       dockerfile: Dockerfile
     container_name: node-app
-    command: "npm run start:prod"
+    restart: unless-stopped
+    ports:
+      - "3001:3001"
     environment:
       - NODE_ENV=${NODE_ENV}
       - PORT=${PORT}
@@ -34,5 +35,96 @@ services:
       - SUPABASE_URL=${SUPABASE_URL}
       - SUPABASE_KEY=${SUPABASE_KEY}
       - SUPABASE_JWT_SECRET=${SUPABASE_JWT_SECRET}
-    ports:
-      - "3001:3001"
+    networks:
+      - app-network
+    dns:
+      # Configurações de DNS personalizadas
+      - 8.8.8.8
+      - 8.8.4.4
+      # Ou use DNS customizados:
+      # - 1.1.1.1
+      # - 1.0.0.1
+    extra_hosts:
+      # Mapeamentos de host personalizados (se necessário)
+      - "host.docker.internal:host-gateway"
+      # - "api.exemplo.com:192.168.1.100"
+    volumes:
+      # Volumes para persistir dados (se necessário)
+      - ./logs:/app/logs
+      # - app-data:/app/data
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3001/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+# Se você precisar de volumes nomeados
+volumes:
+  app-data:
+    driver: local
+
+# Exemplo de outros serviços que você pode adicionar
+# services:
+#   database:
+#     image: postgres:15
+#     container_name: app-database
+#     restart: unless-stopped
+#     environment:
+#       POSTGRES_DB: myapp
+#       POSTGRES_USER: user
+#       POSTGRES_PASSWORD: password
+#     volumes:
+#       - postgres-data:/var/lib/postgresql/data
+#     networks:
+#       - app-network
+#     dns:
+#       - 8.8.8.8
+#       - 8.8.4.4
+
+# volumes:
+#   postgres-data:
+
+#version: "1"
+#services:
+#  app:
+#    extra_hosts:
+#      - "supabase-personal.raspberrypi.home:192.168.1.248"
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#    container_name: node-app
+#    command: "npm run start:prod"
+#    environment:
+#      - NODE_ENV=${NODE_ENV}
+#      - PORT=${PORT}
+#      - DATABASE_HOST=${DATABASE_HOST}
+#      - DATABASE_PORT=${DATABASE_PORT}
+#      - DATABASE_USERNAME=${DATABASE_USERNAME}
+#      - DATABASE_PASSWORD=${DATABASE_PASSWORD}
+#      - DATABASE_NAME=${DATABASE_NAME}
+#      - JWT_SECRET=${JWT_SECRET}
+#      - FTP_HOST=${FTP_HOST}
+#      - FTP_USER=${FTP_USER}
+#      - FTP_PASSWORD=${FTP_PASSWORD}
+#      - FTP_CLIENT_IMAGE_PATH=${FTP_CLIENT_IMAGE_PATH}
+#      - FTP_PARTNERSHIP_LOGO_PATH=${FTP_PARTNERSHIP_LOGO_PATH}
+#      - FTP_VIDEO_PATH=${FTP_VIDEO_PATH}
+#      - FTP_IMAGE_PATH=${FTP_IMAGE_PATH}
+#      - FTP_THUMBNAIL_PATH=${FTP_THUMBNAIL_PATH}
+#      - VIDEO_BASE_PATH=${VIDEO_BASE_PATH}
+#      - IMAGE_BASE_PATH=${IMAGE_BASE_PATH}
+#      - THUMBNAIL_BASE_PATH=${THUMBNAIL_BASE_PATH}
+#      - CLIENT_IMAGE_BASE_PATH=${CLIENT_IMAGE_BASE_PATH}
+#      - PARTNERSHIP_LOGO_BASE_PATH=${PARTNERSHIP_LOGO_BASE_PATH}
+#      - CORS_ORIGIN=${CORS_ORIGIN}
+#      - SUPABASE_URL=${SUPABASE_URL}
+#      - SUPABASE_KEY=${SUPABASE_KEY}
+#      - SUPABASE_JWT_SECRET=${SUPABASE_JWT_SECRET}
+#    ports:
+#      - "3001:3001"

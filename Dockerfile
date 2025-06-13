@@ -13,19 +13,17 @@ RUN npm install --quiet --no-optional --no-fund --loglevel=error
 COPY . .
 
 # Build the application
-#RUN npm run build
+RUN npm run build
 
 # Remove dev dependencies
 RUN npm prune --production
 
 # Debug: List contents of dist directory
-#RUN ls -la dist/
+RUN ls -la dist/
 
 # Set the working directory for runtime
-#WORKDIR /app
+WORKDIR /app
 
 EXPOSE 3001
 
-
-
-CMD ["node", "dist/src/main.js"]
+CMD ["node", "dist/main.js"]
