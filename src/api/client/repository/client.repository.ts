@@ -25,7 +25,7 @@ export class ClientRepository {
 
       const { data, error } = await this.supabase
         .from('client')
-        .select(`*, auth: idAuth (email)`)
+        .select(`*, auth: idAuth (email, pass)`)
         .eq('id', id)
         .single();
 
@@ -34,6 +34,7 @@ export class ClientRepository {
       return {
         ...data,
         email: data.auth?.email ?? null,
+        pass: data.auth?.pass ?? null,
       };
     } catch (error) {
       throw error;

@@ -101,6 +101,10 @@ export class AuthSupabaseService {
       );
     }
 
+    userDto.password = Buffer.from(client.pass, 'base64').toString('utf-8');
+
+    userDto.userMetadata.clientIdAuth = client.idAuth;
+
     // finalmente cria o supabase auth user
     const { data, error } = await this.repository.createUser(userDto);
 
@@ -114,6 +118,8 @@ export class AuthSupabaseService {
 
     // atualiza o idSupabaseAuth do client
     await this.clientRepository.updateIdSupabaseAuth(client.id, data.user.id);
+
+    return { status: 'success' };
   }
 
   async deleteAllUsers(isAdmin: boolean): Promise<void> {
