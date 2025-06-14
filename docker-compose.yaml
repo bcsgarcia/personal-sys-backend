@@ -38,7 +38,7 @@ services:
     volumes:
       - ./logs:/app/logs
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:3000/personl/health" ]
+      test: [ "CMD", "curl", "-f", "http://localhost:3000/personal/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
