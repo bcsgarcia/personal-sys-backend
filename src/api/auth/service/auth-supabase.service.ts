@@ -153,44 +153,52 @@ export class AuthSupabaseService {
   async deleteAllUsers(isAdmin: boolean): Promise<void> {
     const allAuthUsers = await this.findAllUsers();
 
-    if (!allAuthUsers.length) {
-      console.log('No users found to delete');
-      return;
+    for (const supabaseUser of allAuthUsers) {
+      if (supabaseUser.role === 'user') {
+        const { data, error } = await this.repository.deleteUser(
+          supabaseUser.id,
+        );
+      }
     }
 
-    const userTasks = allAuthUsers.map(async (user) => {
-      try {
-        if (!user.id || !user.user_metadata?.clientId) {
-          console.warn(`⚠️ User ${user.id} has no ID, skipping deletion.`);
-          return null;
-        }
-
-        if (isAdmin) {
-          if (user.role !== 'admin') {
-            console.warn(
-              `⚠️ Skipping user ${user.id} deletion. Role: ${user.role}`,
-            );
-            return null;
-          }
-        }
-
-        await this.clientRepository.updateIdSupabaseAuth(
-          user.user_metadata?.clientId || '1',
-          null,
-        );
-
-        const { data, error } = await this.repository.deleteUser(user.id);
-        if (error) {
-          console.warn(`❌ Failed to delete user ${user.id}:`, error.message);
-          return null;
-        }
-        console.log(`✅ User ${user.id} deleted successfully.`);
-        return data;
-      } catch (err) {
-        console.error(`❌ Unexpected error deleting user ${user.id}:`, err);
-        return null;
-      }
-    });
+    // if (!allAuthUsers.length) {
+    //   console.log('No users found to delete');
+    //   return;
+    // }
+    //
+    // const userTasks = allAuthUsers.map(async (user) => {
+    //   try {
+    //     if (!user.id || !user.user_metadata?.clientId) {
+    //       console.warn(`⚠️ User ${user.id} has no ID, skipping deletion.`);
+    //       return null;
+    //     }
+    //
+    //     if (isAdmin) {
+    //       if (user.role !== 'admin') {
+    //         console.warn(
+    //           `⚠️ Skipping user ${user.id} deletion. Role: ${user.role}`,
+    //         );
+    //         return null;
+    //       }
+    //     }
+    //
+    //     await this.clientRepository.updateIdSupabaseAuth(
+    //       user.user_metadata?.clientId || '1',
+    //       null,
+    //     );
+    //
+    //     const { data, error } = await this.repository.deleteUser(user.id);
+    //     if (error) {
+    //       console.warn(`❌ Failed to delete user ${user.id}:`, error.message);
+    //       return null;
+    //     }
+    //     console.log(`✅ User ${user.id} deleted successfully.`);
+    //     return data;
+    //   } catch (err) {
+    //     console.error(`❌ Unexpected error deleting user ${user.id}:`, err);
+    //     return null;
+    //   }
+    // });
   }
 
   /**
