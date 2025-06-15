@@ -161,6 +161,24 @@ export class AuthSupabaseService {
       }
     }
 
+    const allClients = await this.clientRepository.findAll(
+      '7fa9293c-3700-11ee-ba6d-9d20c6833ca2',
+      false,
+    );
+
+    for (const client of allClients) {
+      if (client.idSupabaseAuth) {
+        try {
+          await this.clientRepository.updateIdSupabaseAuth(client.id, null);
+        } catch (err) {
+          console.error(
+            `Failed to delete existing user for client ${client.id}:`,
+            err,
+          );
+        }
+      }
+    }
+
     // if (!allAuthUsers.length) {
     //   console.log('No users found to delete');
     //   return;
