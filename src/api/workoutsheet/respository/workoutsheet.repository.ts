@@ -1,6 +1,10 @@
 import { HttpException, HttpStatus, Inject, Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
-import { convertDateToTimestamp, getMessage, SqlError } from 'src/api/utils/utils';
+import {
+  convertDateToTimestamp,
+  getMessage,
+  SqlError,
+} from 'src/api/utils/utils';
 import { AccessTokenModel } from 'src/models/access-token-user.model';
 import { CreateWorkoutsheetDefaultWorkoutDto } from '../dto/request/create.workoutsheet.default.dto';
 import { WorkoutsheetModel } from '../../../models/workoutsheet.model';
@@ -15,7 +19,10 @@ export class WorkoutsheetRepository {
     private readonly supabase: SupabaseClient,
   ) {}
 
-  async createWorkoutSheetDefault(title: string, idCompany: string): Promise<any> {
+  async createWorkoutSheetDefault(
+    title: string,
+    idCompany: string,
+  ): Promise<any> {
     try {
       // const createQuery = `insert into workoutSheetDefault (title, idCompany)
       //                      values (?, ?);`;
@@ -41,7 +48,10 @@ export class WorkoutsheetRepository {
         // Supondo que o Supabase retorne um código de erro para chave duplicada
         if (error.code === '23505') {
           // unique_violation
-          throw new HttpException(`SQL error: ${getMessage(SqlError.DuplicateKey)}`, HttpStatus.CONFLICT);
+          throw new HttpException(
+            `SQL error: ${getMessage(SqlError.DuplicateKey)}`,
+            HttpStatus.CONFLICT,
+          );
         }
         throw error;
       }
@@ -50,13 +60,18 @@ export class WorkoutsheetRepository {
     } catch (error) {
       if (error.code == SqlError.DuplicateKey) {
         const errorMessage = getMessage(SqlError.DuplicateKey);
-        throw new HttpException(`SQL error: ${errorMessage}`, HttpStatus.CONFLICT);
+        throw new HttpException(
+          `SQL error: ${errorMessage}`,
+          HttpStatus.CONFLICT,
+        );
       }
       throw error;
     }
   }
 
-  async createWorkoutSheet(workoutsheetList: WorkoutsheetModel[]): Promise<any> {
+  async createWorkoutSheet(
+    workoutsheetList: WorkoutsheetModel[],
+  ): Promise<any> {
     try {
       // const params = workoutsheetList
       //   .map(
@@ -79,14 +94,19 @@ export class WorkoutsheetRepository {
         workoutsheetOrder: item.workoutsheetOrder,
       }));
 
-      const { data, error } = await this.supabase.from('workoutSheet').insert(records);
+      const { data, error } = await this.supabase
+        .from('workoutSheet')
+        .insert(records);
 
       if (error) {
         // Supabase returns Postgres error codes under `error.code`
         if (error.code === '23505') {
           // unique_violation
           const errorMessage = getMessage(SqlError.DuplicateKey);
-          throw new HttpException(`SQL error: ${errorMessage}`, HttpStatus.CONFLICT);
+          throw new HttpException(
+            `SQL error: ${errorMessage}`,
+            HttpStatus.CONFLICT,
+          );
         }
         throw error;
       }
@@ -95,13 +115,18 @@ export class WorkoutsheetRepository {
     } catch (error) {
       if (error.code == SqlError.DuplicateKey) {
         const errorMessage = getMessage(SqlError.DuplicateKey);
-        throw new HttpException(`SQL error: ${errorMessage}`, HttpStatus.CONFLICT);
+        throw new HttpException(
+          `SQL error: ${errorMessage}`,
+          HttpStatus.CONFLICT,
+        );
       }
       throw error;
     }
   }
 
-  async createWorkoutClient(workoutClientList: WorkoutClientModel[]): Promise<any> {
+  async createWorkoutClient(
+    workoutClientList: WorkoutClientModel[],
+  ): Promise<any> {
     try {
       // const params = workoutClientList
       //   .map(
@@ -127,7 +152,9 @@ export class WorkoutsheetRepository {
         workoutOrder: item.workoutOrder,
       }));
 
-      const { data, error } = await this.supabase.from('workoutClient').insert(records);
+      const { data, error } = await this.supabase
+        .from('workoutClient')
+        .insert(records);
 
       if (error) {
         // tratamento de chave duplicada
@@ -142,13 +169,19 @@ export class WorkoutsheetRepository {
     } catch (error) {
       if (error.code == SqlError.DuplicateKey) {
         const errorMessage = getMessage(SqlError.DuplicateKey);
-        throw new HttpException(`SQL error: ${errorMessage}`, HttpStatus.CONFLICT);
+        throw new HttpException(
+          `SQL error: ${errorMessage}`,
+          HttpStatus.CONFLICT,
+        );
       }
       throw error;
     }
   }
 
-  async updateWorkoutSheetDefault(title: string, idWorkout: string): Promise<any> {
+  async updateWorkoutSheetDefault(
+    title: string,
+    idWorkout: string,
+  ): Promise<any> {
     try {
       // const createQuery = `update workoutSheetDefault
       //                      set title = ?
@@ -166,7 +199,10 @@ export class WorkoutsheetRepository {
         // código de erro para violação de unicidade no Postgres
         if (error.code === '23505') {
           const errorMessage = getMessage(SqlError.DuplicateKey);
-          throw new HttpException(`SQL error: ${errorMessage}`, HttpStatus.CONFLICT);
+          throw new HttpException(
+            `SQL error: ${errorMessage}`,
+            HttpStatus.CONFLICT,
+          );
         }
         throw error;
       }
@@ -175,7 +211,10 @@ export class WorkoutsheetRepository {
     } catch (error) {
       if (error.code == SqlError.DuplicateKey) {
         const errorMessage = getMessage(SqlError.DuplicateKey);
-        throw new HttpException(`SQL error: ${errorMessage}`, HttpStatus.CONFLICT);
+        throw new HttpException(
+          `SQL error: ${errorMessage}`,
+          HttpStatus.CONFLICT,
+        );
       }
       throw error;
     }
@@ -205,7 +244,9 @@ export class WorkoutsheetRepository {
         workoutOrder: item.workoutOrder,
       }));
 
-      const { error } = await this.supabase.from('workoutSheetDefaultWorkout').insert(records);
+      const { error } = await this.supabase
+        .from('workoutSheetDefaultWorkout')
+        .insert(records);
 
       if (error) throw error;
     } catch (error) {
@@ -213,7 +254,9 @@ export class WorkoutsheetRepository {
     }
   }
 
-  async deleteWorkoutSheetDefaultWorkout(idWorkoutSheetDefault: string): Promise<void> {
+  async deleteWorkoutSheetDefaultWorkout(
+    idWorkoutSheetDefault: string,
+  ): Promise<void> {
     try {
       // const createQuery = `delete
       //                      from workoutSheetDefaultWorkout
@@ -309,7 +352,10 @@ export class WorkoutsheetRepository {
     }
   }
 
-  async getAllWorkoutsheetByIdClientAdmin(idClient: string, idCompany: string): Promise<any> {
+  async getAllWorkoutsheetByIdClientAdmin(
+    idClient: string,
+    idCompany: string,
+  ): Promise<any> {
     try {
       // const query = `SELECT w.*
       //                FROM workoutSheet w
@@ -334,7 +380,10 @@ export class WorkoutsheetRepository {
     }
   }
 
-  async getWorkoutsheetDefaultByIdList(idCompany: string, idWorkoutsheetDefaultList: string[]): Promise<any> {
+  async getWorkoutsheetDefaultByIdList(
+    idCompany: string,
+    idWorkoutsheetDefaultList: string[],
+  ): Promise<any> {
     try {
       // const params = idWorkoutsheetDefaultList.map((item) => `'${item}'`).join(',');
       //
@@ -361,7 +410,9 @@ export class WorkoutsheetRepository {
     }
   }
 
-  async getAllWorkoutsheetDefaultByIdCompanyAdmin(idCompany: string): Promise<any> {
+  async getAllWorkoutsheetDefaultByIdCompanyAdmin(
+    idCompany: string,
+  ): Promise<any> {
     try {
       // const query = `SELECT *
       //                FROM workoutSheetDefault
@@ -384,7 +435,9 @@ export class WorkoutsheetRepository {
     }
   }
 
-  async getAllWorkoutsheetDefaultWorkoutByIdCompanyAdmin(idCompany: string): Promise<any> {
+  async getAllWorkoutsheetDefaultWorkoutByIdCompanyAdmin(
+    idCompany: string,
+  ): Promise<any> {
     try {
       // const query = `SELECT *
       //                FROM workoutSheetDefaultWorkout
@@ -472,7 +525,9 @@ export class WorkoutsheetRepository {
           ORDER BY wsd.date ASC;`;
       //
       // return await this.databaseService.execute(query);
-      const tenDaysAgo = new Date(Date.now() - 10 * 24 * 60 * 60 * 1000).toISOString();
+      const tenDaysAgo = new Date(
+        Date.now() - 10 * 24 * 60 * 60 * 1000,
+      ).toISOString();
 
       const { data, error } = await this.supabase
         .from('workoutSheetDone')
@@ -590,7 +645,9 @@ export class WorkoutsheetRepository {
     }
   }
 
-  async getAllMyCurrentWorkoutSheetsWithWorkouts(user: AccessTokenModel): Promise<any> {
+  async getAllMyCurrentWorkoutSheetsWithWorkouts(
+    user: AccessTokenModel,
+  ): Promise<any> {
     try {
       // const query = `
       //     SELECT ws.id                as workoutSheetId,
@@ -665,7 +722,9 @@ export class WorkoutsheetRepository {
       // 2) No cliente, ordenamos pelo workoutOrder em JS e construímos o flat
       for (const raw of (data as any[]) || []) {
         const ws: any = raw;
-        const clients: any[] = Array.isArray(ws.workoutClient) ? ws.workoutClient : [];
+        const clients: any[] = Array.isArray(ws.workoutClient)
+          ? ws.workoutClient
+          : [];
 
         // ordena em-memory pelo campo workoutOrder
         clients.sort((a, b) => (a.workoutOrder ?? 0) - (b.workoutOrder ?? 0));
@@ -815,7 +874,10 @@ export class WorkoutsheetRepository {
     }
   }
 
-  async createWorkoutsheetFeedback(feedback: string, idWorkoutsheet: string): Promise<void> {
+  async createWorkoutsheetFeedback(
+    feedback: string,
+    idWorkoutsheet: string,
+  ): Promise<void> {
     try {
       // const query = `
       //     INSERT INTO workoutSheetFeedback
@@ -825,12 +887,14 @@ export class WorkoutsheetRepository {
       //             '${idWorkoutsheet}');`;
       //
       // await this.databaseService.execute(query);
-      const { error } = await this.supabase.from('workoutSheetFeedback').insert([
-        {
-          feedback,
-          idWorkoutsheet,
-        },
-      ]);
+      const { error } = await this.supabase
+        .from('workoutSheetFeedback')
+        .insert([
+          {
+            feedback,
+            idWorkoutsheet,
+          },
+        ]);
 
       if (error) throw error;
     } catch (error) {

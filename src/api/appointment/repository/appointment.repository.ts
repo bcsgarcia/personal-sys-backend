@@ -46,7 +46,9 @@ export class AppointmentRepository {
       // const idAppointment = await this.databaseService.execute(getIdQuery);
       //
       // return idAppointment[0];
-      appointment.appointmentStartDate = new Date(appointment.appointmentStartDate);
+      appointment.appointmentStartDate = new Date(
+        appointment.appointmentStartDate,
+      );
       appointment.appointmentEndDate = new Date(appointment.appointmentEndDate);
 
       // Preparar os campos convertidos para string SQL
@@ -74,11 +76,17 @@ export class AppointmentRepository {
       if (error) throw error;
       return data.id;
     } catch (error) {
-      throw new HttpException(DomainError.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        DomainError.INTERNAL_SERVER_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
-  async createAppointmentClient(idAppointment: string, idClient: string): Promise<void> {
+  async createAppointmentClient(
+    idAppointment: string,
+    idClient: string,
+  ): Promise<void> {
     try {
       // const createQuery = 'insert into appointmentClient (idAppointment, idClient) values (?,?);';
       //
@@ -93,7 +101,10 @@ export class AppointmentRepository {
 
       if (error) throw error;
     } catch (error) {
-      throw new HttpException(DomainError.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        DomainError.INTERNAL_SERVER_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -101,15 +112,24 @@ export class AppointmentRepository {
     try {
       // await this.databaseService.execute('UPDATE appointment SET isActive = 0 WHERE id = ?', [idAppointment]);
 
-      const { error } = await this.supabase.from('appointment').update({ isActive: false }).eq('id', idAppointment);
+      const { error } = await this.supabase
+        .from('appointment')
+        .update({ isActive: false })
+        .eq('id', idAppointment);
 
       if (error) throw error;
     } catch (error) {
-      throw new HttpException(DomainError.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        DomainError.INTERNAL_SERVER_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
-  async update(idAppointment: string, appointment: UpdateAppointmentDto): Promise<void> {
+  async update(
+    idAppointment: string,
+    appointment: UpdateAppointmentDto,
+  ): Promise<void> {
     try {
       // appointment.appointmentStartDate = new Date(appointment.appointmentStartDate);
       // appointment.appointmentEndDate = new Date(appointment.appointmentEndDate);
@@ -135,7 +155,9 @@ export class AppointmentRepository {
       //     idAppointment,
       //   ],
       // );
-      appointment.appointmentStartDate = new Date(appointment.appointmentStartDate);
+      appointment.appointmentStartDate = new Date(
+        appointment.appointmentStartDate,
+      );
       appointment.appointmentEndDate = new Date(appointment.appointmentEndDate);
 
       const startTs = convertDateToTimestamp(appointment.appointmentStartDate);
@@ -160,7 +182,9 @@ export class AppointmentRepository {
     }
   }
 
-  async getAllClientsAssociatedWithAppointment(idAppointment: string): Promise<any> {
+  async getAllClientsAssociatedWithAppointment(
+    idAppointment: string,
+  ): Promise<any> {
     try {
       // const query = `
       //     SELECT c.id
@@ -182,18 +206,30 @@ export class AppointmentRepository {
     } catch (error) {}
   }
 
-  async deleteAppointmentClientByIdAppointment(idAppointment: string): Promise<void> {
+  async deleteAppointmentClientByIdAppointment(
+    idAppointment: string,
+  ): Promise<void> {
     try {
       // const query = `delete
       //                from appointmentClient
       //                where idAppointment = '${idAppointment}';`;
       //
       // await this.databaseService.execute(query);
-      const { error } = await this.supabase.from('appointmentClient').delete().eq('idAppointment', idAppointment);
+      const { error } = await this.supabase
+        .from('appointmentClient')
+        .delete()
+        .eq('idAppointment', idAppointment);
 
-      if (error) throw new HttpException(DomainError.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
+      if (error)
+        throw new HttpException(
+          DomainError.INTERNAL_SERVER_ERROR,
+          HttpStatus.INTERNAL_SERVER_ERROR,
+        );
     } catch (error) {
-      throw new HttpException(DomainError.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        DomainError.INTERNAL_SERVER_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -283,7 +319,10 @@ export class AppointmentRepository {
 
       return result;
     } catch (error) {
-      throw new HttpException(DomainError.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        DomainError.INTERNAL_SERVER_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 }

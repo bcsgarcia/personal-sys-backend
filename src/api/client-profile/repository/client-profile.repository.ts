@@ -33,7 +33,10 @@ export class ClientProfileRepository {
     return data;
   }
 
-  async findFeedbacksByClientId(idClient: string, idCompany: string): Promise<any> {
+  async findFeedbacksByClientId(
+    idClient: string,
+    idCompany: string,
+  ): Promise<any> {
     // return this.databaseService.execute(
     //   `select wf.id, wf.feedback, wf.lastUpdate date, wc.title workoutTitle
     //    from workoutFeedback wf
@@ -70,7 +73,9 @@ export class ClientProfileRepository {
     if (error) throw error;
 
     return (data || [])
-      .filter((fb: any) => fb.workoutClient?.[0]?.workoutSheet?.idClient === idClient)
+      .filter(
+        (fb: any) => fb.workoutClient?.[0]?.workoutSheet?.idClient === idClient,
+      )
       .map((fb: any) => ({
         id: fb.id,
         feedback: fb.feedback,
@@ -116,7 +121,10 @@ export class ClientProfileRepository {
       //                      WHERE id IN (${placeholders});`;
       //
       // await this.databaseService.execute(deleteQuery, idsToDelete);
-      const { error } = await this.supabase.from('clientGoal').delete().in('id', idsToDelete);
+      const { error } = await this.supabase
+        .from('clientGoal')
+        .delete()
+        .in('id', idsToDelete);
 
       if (error) throw error;
     } catch (error) {

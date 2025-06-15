@@ -13,8 +13,10 @@ import { SupabaseClient } from '@supabase/supabase-js';
     DatabaseService,
     {
       provide: NotificationRepository,
-      useFactory: (databaseService: DatabaseService, supabase: SupabaseClient) =>
-        new NotificationRepository(databaseService, supabase),
+      useFactory: (
+        databaseService: DatabaseService,
+        supabase: SupabaseClient,
+      ) => new NotificationRepository(databaseService, supabase),
       inject: [DatabaseService, 'SUPABASE_CLIENT'],
     },
   ],

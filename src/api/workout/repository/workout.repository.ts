@@ -40,7 +40,9 @@ export class WorkoutRepository {
     }
   }
 
-  async createWorkoutClient(workoutClientDto: CreateWorkoutClientDto): Promise<void> {
+  async createWorkoutClient(
+    workoutClientDto: CreateWorkoutClientDto,
+  ): Promise<void> {
     try {
       // const createQuery =
       //   'insert into workoutClient (title, subTitle, description, idCompany, idWorkout, breakTime, series, workoutOrder, idWorkoutsheet) values (?,?,?,?,?,?,?,?,?);';
@@ -76,7 +78,9 @@ export class WorkoutRepository {
     }
   }
 
-  async updateWorkoutClient(workoutClientDto: UpdateWorkoutClientDto): Promise<void> {
+  async updateWorkoutClient(
+    workoutClientDto: UpdateWorkoutClientDto,
+  ): Promise<void> {
     try {
       // const createQuery = `update workoutClient
       //                      set title       = ?,
@@ -135,7 +139,9 @@ export class WorkoutRepository {
         mediaOrder: item.mediaOrder,
       }));
 
-      const { error } = await this.supabase.from('workoutMedia').insert(records);
+      const { error } = await this.supabase
+        .from('workoutMedia')
+        .insert(records);
 
       if (error) throw error;
     } catch (error) {
@@ -240,7 +246,9 @@ export class WorkoutRepository {
     }
   }
 
-  async findManyWorkoutByIdWorkoutsheetList(idWorkoutsheetList: string[]): Promise<any> {
+  async findManyWorkoutByIdWorkoutsheetList(
+    idWorkoutsheetList: string[],
+  ): Promise<any> {
     try {
       // const params = idWorkoutsheetList.map((item) => `'${item}'`).join(',');
       //
@@ -271,7 +279,9 @@ export class WorkoutRepository {
     }
   }
 
-  async findWorkoutClientByWorkoutsheet(workoutsheetList: string[]): Promise<any> {
+  async findWorkoutClientByWorkoutsheet(
+    workoutsheetList: string[],
+  ): Promise<any> {
     try {
       // const params = workoutsheetList.map((item) => `'${item}'`).join(',');
       //
@@ -321,7 +331,10 @@ export class WorkoutRepository {
     }
   }
 
-  async findManyWorkoutMediaByIdWorkoutList(idWorkoutList: string[], idCompany: string): Promise<any> {
+  async findManyWorkoutMediaByIdWorkoutList(
+    idWorkoutList: string[],
+    idCompany: string,
+  ): Promise<any> {
     try {
       // const params = idWorkoutList.map((item) => `'${item}'`).join(',');
       //
@@ -384,7 +397,10 @@ export class WorkoutRepository {
   async deleteById(idWorkout: string): Promise<void> {
     try {
       // await this.databaseService.execute('DELETE FROM workout WHERE id = ?', [idWorkout]);
-      const { error } = await this.supabase.from('workout').delete().eq('id', idWorkout);
+      const { error } = await this.supabase
+        .from('workout')
+        .delete()
+        .eq('id', idWorkout);
 
       if (error) throw error;
     } catch (error) {
@@ -395,7 +411,10 @@ export class WorkoutRepository {
   async deleteWorkoutClientById(idWorkoutClient: string): Promise<void> {
     try {
       // await this.databaseService.execute('DELETE FROM workoutClient WHERE id = ?', [idWorkoutClient]);
-      const { error } = await this.supabase.from('workoutClient').delete().eq('id', idWorkoutClient);
+      const { error } = await this.supabase
+        .from('workoutClient')
+        .delete()
+        .eq('id', idWorkoutClient);
 
       if (error) throw error;
     } catch (error) {
@@ -406,7 +425,10 @@ export class WorkoutRepository {
   async deleteWorkoutMedia(idWorkout: string): Promise<void> {
     try {
       // await this.databaseService.execute('DELETE FROM workoutMedia WHERE idWorkout = ?', [idWorkout]);
-      const { error } = await this.supabase.from('workoutMedia').delete().eq('idWorkout', idWorkout);
+      const { error } = await this.supabase
+        .from('workoutMedia')
+        .delete()
+        .eq('idWorkout', idWorkout);
 
       if (error) throw error;
     } catch (error) {
@@ -414,7 +436,11 @@ export class WorkoutRepository {
     }
   }
 
-  async createFeedback(idWorkoutClient: string, idCompany: string, feedback: string): Promise<void> {
+  async createFeedback(
+    idWorkoutClient: string,
+    idCompany: string,
+    feedback: string,
+  ): Promise<void> {
     try {
       // const querie = 'insert into workoutFeedback (feedback, idWorkoutClient, idCompany) values (?,?,?);';
       //

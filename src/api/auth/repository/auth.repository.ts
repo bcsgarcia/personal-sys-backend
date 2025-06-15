@@ -15,7 +15,11 @@ export class AuthRepository {
   async findById(id: string): Promise<any> {
     try {
       // return this.databaseService.execute('SELECT * FROM auth WHERE id = ?', [id]);
-      const { data, error } = await this.supabase.from('auth').select('*').eq('id', id).single();
+      const { data, error } = await this.supabase
+        .from('auth')
+        .select('*')
+        .eq('id', id)
+        .single();
 
       if (error) throw error;
       return data;
@@ -69,7 +73,11 @@ export class AuthRepository {
       //    WHERE email = '${email}'
       //      and pass = '${pass}'`,
       // );
-      const { data, error } = await this.supabase.from('auth').select('*').eq('email', email).eq('pass', pass);
+      const { data, error } = await this.supabase
+        .from('auth')
+        .select('*')
+        .eq('email', email)
+        .eq('pass', pass);
 
       if (error) throw error;
       return data;
@@ -336,7 +344,10 @@ export class AuthRepository {
 
   async deleteById(id: string): Promise<void> {
     // await this.databaseService.execute('update client set isActive=false WHERE id = ?', [id]);
-    const { error } = await this.supabase.from('client').update({ isActive: false }).eq('id', id);
+    const { error } = await this.supabase
+      .from('client')
+      .update({ isActive: false })
+      .eq('id', id);
 
     if (error) throw error;
   }
@@ -349,7 +360,11 @@ export class AuthRepository {
     // return rows[0];
 
     // buscar pass via join aninhado
-    const { data, error } = await this.supabase.from('client').select('auth ( pass )').eq('id', idClient).single();
+    const { data, error } = await this.supabase
+      .from('client')
+      .select('auth ( pass )')
+      .eq('id', idClient)
+      .single();
     if (error) throw error;
 
     // cast para any para acessar auth.pass

@@ -16,7 +16,8 @@ export class CompanyMainInformationDto {
   isActive: boolean;
 
   @ApiProperty({
-    description: 'The date and time of the last update to the company main information.',
+    description:
+      'The date and time of the last update to the company main information.',
     example: '2023-04-17T00:00:00.000Z',
     type: String,
   })

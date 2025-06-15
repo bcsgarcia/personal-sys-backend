@@ -20,7 +20,10 @@ export class CreateItemDto {
   @ApiHideProperty()
   idCompany: string;
 
-  constructor(beforeAndAfterImageToInsert: CreateBeforeAndAfterImageDto[], idCompany: string) {
+  constructor(
+    beforeAndAfterImageToInsert: CreateBeforeAndAfterImageDto[],
+    idCompany: string,
+  ) {
     this.beforeAndAfterImageToInsert = beforeAndAfterImageToInsert;
     this.idCompany = idCompany;
   }

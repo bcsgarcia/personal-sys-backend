@@ -14,8 +14,10 @@ import { SupabaseClient } from '@supabase/supabase-js';
     FtpService,
     {
       provide: ClientEvaluationRepository,
-      useFactory: (databaseService: DatabaseService, supabase: SupabaseClient) =>
-        new ClientEvaluationRepository(databaseService, supabase),
+      useFactory: (
+        databaseService: DatabaseService,
+        supabase: SupabaseClient,
+      ) => new ClientEvaluationRepository(databaseService, supabase),
       inject: [DatabaseService, 'SUPABASE_CLIENT'],
     },
   ],

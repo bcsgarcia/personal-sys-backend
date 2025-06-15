@@ -15,7 +15,11 @@ export class MediaRepository {
     // const row = await this.databaseService.execute('SELECT * FROM media WHERE id = ?', [id]);
     // return row[0];
 
-    const { data, error } = await this.supabase.from('media').select('*').eq('id', id).single();
+    const { data, error } = await this.supabase
+      .from('media')
+      .select('*')
+      .eq('id', id)
+      .single();
 
     if (error) throw error;
     return data;
@@ -126,7 +130,10 @@ export class MediaRepository {
   async update(mediaDto: MediaDto): Promise<void> {
     try {
       // await this.databaseService.execute('UPDATE media SET title = ? WHERE id = ?', [mediaDto.title, mediaDto.id]);
-      const { error } = await this.supabase.from('media').update({ title: mediaDto.title }).eq('id', mediaDto.id);
+      const { error } = await this.supabase
+        .from('media')
+        .update({ title: mediaDto.title })
+        .eq('id', mediaDto.id);
 
       if (error) throw error;
     } catch (error) {

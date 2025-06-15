@@ -1,4 +1,8 @@
-import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 import { CreateNotificationDto } from '../dto/create-notification.dto';
 import { convertDateToTimestamp } from '../../utils/utils';
@@ -138,7 +142,10 @@ export class NotificationRepository {
     }
   }
 
-  async createReadNotification(idNotification: string, idClient: string): Promise<void> {
+  async createReadNotification(
+    idNotification: string,
+    idClient: string,
+  ): Promise<void> {
     try {
       // const createQuery = 'insert into readNotification (readDate, idNotification, idClient) VALUES (?, ?, ?);';
       //
@@ -164,7 +171,10 @@ export class NotificationRepository {
       //
       // await this.databaseService.execute('UPDATE readNotification SET isActive = 0 WHERE idNotification = ?', [id]);
       // Desativa notificação
-      const { error: notifError } = await this.supabase.from('notification').update({ isActive: false }).eq('id', id);
+      const { error: notifError } = await this.supabase
+        .from('notification')
+        .update({ isActive: false })
+        .eq('id', id);
       if (notifError) throw notifError;
 
       // Desativa registros de leitura relacionados
@@ -178,7 +188,10 @@ export class NotificationRepository {
     }
   }
 
-  async updateReadDateForAllNotification(idClient: string, idCompany: string): Promise<void> {
+  async updateReadDateForAllNotification(
+    idClient: string,
+    idCompany: string,
+  ): Promise<void> {
     try {
       // const createQuery = `INSERT INTO readNotification (id, readDate, idNotification, idClient)
       //                      SELECT UUID(), CURRENT_TIMESTAMP, n.id, n.idClient
@@ -223,7 +236,9 @@ export class NotificationRepository {
 
       if (toInsert.length === 0) return;
 
-      const { error: insertError } = await this.supabase.from('readNotification').insert(toInsert);
+      const { error: insertError } = await this.supabase
+        .from('readNotification')
+        .insert(toInsert);
 
       if (insertError) throw insertError;
     } catch (error) {

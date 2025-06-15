@@ -63,22 +63,23 @@ export class ClientRepository {
     }
   }
 
-  async create(createClientDto: CreateClientDto, auth: Auth): Promise<void> {
-    try {
-      // const createQuery = 'insert into client (name, birthday, phone, gender, idCompany, idAuth) values (?,?,?,?,?,?);';
-      //
-      // await this.databaseService.execute(createQuery, [
-      //   createClientDto.name,
-      //   convertDateToTimestamp(new Date(createClientDto.birthday)),
-      //   createClientDto.phone,
-      //   createClientDto.gender,
-      //   createClientDto.idCompany,
-      //   auth.id,
-      // ]);
-      const birthdayTs = convertDateToTimestamp(
-        new Date(createClientDto.birthday),
-      );
-      const { error } = await this.supabase.from('client').insert([
+  async create(createClientDto: CreateClientDto, auth: Auth): Promise<any> {
+    // const createQuery = 'insert into client (name, birthday, phone, gender, idCompany, idAuth) values (?,?,?,?,?,?);';
+    //
+    // await this.databaseService.execute(createQuery, [
+    //   createClientDto.name,
+    //   convertDateToTimestamp(new Date(createClientDto.birthday)),
+    //   createClientDto.phone,
+    //   createClientDto.gender,
+    //   createClientDto.idCompany,
+    //   auth.id,
+    // ]);
+    const birthdayTs = convertDateToTimestamp(
+      new Date(createClientDto.birthday),
+    );
+    const { data, error } = await this.supabase
+      .from('client')
+      .insert([
         {
           name: createClientDto.name,
           birthday: birthdayTs,
@@ -87,12 +88,12 @@ export class ClientRepository {
           idCompany: createClientDto.idCompany,
           idAuth: auth.id,
         },
-      ]);
+      ])
+      .select('*')
+      .single();
 
-      if (error) throw error;
-    } catch (error) {
-      throw error;
-    }
+    if (error) throw error;
+    return data;
   }
 
   async update(

@@ -33,7 +33,6 @@ dotenv.config();
     {
       provide: AuthSupabaseRepository,
       useFactory: () => new AuthSupabaseRepository(),
-      inject: ['SUPABASE_CLIENT'],
     },
     {
       provide: ClientRepository,
@@ -51,6 +50,6 @@ dotenv.config();
       signOptions: { expiresIn: '240m' },
     }),
   ],
-  exports: [AuthService, AuthSupabaseService],
+  exports: [AuthService, AuthSupabaseService, AuthSupabaseRepository],
 })
 export class AuthModule {}

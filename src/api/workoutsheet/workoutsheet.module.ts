@@ -14,7 +14,8 @@ import { SupabaseClient } from '@supabase/supabase-js';
     WorkoutsheetService,
     {
       provide: WorkoutsheetRepository,
-      useFactory: (db: DatabaseService, supabase: SupabaseClient) => new WorkoutsheetRepository(db, supabase),
+      useFactory: (db: DatabaseService, supabase: SupabaseClient) =>
+        new WorkoutsheetRepository(db, supabase),
       inject: [DatabaseService, 'SUPABASE_CLIENT'],
     },
   ],

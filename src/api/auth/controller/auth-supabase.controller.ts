@@ -21,22 +21,6 @@ export class AuthSupabaseController {
     return this.authSupabaseService.findUserById(id);
   }
 
-  // @Public()
-  @Post(':id/enable')
-  enableSupabase(@Param('id') id: string) {
-    return this.authSupabaseService.enableUser(id);
-  }
-
-  @Post(':id/disable')
-  disableSupabase(@Param('id') id: string) {
-    return this.authSupabaseService.disableUser(id);
-  }
-
-  // @Post('send-reset-email')
-  // sendResetSupabase(@Body() body: SendResetDto) {
-  //   return this.authSupabaseService.sendResetPasswordEmail(body.email, body.redirectTo);
-  // }
-
   @Delete(':id')
   delete(
     @Param('supabaseAuthId') idSupabase: string,

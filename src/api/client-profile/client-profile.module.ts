@@ -13,14 +13,18 @@ import { SupabaseClient } from '@supabase/supabase-js';
     DatabaseService,
     {
       provide: ClientProfileRepository,
-      useFactory: (databaseService: DatabaseService, supabase: SupabaseClient) =>
-        new ClientProfileRepository(databaseService, supabase),
+      useFactory: (
+        databaseService: DatabaseService,
+        supabase: SupabaseClient,
+      ) => new ClientProfileRepository(databaseService, supabase),
       inject: [DatabaseService, 'SUPABASE_CLIENT'],
     },
     {
       provide: ClientRepository,
-      useFactory: (databaseService: DatabaseService, supabase: SupabaseClient) =>
-        new ClientRepository(databaseService, supabase),
+      useFactory: (
+        databaseService: DatabaseService,
+        supabase: SupabaseClient,
+      ) => new ClientRepository(databaseService, supabase),
       inject: [DatabaseService, 'SUPABASE_CLIENT'],
     },
   ],

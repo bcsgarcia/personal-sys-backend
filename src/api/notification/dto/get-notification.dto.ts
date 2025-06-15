@@ -16,8 +16,11 @@ export class GetNotificationDto {
     this.readDate = data.readDate;
     this.appointmentId = data.appointmentId;
     this.appointmentStartDate = data.appointmentStartDate;
-    this.appointmentId = data.appointmentId != undefined ? data.appointmentId : null;
-    this.appointmentEndDate = data.appointmentEndDate != undefined ? data.appointmentEndDate : null;
-    this.appointmentStartDate = data.appointmentStartDate != undefined ? data.appointmentStartDate : null;
+    this.appointmentId =
+      data.appointmentId != undefined ? data.appointmentId : null;
+    this.appointmentEndDate =
+      data.appointmentEndDate != undefined ? data.appointmentEndDate : null;
+    this.appointmentStartDate =
+      data.appointmentStartDate != undefined ? data.appointmentStartDate : null;
   }
 }

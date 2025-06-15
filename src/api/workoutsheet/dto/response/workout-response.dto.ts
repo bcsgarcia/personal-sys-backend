@@ -33,7 +33,9 @@ export class WorkoutResponseDto {
     this.title = data.title;
     this.subtitle = data.subtitle;
     this.description = data.description;
-    this.media = data.media ? data.media.map((item: any) => new WorkoutMediaDto(item)) : [];
+    this.media = data.media
+      ? data.media.map((item: any) => new WorkoutMediaDto(item))
+      : [];
     this.workoutOrder = data.workoutOrder;
     this.breaktime = data.breaktime;
     this.serie = data.serie;

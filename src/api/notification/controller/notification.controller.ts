@@ -1,7 +1,21 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Req,
+} from '@nestjs/common';
 import { NotificationService } from '../service/notification.service';
 import { CreateNotificationDto } from '../dto/create-notification.dto';
-import { ApiBadRequestResponse, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Request } from 'express';
 import { CreateWarningDto } from '../dto/create-warning.dto';
 import { GetNotificationDto } from '../dto/get-notification.dto';
@@ -21,7 +35,10 @@ export class NotificationController {
   @ApiBadRequestResponse({
     description: 'Bad request, invalid input or missing required fields.',
   })
-  create(@Body() createNotificationDto: CreateNotificationDto, @Req() request: Request) {
+  create(
+    @Body() createNotificationDto: CreateNotificationDto,
+    @Req() request: Request,
+  ) {
     try {
       createNotificationDto.idCompany = request.headers['idcompany'] as string;
 
@@ -44,7 +61,10 @@ export class NotificationController {
   @ApiBadRequestResponse({
     description: 'Bad request, invalid input or missing required fields.',
   })
-  createWarning(@Body() createWarningDto: CreateWarningDto, @Req() request: Request) {
+  createWarning(
+    @Body() createWarningDto: CreateWarningDto,
+    @Req() request: Request,
+  ) {
     try {
       const user = new AccessTokenModel(request['user']);
 
@@ -52,7 +72,9 @@ export class NotificationController {
         title: createWarningDto.title,
         description: createWarningDto.description,
         notificationDate:
-          createWarningDto.notificationDate == undefined ? new Date() : new Date(createWarningDto.notificationDate),
+          createWarningDto.notificationDate == undefined
+            ? new Date()
+            : new Date(createWarningDto.notificationDate),
         idCompany: user.clientIdCompany,
         idAppointment: null,
       };
@@ -81,7 +103,10 @@ export class NotificationController {
     try {
       const user = new AccessTokenModel(request['user']);
 
-      return this.notificationService.findAllByIdClient(user.clientId, user.clientIdCompany);
+      return this.notificationService.findAllByIdClient(
+        user.clientId,
+        user.clientIdCompany,
+      );
     } catch (error) {
       throw error;
     }
@@ -105,7 +130,9 @@ export class NotificationController {
     try {
       const user = new AccessTokenModel(request['user']);
 
-      return this.notificationService.findAllWarningByIdCompany(user.clientIdCompany);
+      return this.notificationService.findAllWarningByIdCompany(
+        user.clientIdCompany,
+      );
     } catch (error) {
       throw error;
     }
@@ -119,7 +146,8 @@ export class NotificationController {
   })
   @ApiResponse({
     status: 200,
-    description: 'Successfully deactivated the notification by setting isActivate to false.',
+    description:
+      'Successfully deactivated the notification by setting isActivate to false.',
   })
   @ApiBadRequestResponse({
     description: 'Bad request, unable to deactivate the notification.',
@@ -140,7 +168,8 @@ export class NotificationController {
   })
   @ApiResponse({
     status: 200,
-    description: 'Successfully updated readDate for all notifications related to the client.',
+    description:
+      'Successfully updated readDate for all notifications related to the client.',
   })
   @ApiBadRequestResponse({
     description: 'Bad request, unable to update readDate for notifications.',

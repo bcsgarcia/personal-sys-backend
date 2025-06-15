@@ -17,8 +17,10 @@ import { SupabaseClient } from '@supabase/supabase-js';
     ImageService,
     {
       provide: PartnershipRepository,
-      useFactory: (databaseService: DatabaseService, supabase: SupabaseClient) =>
-        new PartnershipRepository(databaseService, supabase),
+      useFactory: (
+        databaseService: DatabaseService,
+        supabase: SupabaseClient,
+      ) => new PartnershipRepository(databaseService, supabase),
       inject: [DatabaseService, 'SUPABASE_CLIENT'],
     },
   ],

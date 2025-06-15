@@ -16,7 +16,9 @@ export class ClientEvaluationRepository {
     private readonly supabase: SupabaseClient,
   ) {}
 
-  async createClientEvaluation(clientEvaluation: CreateClientEvaluationDto): Promise<any> {
+  async createClientEvaluation(
+    clientEvaluation: CreateClientEvaluationDto,
+  ): Promise<any> {
     // await this.databaseService.execute(
     //   'INSERT INTO clientEvaluation (idClient, idCompany, date) VALUES (?, ?, now())',
     //   [clientEvaluation.idClient, clientEvaluation.idCompany],
@@ -44,7 +46,9 @@ export class ClientEvaluationRepository {
     return inserted;
   }
 
-  async createClientEvaluationPhoto(clientEvaluationPhoto: CreateClientEvaluationPhotoDto): Promise<void> {
+  async createClientEvaluationPhoto(
+    clientEvaluationPhoto: CreateClientEvaluationPhotoDto,
+  ): Promise<void> {
     try {
       // await this.databaseService.execute(
       //   `INSERT INTO clientEvaluationPhoto
@@ -57,15 +61,17 @@ export class ClientEvaluationRepository {
       //     clientEvaluationPhoto.fileName,
       //   ],
       // );
-      const { error } = await this.supabase.from('clientEvaluationPhoto').insert([
-        {
-          idClientEvaluation: clientEvaluationPhoto.idClientEvaluation,
-          idCompany: clientEvaluationPhoto.idCompany,
-          date: new Date().toISOString(),
-          url: clientEvaluationPhoto.url,
-          fileName: clientEvaluationPhoto.fileName,
-        },
-      ]);
+      const { error } = await this.supabase
+        .from('clientEvaluationPhoto')
+        .insert([
+          {
+            idClientEvaluation: clientEvaluationPhoto.idClientEvaluation,
+            idCompany: clientEvaluationPhoto.idCompany,
+            date: new Date().toISOString(),
+            url: clientEvaluationPhoto.url,
+            fileName: clientEvaluationPhoto.fileName,
+          },
+        ]);
 
       if (error) throw error;
     } catch (error) {
@@ -73,7 +79,10 @@ export class ClientEvaluationRepository {
     }
   }
 
-  async deleteClientEvaluation(idCompany: string, clientEvaluationId: string): Promise<void> {
+  async deleteClientEvaluation(
+    idCompany: string,
+    clientEvaluationId: string,
+  ): Promise<void> {
     try {
       // await this.databaseService.execute(
       //   `DELETE
@@ -94,7 +103,9 @@ export class ClientEvaluationRepository {
     }
   }
 
-  async deleteClientEvaluationPhoto(clientEvaluationPhoto: ClientEvaluationPhotoDto): Promise<void> {
+  async deleteClientEvaluationPhoto(
+    clientEvaluationPhoto: ClientEvaluationPhotoDto,
+  ): Promise<void> {
     try {
       // await this.databaseService.execute(
       //   `DELETE
@@ -117,7 +128,10 @@ export class ClientEvaluationRepository {
     }
   }
 
-  async deleteAllClientEvaluationPhoto(idCompany: string, idClientEvaluation: string): Promise<void> {
+  async deleteAllClientEvaluationPhoto(
+    idCompany: string,
+    idClientEvaluation: string,
+  ): Promise<void> {
     try {
       // await this.databaseService.execute(
       //   `DELETE
@@ -134,7 +148,9 @@ export class ClientEvaluationRepository {
 
       if (error) throw error;
     } catch (error) {
-      throw new Error(`Erro ao deletar todas as fotos da avaliação do cliente: ${error}`);
+      throw new Error(
+        `Erro ao deletar todas as fotos da avaliação do cliente: ${error}`,
+      );
     }
   }
 
@@ -165,10 +181,14 @@ export class ClientEvaluationRepository {
       const record = {
         idClientEvaluation,
         idCompany,
-        ...Object.fromEntries(Object.entries(fields).map(([k, v]) => [k, v === '' ? null : v])),
+        ...Object.fromEntries(
+          Object.entries(fields).map(([k, v]) => [k, v === '' ? null : v]),
+        ),
       };
 
-      const { error } = await this.supabase.from('musclePerimeter').insert([record]);
+      const { error } = await this.supabase
+        .from('musclePerimeter')
+        .insert([record]);
 
       if (error) throw error;
     } catch (error) {
@@ -240,10 +260,14 @@ export class ClientEvaluationRepository {
       const record = {
         idClientEvaluation,
         idCompany,
-        ...Object.fromEntries(Object.entries(fields).map(([k, v]) => [k, v === '' ? null : v])),
+        ...Object.fromEntries(
+          Object.entries(fields).map(([k, v]) => [k, v === '' ? null : v]),
+        ),
       };
 
-      const { error } = await this.supabase.from('muscoloskeletalChange').insert([record]);
+      const { error } = await this.supabase
+        .from('muscoloskeletalChange')
+        .insert([record]);
 
       if (error) throw error;
     } catch (error) {
@@ -288,7 +312,10 @@ export class ClientEvaluationRepository {
     }
   }
 
-  async findAllByClientAndCompany(idClient: string, idCompany: string): Promise<any> {
+  async findAllByClientAndCompany(
+    idClient: string,
+    idCompany: string,
+  ): Promise<any> {
     // const rows = await this.databaseService.execute(
     //   `SELECT ce.id  idClientEvaluation,
     //           ce.date,

@@ -13,14 +13,18 @@ import { SupabaseClient } from '@supabase/supabase-js';
     DatabaseService,
     {
       provide: WorkoutRepository,
-      useFactory: (databaseService: DatabaseService, supabase: SupabaseClient) =>
-        new WorkoutRepository(databaseService, supabase),
+      useFactory: (
+        databaseService: DatabaseService,
+        supabase: SupabaseClient,
+      ) => new WorkoutRepository(databaseService, supabase),
       inject: [DatabaseService, 'SUPABASE_CLIENT'],
     },
     {
       provide: MediaRepository,
-      useFactory: (databaseService: DatabaseService, supabase: SupabaseClient) =>
-        new MediaRepository(databaseService, supabase),
+      useFactory: (
+        databaseService: DatabaseService,
+        supabase: SupabaseClient,
+      ) => new MediaRepository(databaseService, supabase),
       inject: [DatabaseService, 'SUPABASE_CLIENT'],
     },
   ],

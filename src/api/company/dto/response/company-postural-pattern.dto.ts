@@ -16,7 +16,8 @@ export class PosturalPatternDto {
   isActive: boolean;
 
   @ApiProperty({
-    description: 'The date and time of the last update to the postural pattern.',
+    description:
+      'The date and time of the last update to the postural pattern.',
     example: '2023-04-17T00:00:00.000Z',
     type: String,
   })

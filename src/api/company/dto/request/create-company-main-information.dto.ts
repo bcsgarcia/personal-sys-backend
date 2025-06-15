@@ -13,7 +13,8 @@ export class CreateCompanyMainInformationDto {
 
   @ApiProperty({
     description: 'The description of the Company Main Informtation',
-    example: 'Independente do exercicio, sempre devemos manter o padrao postural: ...',
+    example:
+      'Independente do exercicio, sempre devemos manter o padrao postural: ...',
     type: String,
   })
   @IsNotEmpty()

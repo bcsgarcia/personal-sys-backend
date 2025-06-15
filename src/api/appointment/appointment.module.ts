@@ -16,8 +16,10 @@ import { SupabaseClient } from '@supabase/supabase-js';
     DatabaseService,
     {
       provide: AppointmentRepository,
-      useFactory: (databaseService: DatabaseService, supabase: SupabaseClient) =>
-        new AppointmentRepository(databaseService, supabase),
+      useFactory: (
+        databaseService: DatabaseService,
+        supabase: SupabaseClient,
+      ) => new AppointmentRepository(databaseService, supabase),
       inject: [DatabaseService, 'SUPABASE_CLIENT'],
     },
   ],

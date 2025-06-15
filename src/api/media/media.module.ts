@@ -15,8 +15,11 @@ import { SupabaseClient } from '@supabase/supabase-js';
     FtpService,
     {
       provide: MediaRepository,
-      useFactory: (databaseService: DatabaseService, supabase: SupabaseClient) =>
-        new MediaRepository(databaseService, supabase),
+      useFactory: (
+        databaseService: DatabaseService,
+        supabase: SupabaseClient,
+      ) => new MediaRepository(databaseService, supabase),
+
       inject: [DatabaseService, 'SUPABASE_CLIENT'],
     },
   ],

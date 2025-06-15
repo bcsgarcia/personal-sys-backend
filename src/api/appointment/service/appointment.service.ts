@@ -15,14 +15,25 @@ export class AppointmentService {
 
   async create(createAppointmentDto: CreateAppointmentDto) {
     try {
-      const idAppointment = await this.appointmentRepository.create(createAppointmentDto);
+      const idAppointment = await this.appointmentRepository.create(
+        createAppointmentDto,
+      );
 
-      if (createAppointmentDto.sendNotificationToClients && createAppointmentDto.clients.length > 0) {
-        await this._createNotificationToClient(createAppointmentDto, idAppointment);
+      if (
+        createAppointmentDto.sendNotificationToClients &&
+        createAppointmentDto.clients.length > 0
+      ) {
+        await this._createNotificationToClient(
+          createAppointmentDto,
+          idAppointment,
+        );
       }
 
       for (const clientId of createAppointmentDto.clients) {
-        await this.appointmentRepository.createAppointmentClient(idAppointment, clientId);
+        await this.appointmentRepository.createAppointmentClient(
+          idAppointment,
+          clientId,
+        );
       }
 
       return {
@@ -49,13 +60,23 @@ export class AppointmentService {
 
   async update(idAppointment: string, appointment: UpdateAppointmentDto) {
     try {
-      const resClientOfAppointment = await this.appointmentRepository.getAllClientsAssociatedWithAppointment(
-        idAppointment,
+      const resClientOfAppointment =
+        await this.appointmentRepository.getAllClientsAssociatedWithAppointment(
+          idAppointment,
+        );
+      const clientOfAppointment: string[] = resClientOfAppointment.map(
+        (obj) => obj.id,
       );
-      const clientOfAppointment: string[] = resClientOfAppointment.map((obj) => obj.id);
 
-      if (this._diffBetweenCurrentClientsAndUpdatedObject(clientOfAppointment, appointment.clients)) {
-        await this.appointmentRepository.deleteAppointmentClientByIdAppointment(idAppointment);
+      if (
+        this._diffBetweenCurrentClientsAndUpdatedObject(
+          clientOfAppointment,
+          appointment.clients,
+        )
+      ) {
+        await this.appointmentRepository.deleteAppointmentClientByIdAppointment(
+          idAppointment,
+        );
 
         await this._createAppointmentClient(idAppointment, appointment.clients);
       }
@@ -108,9 +129,15 @@ export class AppointmentService {
     }
   }
 
-  private async _createAppointmentClient(idAppointment: string, idClients: string[]): Promise<void> {
+  private async _createAppointmentClient(
+    idAppointment: string,
+    idClients: string[],
+  ): Promise<void> {
     for (const item of idClients) {
-      await this.appointmentRepository.createAppointmentClient(idAppointment, item);
+      await this.appointmentRepository.createAppointmentClient(
+        idAppointment,
+        item,
+      );
     }
   }
 
@@ -137,9 +164,16 @@ export class AppointmentService {
     }
   }
 
-  private _diffBetweenCurrentClientsAndUpdatedObject(originalClients: string[], newClients: string[]): boolean {
-    const diffArray1: string[] = originalClients.filter((item) => !newClients.includes(item));
-    const diffArray2: string[] = newClients.filter((item) => !originalClients.includes(item));
+  private _diffBetweenCurrentClientsAndUpdatedObject(
+    originalClients: string[],
+    newClients: string[],
+  ): boolean {
+    const diffArray1: string[] = originalClients.filter(
+      (item) => !newClients.includes(item),
+    );
+    const diffArray2: string[] = newClients.filter(
+      (item) => !originalClients.includes(item),
+    );
 
     const diffCombined: string[] = [...diffArray1, ...diffArray2];
 

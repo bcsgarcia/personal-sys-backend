@@ -18,21 +18,38 @@ export class AppHomeScreenService {
   async getHomeScreen(user: AccessTokenModel): Promise<any> {
     try {
       const clientDto = await this.clientService.findOne(user.clientId);
-      const companyTipsInformation = await this.companyService.findAllCompanyMainInformation(user.clientIdCompany);
-      const companyPosturalPatterns = await this.companyService.findAllCompanyPosturalPattern(user.clientIdCompany);
-      const companyPartnerships = await this.companyService.findAllPartnershipByIdCompany(user.clientIdCompany);
-      const notifications = await this.notificationService.findAllByIdClient(user.clientId, user.clientIdCompany);
+      const companyTipsInformation =
+        await this.companyService.findAllCompanyMainInformation(
+          user.clientIdCompany,
+        );
+      const companyPosturalPatterns =
+        await this.companyService.findAllCompanyPosturalPattern(
+          user.clientIdCompany,
+        );
+      const companyPartnerships =
+        await this.companyService.findAllPartnershipByIdCompany(
+          user.clientIdCompany,
+        );
+      const notifications = await this.notificationService.findAllByIdClient(
+        user.clientId,
+        user.clientIdCompany,
+      );
 
       // Retrieve the user's training program and convert it to a readable format
-      const myTrainingPlan = await this.workoutsheetService.getMyTrainingProgram(user);
+      const myTrainingPlan =
+        await this.workoutsheetService.getMyTrainingProgram(user);
       // const myTrainingPlan = this.convertRowsToWorkoutSheetResponseDto(rows);
 
       // Retrieve the user's current workout sheets and convert them to a readable format
-      const allMyCurrentWorkoutSheets = await this.workoutsheetService.getAllMyCurrentWorkoutSheetsWithWorkouts(user);
+      const allMyCurrentWorkoutSheets =
+        await this.workoutsheetService.getAllMyCurrentWorkoutSheetsWithWorkouts(
+          user,
+        );
 
       // Check if the user has already completed today's workout
       const lastWorkout = myTrainingPlan[myTrainingPlan.length - 1];
-      const todaysWorkoutHasBeenDone = lastWorkout == undefined ? false : isToday(lastWorkout.date);
+      const todaysWorkoutHasBeenDone =
+        lastWorkout == undefined ? false : isToday(lastWorkout.date);
       if (todaysWorkoutHasBeenDone) {
         return {
           myTrainingPlan: myTrainingPlan,
@@ -55,7 +72,9 @@ export class AppHomeScreenService {
         orders,
         lastWorkout == undefined
           ? 0
-          : allMyCurrentWorkoutSheets.indexOf(allMyCurrentWorkoutSheets.find((i) => i.id == lastWorkout.id)),
+          : allMyCurrentWorkoutSheets.indexOf(
+              allMyCurrentWorkoutSheets.find((i) => i.id == lastWorkout.id),
+            ),
       );
 
       // Add the next workout sheet to the user's training plan and return it
@@ -77,12 +96,18 @@ export class AppHomeScreenService {
     }
   }
 
-  getNextWorkoutOrder(workoutSheets: number[], lastWorkoutDone: number): number {
+  getNextWorkoutOrder(
+    workoutSheets: number[],
+    lastWorkoutDone: number,
+  ): number {
     // Find the index of the last workout done in the workout sheets array
     const lastWorkoutIndex = workoutSheets.indexOf(lastWorkoutDone);
 
     // If the last workout is not found or is the last element in the array, return the first workout
-    if (lastWorkoutIndex === -1 || lastWorkoutIndex === workoutSheets.length - 1) {
+    if (
+      lastWorkoutIndex === -1 ||
+      lastWorkoutIndex === workoutSheets.length - 1
+    ) {
       return workoutSheets[0];
     }
 

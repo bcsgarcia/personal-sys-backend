@@ -17,14 +17,18 @@ import { SupabaseClient } from '@supabase/supabase-js';
     DatabaseService,
     {
       provide: CompanyRepository,
-      useFactory: (databaseService: DatabaseService, supabase: SupabaseClient) =>
-        new CompanyRepository(databaseService, supabase),
+      useFactory: (
+        databaseService: DatabaseService,
+        supabase: SupabaseClient,
+      ) => new CompanyRepository(databaseService, supabase),
       inject: [DatabaseService, 'SUPABASE_CLIENT'],
     },
     {
       provide: MediaRepository,
-      useFactory: (databaseService: DatabaseService, supabase: SupabaseClient) =>
-        new MediaRepository(databaseService, supabase),
+      useFactory: (
+        databaseService: DatabaseService,
+        supabase: SupabaseClient,
+      ) => new MediaRepository(databaseService, supabase),
       inject: [DatabaseService, 'SUPABASE_CLIENT'],
     },
   ],

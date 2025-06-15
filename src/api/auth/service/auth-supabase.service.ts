@@ -3,7 +3,10 @@ import { Injectable } from '@nestjs/common';
 import { AuthSupabaseRepository } from '../repository/auth-supabase.repository';
 import { ClientRepository } from '../../client/repository/client.repository';
 import { User } from '@supabase/supabase-js';
-import { CreateSupabaseUserDto } from '../dto/request/create-user.dto';
+import {
+  CreateSupabaseUserDto,
+  UpdateSupabaseUserDto,
+} from '../dto/request/create-user.dto';
 
 @Injectable()
 export class AuthSupabaseService {
@@ -22,38 +25,16 @@ export class AuthSupabaseService {
     return data;
   }
 
-  async enableUser(userId: string) {
+  async toggleUserAccess(userId: string, enabled: boolean) {
     const { data, error } = await this.repository.toggleUserAccess(
       userId,
-      true,
-    );
-    if (error) throw error;
-    return data;
-  }
-
-  async disableUser(userId: string) {
-    const { data, error } = await this.repository.toggleUserAccess(
-      userId,
-      false,
-    );
-    if (error) throw error;
-    return data;
-  }
-
-  async sendResetPasswordEmail(email: string, redirectTo: string) {
-    const { data, error } = await this.repository.sendResetPasswordEmail(
-      email,
-      redirectTo,
+      enabled,
     );
     if (error) throw error;
     return data;
   }
 
   async deleteUser(supabaseAuthId: string, clientId: string) {
-    // const { data, error } = await this.repository.deleteUser(userId);
-    // if (error) throw error;
-    // return data;
-
     await this.clientRepository.updateIdSupabaseAuth(clientId, null);
 
     const { data, error } = await this.repository.deleteUser(supabaseAuthId);
@@ -85,6 +66,7 @@ export class AuthSupabaseService {
           `Failed to delete existing user for client ${client.id}:`,
           err,
         );
+        throw err;
       }
     }
 
@@ -102,7 +84,6 @@ export class AuthSupabaseService {
     }
 
     userDto.password = Buffer.from(client.pass, 'base64').toString('utf-8');
-
     userDto.userMetadata.clientIdAuth = client.idAuth;
 
     // finalmente cria o supabase auth user
@@ -113,7 +94,7 @@ export class AuthSupabaseService {
         `❌ Failed to create supabase user for client ${client.id}:`,
         error.message,
       );
-      return null;
+      throw error;
     }
 
     // atualiza o idSupabaseAuth do client
@@ -122,6 +103,53 @@ export class AuthSupabaseService {
     return { status: 'success' };
   }
 
+  async updateUser(userDto: UpdateSupabaseUserDto) {
+    // get client
+    const client = await this.clientRepository.findById(
+      userDto.userMetadata.clientId,
+    );
+
+    // check if client exists
+    if (!client) {
+      throw new Error(
+        `Client with ID ${userDto.userMetadata.clientId} not found`,
+      );
+    }
+
+    // verificar se o email ja está cadastrado no supabaseAuth para outro user
+    const existingUsers = await this.repository.findAllUsers();
+    const existsOtherUserWithSameEmail = existingUsers.some(
+      (user) =>
+        user.email === userDto.email && user.id !== userDto.idSupabaseAuth,
+    );
+
+    // se ainda existir email cadastrado, é pq estamos duplicando o email para outro user
+    if (existsOtherUserWithSameEmail) {
+      throw new Error(
+        `User with email ${userDto.email} already exists to another client`,
+      );
+    }
+
+    // finalmente cria o supabase auth user
+    const { data, error } = await this.repository.updateUser(
+      userDto.idSupabaseAuth,
+      userDto,
+    );
+
+    if (error) {
+      console.warn(
+        `❌ Failed to update supabase user for client ${client.id}:`,
+        error.message,
+      );
+      throw error;
+    }
+
+    return { status: 'success' };
+  }
+
+  /**
+   * @deprecated do not use this method
+   */
   async deleteAllUsers(isAdmin: boolean): Promise<void> {
     const allAuthUsers = await this.findAllUsers();
 
@@ -165,6 +193,9 @@ export class AuthSupabaseService {
     });
   }
 
+  /**
+   * @deprecated do not use this method
+   */
   async syncClientsWithAuthUsers(isAdmin: boolean): Promise<void> {
     const allClients = await this.clientRepository.findAll(
       '7fa9293c-3700-11ee-ba6d-9d20c6833ca2',

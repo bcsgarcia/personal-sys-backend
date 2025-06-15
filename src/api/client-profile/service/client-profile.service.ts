@@ -20,8 +20,15 @@ export class ClientProfileService {
       return { status: 'error', message: 'Client not found' };
     }
 
-    const clientGoals = await this.clientProfileRepository.findGoalsByClientId(idClient, idCompany);
-    const clientFeedbacks = await this.clientProfileRepository.findFeedbacksByClientId(idClient, idCompany);
+    const clientGoals = await this.clientProfileRepository.findGoalsByClientId(
+      idClient,
+      idCompany,
+    );
+    const clientFeedbacks =
+      await this.clientProfileRepository.findFeedbacksByClientId(
+        idClient,
+        idCompany,
+      );
 
     return {
       status: 'success',
