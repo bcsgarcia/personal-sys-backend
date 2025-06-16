@@ -78,9 +78,17 @@ export class AuthSupabaseService {
 
     // se ainda existir email cadastrado, é pq estamos duplicando o email para outro user
     if (userExists) {
-      throw new Error(
-        `User with email ${userDto.email} already exists to another client`,
+      const existingUser = existingUsers.find(
+        (user) => user.email === userDto.email,
       );
+      if (existingUser && existingUser.user_metadata?.clientId === client.id) {
+        // se o email já existe mas é do mesmo client, então deleta o existente e cria um novo
+        await this.deleteUser(existingUser.id, client.id);
+      } else {
+        throw new Error(
+          `User with email ${userDto.email} already exists to another client`,
+        );
+      }
     }
 
     userDto.password = Buffer.from(client.pass, 'base64').toString('utf-8');
