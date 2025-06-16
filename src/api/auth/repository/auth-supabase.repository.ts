@@ -63,6 +63,12 @@ export class AuthSupabaseRepository {
     });
   }
 
+  async updatePassword(userId: string, newPassword: string) {
+    return this.supabase.auth.admin.updateUserById(userId, {
+      password: newPassword,
+    });
+  }
+
   async updateUser(dto: UpdateSupabaseUserDto) {
     return this.supabase.auth.admin.updateUserById(dto.idSupabaseAuth, {
       email: dto.email,

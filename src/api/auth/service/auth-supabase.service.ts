@@ -53,20 +53,10 @@ export class AuthSupabaseService {
     }
 
     // update password in supabase auth
-    const { error } = await this.repository.updateUser({
-      idSupabaseAuth: client.idSupabaseAuth,
-      email: client.email,
-      password: Buffer.from(newPass, 'utf-8').toString('base64'),
-      emailConfirmed: true,
-      role: 'user',
-      appMetadata: { enabled: client.isActive },
-      userMetadata: {
-        clientId: client.id,
-        clientIdAuth: client.clientIdAuth,
-        idCompany: client.idCompany,
-        clientName: client.name,
-      },
-    });
+    const { error } = await this.repository.updatePassword(
+      client.idSupabaseAuth,
+      Buffer.from(newPass, 'base64').toString('utf-8'),
+    );
 
     if (error) {
       console.warn(
