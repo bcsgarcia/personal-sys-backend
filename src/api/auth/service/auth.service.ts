@@ -10,12 +10,14 @@ import { AuthRepository } from '../repository/auth.repository';
 import { AccessTokenDto } from '../dto/response/access-token-dto';
 import { AppAuthDto } from '../dto/request/app-auth.dto';
 import { JwtService } from '@nestjs/jwt';
+import { AuthSupabaseService } from './auth-supabase.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly authRepository: AuthRepository,
     private readonly jwtService: JwtService,
+    private readonly supabaseAuthService: AuthSupabaseService,
   ) {}
 
   async create(authDto: AuthDto): Promise<Auth> {
@@ -191,8 +193,9 @@ export class AuthService {
     try {
       const currentPass = await this.authRepository.validateOldPass(idClient);
 
-      if (oldpass == currentPass['pass']) {
-        return this.authRepository.updatePassByIdClient(idClient, newpass);
+      if (oldpass == currentPass) {
+        await this.authRepository.updatePassByIdClient(idClient, newpass);
+        await this.supabaseAuthService.updatePassword(idClient, newpass);
       } else {
         throw new HttpException(
           'Wrong current password',

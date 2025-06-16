@@ -43,6 +43,42 @@ export class AuthSupabaseService {
     return data;
   }
 
+  async updatePassword(idClient: string, newPass: string) {
+    // get client
+    const client = await this.clientRepository.findById(idClient);
+
+    // check if client exists
+    if (!client) {
+      throw new Error(`Client with ID ${idClient} not found`);
+    }
+
+    // update password in supabase auth
+    const { error } = await this.repository.updateUser({
+      idSupabaseAuth: client.idSupabaseAuth,
+      email: client.email,
+      password: Buffer.from(newPass, 'utf-8').toString('base64'),
+      emailConfirmed: true,
+      role: 'user',
+      appMetadata: { enabled: client.isActive },
+      userMetadata: {
+        clientId: client.id,
+        clientIdAuth: client.clientIdAuth,
+        idCompany: client.idCompany,
+        clientName: client.name,
+      },
+    });
+
+    if (error) {
+      console.warn(
+        `❌ Failed to update password for client ${client.id}:`,
+        error.message,
+      );
+      throw error;
+    }
+
+    return { status: 'success' };
+  }
+
   async createUser(userDto: CreateSupabaseUserDto) {
     // get client
     const client = await this.clientRepository.findById(
@@ -139,10 +175,7 @@ export class AuthSupabaseService {
     }
 
     // finalmente cria o supabase auth user
-    const { data, error } = await this.repository.updateUser(
-      userDto.idSupabaseAuth,
-      userDto,
-    );
+    const { data, error } = await this.repository.updateUser(userDto);
 
     if (error) {
       console.warn(
