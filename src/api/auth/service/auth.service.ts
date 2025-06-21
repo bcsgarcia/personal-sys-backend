@@ -134,26 +134,26 @@ export class AuthService {
 
   async adminAuth(auth: AppAuthDto): Promise<AccessTokenDto> {
     try {
-      const rows = await this.authRepository.adminAuth(auth);
+      // const rows = await this.authRepository.adminAuth(auth);
+      //
+      // if (rows === undefined) {
+      //   throw new HttpException(`user/pass not found`, HttpStatus.NOT_FOUND);
+      // }
+      //
+      // const payload = {
+      //   clientId: rows['clientId'],
+      //   clientEmail: rows['clientEmail'],
+      //   clientIdAuth: rows['clientIdAuth'],
+      //   clientIdCompany: rows['clientIdCompany'],
+      //   clientName: rows['clientName'],
+      //   clientPhotoUrl: rows['clientPhotoUrl'],
+      // };
+      //
+      // const accessToken = await this.jwtService.signAsync(payload);
 
-      if (rows === undefined) {
-        throw new HttpException(`user/pass not found`, HttpStatus.NOT_FOUND);
-      }
+      const accessToken = await this.supabaseAuthService.appAuth(auth);
 
-      const payload = {
-        clientId: rows['clientId'],
-        clientEmail: rows['clientEmail'],
-        clientIdAuth: rows['clientIdAuth'],
-        clientIdCompany: rows['clientIdCompany'],
-        clientName: rows['clientName'],
-        clientPhotoUrl: rows['clientPhotoUrl'],
-      };
-
-      // const accessToken = await this.jwtService.signAsync(payload, {
-      //   expiresIn: '60s',
-      // });
-
-      const accessToken = await this.jwtService.signAsync(payload);
+      return new AccessTokenDto(accessToken);
 
       return new AccessTokenDto(accessToken);
     } catch (error) {
