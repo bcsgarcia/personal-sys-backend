@@ -39,6 +39,15 @@ export class AuthSupabaseRepository {
     });
   }
 
+  async loginUser(email: string, password: string) {
+    const { data, error } = await this.supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (error) throw error;
+    return data;
+  }
+
   async sendResetPasswordEmail(email: string, redirectTo: string) {
     return this.supabase.auth.admin.generateLink({
       type: 'recovery',
@@ -72,7 +81,6 @@ export class AuthSupabaseRepository {
   async updateUser(dto: UpdateSupabaseUserDto) {
     return this.supabase.auth.admin.updateUserById(dto.idSupabaseAuth, {
       email: dto.email,
-      password: dto.password,
       role: dto.role ?? 'user',
       email_confirm: dto.emailConfirmed ?? true,
       user_metadata: dto.userMetadata,

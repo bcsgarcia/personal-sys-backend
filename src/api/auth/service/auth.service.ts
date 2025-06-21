@@ -89,22 +89,22 @@ export class AuthService {
 
   async appAuth(auth: AppAuthDto): Promise<AccessTokenDto> {
     try {
-      const rows = await this.authRepository.appAuth(auth);
-
-      if (rows.length === 0) {
-        throw new HttpException(`user/pass not found`, HttpStatus.NOT_FOUND);
-      }
-
-      const payload = {
-        clientId: rows['clientId'],
-        clientEmail: rows['clientEmail'],
-        clientIdAuth: rows['clientIdAuth'],
-        clientIdCompany: rows['clientIdCompany'],
-        clientName: rows['clientName'],
-        clientPhotoUrl: rows['clientPhotoUrl'],
-      };
-
-      const accessToken = await this.jwtService.signAsync(payload);
+      // const rows = await this.authRepository.appAuth(auth);
+      // if (rows.length === 0) {
+      //   throw new HttpException(`user/pass not found`, HttpStatus.NOT_FOUND);
+      // }
+      //
+      // const payload = {
+      //   clientId: rows['clientId'],
+      //   clientEmail: rows['clientEmail'],
+      //   clientIdAuth: rows['clientIdAuth'],
+      //   clientIdCompany: rows['clientIdCompany'],
+      //   clientName: rows['clientName'],
+      //   clientPhotoUrl: rows['clientPhotoUrl'],
+      // };
+      //
+      // const accessToken = await this.jwtService.signAsync(payload);
+      const accessToken = await this.supabaseAuthService.appAuth(auth);
 
       return new AccessTokenDto(accessToken);
     } catch (error) {

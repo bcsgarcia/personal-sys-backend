@@ -83,6 +83,7 @@ export class NotificationRepository {
         description,
         notificationDate,
         readNotification (
+          idNotification,
           readDate
         ),
         appointment (
@@ -208,7 +209,8 @@ export class NotificationRepository {
       const { data: notifications, error: notifError } = await this.supabase
         .from('notification')
         .select('id')
-        .eq('idClient', idClient)
+        .or(`idClient.eq.${idClient},idClient.is.null`)
+        // .eq('idClient', idClient)
         .eq('idCompany', idCompany)
         .eq('isActive', true);
 
@@ -224,7 +226,6 @@ export class NotificationRepository {
 
       const readSet = new Set(existingReads.map((r) => r.idNotification));
 
-      //TODO: REMOVER O IDCLIENT DO INSERT - VERIFICAR SE PRECISA INCLUIR NO SUPABASE
       const toInsert = (notifications || [])
         .filter((n) => !readSet.has(n.id))
         .map((n) => ({

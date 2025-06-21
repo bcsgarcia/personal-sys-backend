@@ -59,6 +59,14 @@ export class UpdateClientDto {
   @IsString()
   photoUrl: string;
 
+  @ApiProperty({
+    description: 'Client`s new password',
+    example: 'hamburgerDeSiri*',
+    type: String,
+  })
+  @IsString()
+  pass?: string;
+
   constructor(data: any | null) {
     this.name = data.name;
     this.birthday = new Date(data.birthday);
@@ -67,5 +75,6 @@ export class UpdateClientDto {
     this.phone = data.phone;
     this.photoUrl = data.photoUrl;
     this.isActive = data.isActive;
+    this.pass = data.pass;
   }
 }

@@ -117,12 +117,9 @@ export class ClientService {
       }
 
       await this.clientRepository.update(id, updateClientDto);
-
       await this.authService.updateEmailByIdClient(id, updateClientDto.email);
-
       await this.supabaseAuthService.updateUser({
         email: updateClientDto.email,
-        password: Buffer.from(client.pass, 'base64').toString('utf-8'),
         emailConfirmed: true,
         role: 'user',
         appMetadata: { enabled: updateClientDto.isActive },
@@ -134,6 +131,14 @@ export class ClientService {
         },
         idSupabaseAuth: client.idSupabaseAuth,
       });
+
+      if (updateClientDto.pass) {
+        await this.authService.updatePassByIdClient(
+          id,
+          client.pass,
+          updateClientDto.pass,
+        );
+      }
 
       return { status: 'success' };
     } catch (error) {

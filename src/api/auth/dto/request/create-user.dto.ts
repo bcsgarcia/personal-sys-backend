@@ -53,7 +53,7 @@ export class CreateSupabaseUserDto {
     example: '******',
     type: String,
   })
-  password: string;
+  password?: string;
 
   @ApiProperty({
     description: 'The name of the client',

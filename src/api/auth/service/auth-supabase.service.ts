@@ -7,6 +7,7 @@ import {
   CreateSupabaseUserDto,
   UpdateSupabaseUserDto,
 } from '../dto/request/create-user.dto';
+import { AppAuthDto } from '../dto/request/app-auth.dto';
 
 @Injectable()
 export class AuthSupabaseService {
@@ -17,6 +18,20 @@ export class AuthSupabaseService {
 
   async findAllUsers() {
     return this.repository.findAllUsers();
+  }
+
+  async appAuth(auth: AppAuthDto) {
+    try {
+      const data = await this.repository.loginUser(
+        auth.email,
+        Buffer.from(auth.password, 'base64').toString('utf-8'),
+      );
+
+      return data.session.access_token;
+    } catch (error) {
+      console.error('Error during app authentication:', error);
+      throw error;
+    }
   }
 
   async findUserById(userId: string) {

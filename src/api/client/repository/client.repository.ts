@@ -127,7 +127,6 @@ export class ClientRepository {
           isActive: updateClientDto.isActive,
         })
         .eq('id', idClient);
-
       if (error) throw error;
     } catch (error) {
       throw error;
