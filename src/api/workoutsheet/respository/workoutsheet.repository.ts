@@ -96,7 +96,8 @@ export class WorkoutsheetRepository {
 
       const { data, error } = await this.supabase
         .from('workoutSheet')
-        .insert(records);
+        .insert(records)
+        .select();
 
       if (error) {
         // Supabase returns Postgres error codes under `error.code`
@@ -154,7 +155,8 @@ export class WorkoutsheetRepository {
 
       const { data, error } = await this.supabase
         .from('workoutClient')
-        .insert(records);
+        .insert(records)
+        .select();
 
       if (error) {
         // tratamento de chave duplicada

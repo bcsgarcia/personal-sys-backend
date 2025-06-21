@@ -273,7 +273,11 @@ export class WorkoutRepository {
       if (error) throw error;
 
       // Retornamos apenas os objetos workout
-      return (data || []).map((rec) => rec.workout);
+      return (data || []).map((rec: any) => ({
+        ...rec,
+        ...rec.workout,
+        workout: undefined, // remove o objeto original se quiser
+      }));
     } catch (error) {
       throw error;
     }
