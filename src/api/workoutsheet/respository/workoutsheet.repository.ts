@@ -489,42 +489,42 @@ export class WorkoutsheetRepository {
 
   async getMyTrainingProgram(user: AccessTokenModel): Promise<any> {
     try {
-      const query = `
-          SELECT ws.id                as workoutSheetId,
-                 ws.name              as workoutSheetName,
-                 wsd.date             as workoutSheedConclusionDate,
-                 ws.workoutsheetOrder as workoutSheetOrder,
-
-                 wc.id                as workoutId,
-                 w.title              as workoutTitle,
-                 w.subTitle           as workoutSubtitle,
-                 w.description        as workoutDescription,
-                 wc.workoutOrder      as workoutOrder,
-                 wc.breakTime         as workoutBreakTime,
-                 wc.series            as workoutSeries,
-
-                 m.id                 as mediaId,
-                 m.title              as mediaTitle,
-                 m.fileFormat         as mediaFormat,
-                 m.type               as mediaType,
-                 m.url                as mediaUrl,
-                 m.thumbnailUrl       as thumbnailUrl,
-                 wm.mediaOrder        as mediaOrder
-          FROM workoutSheetDone wsd
-                   INNER JOIN workoutSheet ws on wsd.idWorkoutSheet = ws.id
-                   INNER JOIN workoutClient wc
-                              on ws.id = wc.idWorkoutSheet and wc.isActive = 1
-                   INNER JOIN workout w
-                              on wc.idWorkout = w.id and w.isActive = 1
-                   LEFT JOIN workoutMedia wm on w.id = wm.idWorkout
-                   LEFT JOIN media m on wm.idMedia = m.id and m.isActive = 1
-
-          WHERE ws.idClient = '${user.clientId}'
-            AND ws.idCompany = '${user.clientIdCompany}'
-            AND ws.isActive = 1
-            AND wsd.date > ADDDATE(NOW(), -10)
-
-          ORDER BY wsd.date ASC;`;
+      // const query = `
+      //     SELECT ws.id                as workoutSheetId,
+      //            ws.name              as workoutSheetName,
+      //            wsd.date             as workoutSheedConclusionDate,
+      //            ws.workoutsheetOrder as workoutSheetOrder,
+      //
+      //            wc.id                as workoutId,
+      //            w.title              as workoutTitle,
+      //            w.subTitle           as workoutSubtitle,
+      //            w.description        as workoutDescription,
+      //            wc.workoutOrder      as workoutOrder,
+      //            wc.breakTime         as workoutBreakTime,
+      //            wc.series            as workoutSeries,
+      //
+      //            m.id                 as mediaId,
+      //            m.title              as mediaTitle,
+      //            m.fileFormat         as mediaFormat,
+      //            m.type               as mediaType,
+      //            m.url                as mediaUrl,
+      //            m.thumbnailUrl       as thumbnailUrl,
+      //            wm.mediaOrder        as mediaOrder
+      //     FROM workoutSheetDone wsd
+      //              INNER JOIN workoutSheet ws on wsd.idWorkoutSheet = ws.id
+      //              INNER JOIN workoutClient wc
+      //                         on ws.id = wc.idWorkoutSheet and wc.isActive = 1
+      //              INNER JOIN workout w
+      //                         on wc.idWorkout = w.id and w.isActive = 1
+      //              LEFT JOIN workoutMedia wm on w.id = wm.idWorkout
+      //              LEFT JOIN media m on wm.idMedia = m.id and m.isActive = 1
+      //
+      //     WHERE ws.idClient = '${user.clientId}'
+      //       AND ws.idCompany = '${user.clientIdCompany}'
+      //       AND ws.isActive = 1
+      //       AND wsd.date > ADDDATE(NOW(), -10)
+      //
+      //     ORDER BY wsd.date ASC;`;
       //
       // return await this.databaseService.execute(query);
       const tenDaysAgo = new Date(
@@ -594,9 +594,6 @@ export class WorkoutsheetRepository {
           const w = wc.workout as any | null;
           const medias = Array.isArray(w?.workoutMedia) ? w.workoutMedia : [];
 
-          if (w?.title == 'AEROBIO') {
-            console.log('AQUI');
-          }
           // Base do objeto comum
           const base = {
             workoutSheetId: ws.id,
@@ -604,12 +601,12 @@ export class WorkoutsheetRepository {
             workoutSheedConclusionDate: wsdDate,
             workoutSheetOrder: ws.workoutsheetOrder,
             workoutId: wc.id,
-            workoutTitle: w?.title,
-            workoutSubtitle: w?.subTitle,
-            workoutDescription: w?.description,
+            workoutTitle: w?.title ?? '',
+            workoutSubtitle: w?.subTitle ?? '',
+            workoutDescription: w?.description ?? '',
             workoutOrder: wc.workoutOrder,
-            workoutBreakTime: wc.breakTime,
-            workoutSeries: wc.series,
+            workoutBreakTime: wc.breakTime ?? '',
+            workoutSeries: wc.series ?? '',
           };
 
           if (medias.length === 0) {
@@ -741,12 +738,12 @@ export class WorkoutsheetRepository {
             workoutSheetName: ws.name,
             workoutSheetOrder: ws.workoutsheetOrder,
             workoutId: wc.id,
-            workoutTitle: wc.title,
-            workoutSubtitle: wc.subtitle,
-            workoutDescription: wc.description,
+            workoutTitle: wc.title ?? '',
+            workoutSubtitle: wc.subtitle ?? '',
+            workoutDescription: wc.description ?? '',
             workoutOrder: wc.workoutOrder,
-            workoutBreakTime: wc.breakTime,
-            workoutSeries: wc.series,
+            workoutBreakTime: wc.breakTime ?? '',
+            workoutSeries: wc.series ?? '',
           };
 
           if (medias.length === 0) {

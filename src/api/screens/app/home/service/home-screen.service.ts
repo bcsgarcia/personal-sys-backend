@@ -22,14 +22,17 @@ export class AppHomeScreenService {
         await this.companyService.findAllCompanyMainInformation(
           user.clientIdCompany,
         );
+
       const companyPosturalPatterns =
         await this.companyService.findAllCompanyPosturalPattern(
           user.clientIdCompany,
         );
+
       const companyPartnerships =
         await this.companyService.findAllPartnershipByIdCompany(
           user.clientIdCompany,
         );
+
       const notifications = await this.notificationService.findAllByIdClient(
         user.clientId,
         user.clientIdCompany,
