@@ -68,7 +68,7 @@ export class WorkoutRepository {
           breakTime: workoutClientDto.breakTime,
           series: workoutClientDto.series,
           workoutOrder: workoutClientDto.workoutOrder,
-          idWorkoutsheet: workoutClientDto.idWorkoutsheet,
+          idWorkoutSheet: workoutClientDto.idWorkoutsheet,
         },
       ]);
 
