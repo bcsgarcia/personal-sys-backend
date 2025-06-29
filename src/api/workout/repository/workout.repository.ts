@@ -61,7 +61,7 @@ export class WorkoutRepository {
       const { error } = await this.supabase.from('workoutClient').insert([
         {
           title: workoutClientDto.title,
-          subTitle: workoutClientDto.subtitle,
+          subtitle: workoutClientDto.subtitle,
           description: workoutClientDto.description,
           idCompany: workoutClientDto.idCompany,
           idWorkout: workoutClientDto.idWorkout,
@@ -102,7 +102,7 @@ export class WorkoutRepository {
         .from('workoutClient')
         .update({
           title: workoutClientDto.title,
-          subTitle: workoutClientDto.subtitle,
+          subtitle: workoutClientDto.subtitle,
           description: workoutClientDto.description,
           breakTime: workoutClientDto.breakTime,
           series: workoutClientDto.series,
