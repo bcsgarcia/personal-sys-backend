@@ -44,7 +44,7 @@ export class ClientService {
       const client = await this.clientRepository.create(createClientDto, auth);
 
       await this.supabaseAuthService.createUser({
-        email: client.email,
+        email: auth.email,
         password: auth.pass,
         emailConfirmed: true,
         role: 'user',
