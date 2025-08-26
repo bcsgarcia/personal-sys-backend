@@ -431,7 +431,12 @@ export class CompanyRepository {
       .eq('idCompany', idCompany);
 
     if (error) throw error;
-    return data;
+    // return data;
+    return data.map((item: any) => ({
+      name: item.name,
+      description: item.description,
+      imageUrl: item.media?.url || '',
+    }));
   }
 
   async getTestimonyByIdCompanyAdmin(idCompany: string): Promise<any> {
@@ -464,13 +469,27 @@ export class CompanyRepository {
     //
     // return await this.databaseService.execute(query);
 
+    // const { data, error } = await this.supabase
+    //   .from('photosBeforeAndAfter')
+    //   .select(`imageUrl:media(url)`)
+    //   .eq('idCompany', idCompany);
+    //
+    // if (error) throw error;
+    // return data;
+
     const { data, error } = await this.supabase
       .from('photosBeforeAndAfter')
       .select(`media (url)`)
       .eq('idCompany', idCompany);
 
     if (error) throw error;
-    return data;
+
+    // Mapear para o formato que seu frontend espera
+    return data
+      .map((item: any) => ({
+        imageUrl: (item.media as { url: string })?.url || '',
+      }))
+      .filter((item: { imageUrl: string }) => item.imageUrl);
   }
 
   async getPhotosBeforeAndAfterByIdCompanyAdmin(
