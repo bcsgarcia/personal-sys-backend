@@ -10,6 +10,9 @@ import { AuthModule } from '../auth/auth.module';
 import { JwtModule } from '@nestjs/jwt';
 import { FtpService } from 'src/common-services/ftp-service.service';
 import { ImageService } from 'src/common-services/image-service.service';
+import { SupabaseClient } from '@supabase/supabase-js';
+import { AuthSupabaseService } from '../auth/service/auth-supabase.service';
+import { AuthSupabaseRepository } from '../auth/repository/auth-supabase.repository';
 
 @Module({
   controllers: [ClientController],
@@ -26,11 +29,19 @@ import { ImageService } from 'src/common-services/image-service.service';
     AuthService,
     FtpService,
     ImageService,
+    AuthSupabaseService,
     AuthRepository,
     {
       provide: ClientRepository,
-      useFactory: (databaseService: DatabaseService) => new ClientRepository(databaseService),
-      inject: [DatabaseService],
+      useFactory: (
+        databaseService: DatabaseService,
+        supabase: SupabaseClient,
+      ) => new ClientRepository(databaseService, supabase),
+      inject: [DatabaseService, 'SUPABASE_CLIENT'],
+    },
+    {
+      provide: AuthSupabaseRepository,
+      useFactory: () => new AuthSupabaseRepository(),
     },
   ],
 })

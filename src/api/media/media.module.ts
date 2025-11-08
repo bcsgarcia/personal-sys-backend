@@ -5,6 +5,7 @@ import { MediaRepository } from './repository/media.repository';
 import { MediaController } from './controller/media.controller';
 import { MediaService } from './service/media.service';
 import { FtpService } from '../../common-services/ftp-service.service';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 @Module({
   controllers: [MediaController],
@@ -14,8 +15,12 @@ import { FtpService } from '../../common-services/ftp-service.service';
     FtpService,
     {
       provide: MediaRepository,
-      useFactory: (databaseService: DatabaseService) => new MediaRepository(databaseService),
-      inject: [DatabaseService],
+      useFactory: (
+        databaseService: DatabaseService,
+        supabase: SupabaseClient,
+      ) => new MediaRepository(databaseService, supabase),
+
+      inject: [DatabaseService, 'SUPABASE_CLIENT'],
     },
   ],
 })

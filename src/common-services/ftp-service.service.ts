@@ -24,13 +24,19 @@ export class FtpService {
         password: process.env.FTP_PASSWORD,
       });
 
-      await client.ensureDir(`${process.env.FTP_CLIENT_IMAGE_PATH}/${clientId}/${idClientEvaluation}/`);
+      await client.ensureDir(
+        `${process.env.FTP_CLIENT_IMAGE_PATH}/${clientId}/${idClientEvaluation}/`,
+      );
 
-      console.log(`upload uploadClientEvaluationPhoto - path: ${await client.pwd()} - filename: ${fileName}`);
+      console.log(
+        `upload uploadClientEvaluationPhoto - path: ${await client.pwd()} - filename: ${fileName}`,
+      );
 
       await client.uploadFrom(stream, fileName);
     } catch (error) {
-      console.error(`uploadClientEvaluationPhoto - Erro ao fazer upload da foto: ${error}`);
+      console.error(
+        `uploadClientEvaluationPhoto - Erro ao fazer upload da foto: ${error}`,
+      );
       rethrow;
     } finally {
       stream.destroy();
@@ -38,7 +44,10 @@ export class FtpService {
     }
   }
 
-  async uploadPartnershipLogo(fileBuffer: Buffer, fileName: string): Promise<void> {
+  async uploadPartnershipLogo(
+    fileBuffer: Buffer,
+    fileName: string,
+  ): Promise<void> {
     const client = new basicFtp.Client();
     const stream = new Readable();
     stream.push(fileBuffer);
@@ -53,11 +62,15 @@ export class FtpService {
 
       await client.ensureDir(`${process.env.FTP_PARTNERSHIP_LOGO_PATH}`);
 
-      console.log(`upload uploadPartnershipLogo - path: ${await client.pwd()} - filename: ${fileName}`);
+      console.log(
+        `upload uploadPartnershipLogo - path: ${await client.pwd()} - filename: ${fileName}`,
+      );
 
       await client.uploadFrom(stream, fileName);
     } catch (error) {
-      console.error(`uploadPartnershipLogo - Erro ao fazer upload da foto: ${error}`);
+      console.error(
+        `uploadPartnershipLogo - Erro ao fazer upload da foto: ${error}`,
+      );
       rethrow;
     } finally {
       stream.destroy();
@@ -65,7 +78,11 @@ export class FtpService {
     }
   }
 
-  async uploadPhoto(fileBuffer: Buffer, fileName: string, path: string): Promise<void> {
+  async uploadPhoto(
+    fileBuffer: Buffer,
+    fileName: string,
+    path: string,
+  ): Promise<void> {
     const client = new basicFtp.Client();
     const stream = new Readable();
     stream.push(fileBuffer);
@@ -80,7 +97,9 @@ export class FtpService {
 
       await client.ensureDir(path);
 
-      console.log(`upload photo - path: ${await client.pwd()} - filename: ${fileName}`);
+      console.log(
+        `upload photo - path: ${await client.pwd()} - filename: ${fileName}`,
+      );
 
       await client.uploadFrom(stream, fileName);
 
@@ -95,7 +114,11 @@ export class FtpService {
     }
   }
 
-  async uploadFile(fileBuffer: Buffer, fileName: string, mediaType: string): Promise<void> {
+  async uploadFile(
+    fileBuffer: Buffer,
+    fileName: string,
+    mediaType: string,
+  ): Promise<void> {
     const client = new basicFtp.Client();
     const stream = new Readable();
     stream.push(fileBuffer);
@@ -122,11 +145,15 @@ export class FtpService {
           return;
       }
 
-      console.log(`upload file ${mediaType}: path: ${await client.pwd()} - filename: ${fileName}`);
+      console.log(
+        `upload file ${mediaType}: path: ${await client.pwd()} - filename: ${fileName}`,
+      );
 
       await client.uploadFrom(stream, fileName.toLowerCase());
     } catch (error) {
-      console.error(`uploadFile - Erro ao fazer upload do arquivo '${mediaType}': ${error}`);
+      console.error(
+        `uploadFile - Erro ao fazer upload do arquivo '${mediaType}': ${error}`,
+      );
       rethrow;
     } finally {
       stream.destroy();
@@ -200,7 +227,9 @@ export class FtpService {
           return;
       }
 
-      console.log(`remove file ${mediaType}: path: ${await client.pwd()} - filename: ${fileName}`);
+      console.log(
+        `remove file ${mediaType}: path: ${await client.pwd()} - filename: ${fileName}`,
+      );
 
       await client.remove(fileName);
     } catch (error) {

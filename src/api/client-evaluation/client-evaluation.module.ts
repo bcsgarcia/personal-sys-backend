@@ -4,6 +4,7 @@ import { ClientEvaluationController } from './controllers/client-evaluation.cont
 import { DatabaseService } from 'src/database/database.service';
 import { ClientEvaluationRepository } from './repository/client-evaluation.repository';
 import { FtpService } from 'src/common-services/ftp-service.service';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 @Module({
   controllers: [ClientEvaluationController],
@@ -13,8 +14,11 @@ import { FtpService } from 'src/common-services/ftp-service.service';
     FtpService,
     {
       provide: ClientEvaluationRepository,
-      useFactory: (databaseService: DatabaseService) => new ClientEvaluationRepository(databaseService),
-      inject: [DatabaseService],
+      useFactory: (
+        databaseService: DatabaseService,
+        supabase: SupabaseClient,
+      ) => new ClientEvaluationRepository(databaseService, supabase),
+      inject: [DatabaseService, 'SUPABASE_CLIENT'],
     },
   ],
 })

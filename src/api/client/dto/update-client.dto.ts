@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsDate, IsNotEmpty, IsString } from 'class-validator';
 
 export class UpdateClientDto {
   @ApiProperty({
@@ -46,10 +46,10 @@ export class UpdateClientDto {
 
   @ApiProperty({
     description: 'Client`s activate status',
-    example: 'true',
+    example: true,
     type: Boolean,
   })
-  isActive: string;
+  isActive: boolean;
 
   @ApiProperty({
     description: 'Client`s photo url',
@@ -59,6 +59,14 @@ export class UpdateClientDto {
   @IsString()
   photoUrl: string;
 
+  @ApiProperty({
+    description: 'Client`s new password',
+    example: 'hamburgerDeSiri*',
+    type: String,
+  })
+  @IsString()
+  pass?: string;
+
   constructor(data: any | null) {
     this.name = data.name;
     this.birthday = new Date(data.birthday);
@@ -67,5 +75,6 @@ export class UpdateClientDto {
     this.phone = data.phone;
     this.photoUrl = data.photoUrl;
     this.isActive = data.isActive;
+    this.pass = data.pass;
   }
 }

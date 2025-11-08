@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+  Query,
+  Req,
+} from '@nestjs/common';
 
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { MediaService } from '../service/media.service';
@@ -48,7 +58,13 @@ export class MediaController {
   ) {
     const user = new AccessTokenModel(request['user']);
 
-    return this.mediaService.findAllPagined(user.clientIdCompany, page, itemsPerPage, mediaType, title);
+    return this.mediaService.findAllPagined(
+      user.clientIdCompany,
+      page,
+      itemsPerPage,
+      mediaType,
+      title,
+    );
   }
 
   @Get('/photos')
@@ -78,7 +94,11 @@ export class MediaController {
   }
 
   @Put(':id')
-  update(@Param('id') id: string, @Body() updateMedia: MediaDto, @Req() request: Request) {
+  update(
+    @Param('id') id: string,
+    @Body() updateMedia: MediaDto,
+    @Req() request: Request,
+  ) {
     const user = new AccessTokenModel(request['user']);
 
     return this.mediaService.update(updateMedia);

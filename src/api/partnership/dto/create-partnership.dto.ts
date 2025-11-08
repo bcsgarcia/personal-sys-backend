@@ -58,7 +58,8 @@ export class CreatePartnershipDto {
   address: string;
 
   @ApiProperty({
-    description: 'The id of the partnership category or if its new the category name',
+    description:
+      'The id of the partnership category or if its new the category name',
     example: 'rfdsafadf-afdsafds-afdsafds-afdsafds',
     type: String,
   })

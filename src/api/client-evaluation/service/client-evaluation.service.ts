@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { CreateClientEvaluationDto } from '../dto/create-client-evaluation.dto';
-import { UpdateClientEvaluationDto } from '../dto/update-client-evaluation.dto';
 import { ClientEvaluationRepository } from '../repository/client-evaluation.repository';
 import { ClientEvaluationDto } from '../dto/client-evaluation.dto';
 import { rethrow } from '@nestjs/core/helpers/rethrow';
@@ -19,9 +18,10 @@ export class ClientEvaluationService {
 
   async create(createClientEvaluationDto: CreateClientEvaluationDto) {
     try {
-      const clientEvaluationMap = await this.clientEvaluationRepository.createClientEvaluation(
-        createClientEvaluationDto,
-      );
+      const clientEvaluationMap =
+        await this.clientEvaluationRepository.createClientEvaluation(
+          createClientEvaluationDto,
+        );
       const clientEvaluation = new ClientEvaluationDto(clientEvaluationMap);
 
       await this.clientEvaluationRepository.createMusclePerimeter(
@@ -44,22 +44,29 @@ export class ClientEvaluationService {
 
   async findAll(idClient: string, idCompany: string) {
     try {
-      const rows = await this.clientEvaluationRepository.findAllByClientAndCompany(idClient, idCompany);
+      const rows =
+        await this.clientEvaluationRepository.findAllByClientAndCompany(
+          idClient,
+          idCompany,
+        );
 
       const clientEvaluationMap = new Map<string, ClientEvaluationDto>();
       rows.map((row) => {
-        const key = row['idClientEvaluation'];
+        const key = row['id'];
 
         if (!clientEvaluationMap.has(key)) {
           const clientEvaluation = new ClientEvaluationDto(row);
           clientEvaluation.musclePerimeter = new MusclePerimeterDto(row);
-          clientEvaluation.muscoloskeletalChanges = new MuscoloskeletalChangesDto(row);
+          clientEvaluation.muscoloskeletalChanges =
+            new MuscoloskeletalChangesDto(row);
           clientEvaluation.clientEvaluationPhotoList = [];
           clientEvaluationMap.set(key, clientEvaluation);
         }
 
         if (row['idClientEvaluationPhoto'] != undefined) {
-          clientEvaluationMap.get(key).clientEvaluationPhotoList.push(new ClientEvaluationPhotoDto(row));
+          clientEvaluationMap
+            .get(key)
+            .clientEvaluationPhotoList.push(new ClientEvaluationPhotoDto(row));
         }
       });
 
@@ -95,7 +102,10 @@ export class ClientEvaluationService {
 
   async remove(clientEvaluationId: string, idCompany: string) {
     try {
-      const clientEvaluation = await this.clientEvaluationRepository.findOne(idCompany, clientEvaluationId);
+      const clientEvaluation = await this.clientEvaluationRepository.findOne(
+        idCompany,
+        clientEvaluationId,
+      );
 
       // removing client evaluation photos dir from ftp
       await this.ftpService.removeDir(
@@ -103,32 +113,47 @@ export class ClientEvaluationService {
       );
 
       // removing clientEvaluation
-      await this.clientEvaluationRepository.deleteClientEvaluation(idCompany, clientEvaluationId);
+      await this.clientEvaluationRepository.deleteClientEvaluation(
+        idCompany,
+        clientEvaluationId,
+      );
       return { status: 'success' };
     } catch (error) {
       throw new Error(`Erro client evaluation service: ${error}`);
     }
   }
 
-  async addPhotoClientEvaluation(clientEvaluationPhotoDto: CreateClientEvaluationPhotoDto) {
+  async addPhotoClientEvaluation(
+    clientEvaluationPhotoDto: CreateClientEvaluationPhotoDto,
+  ) {
     try {
       clientEvaluationPhotoDto.url = `${process.env.CLIENT_IMAGE_BASE_PATH}/${clientEvaluationPhotoDto.idClient}/${clientEvaluationPhotoDto.idClientEvaluation}/${clientEvaluationPhotoDto.fileName}`;
 
-      await this.clientEvaluationRepository.createClientEvaluationPhoto(clientEvaluationPhotoDto);
+      await this.clientEvaluationRepository.createClientEvaluationPhoto(
+        clientEvaluationPhotoDto,
+      );
 
       return { status: 'success' };
     } catch (error) {
-      throw new Error(`error client-evaluation-service addPhotoClientEvaluation - ${error}`);
+      throw new Error(
+        `error client-evaluation-service addPhotoClientEvaluation - ${error}`,
+      );
     }
   }
 
-  async deletePhotoClientEvaluation(clientEvaluationPhotoDto: ClientEvaluationPhotoDto) {
+  async deletePhotoClientEvaluation(
+    clientEvaluationPhotoDto: ClientEvaluationPhotoDto,
+  ) {
     try {
-      await this.clientEvaluationRepository.deleteClientEvaluationPhoto(clientEvaluationPhotoDto);
+      await this.clientEvaluationRepository.deleteClientEvaluationPhoto(
+        clientEvaluationPhotoDto,
+      );
 
       return { status: 'success' };
     } catch (error) {
-      throw new Error(`error client-evaluation-service addPhotoClientEvaluation - ${error}`);
+      throw new Error(
+        `error client-evaluation-service addPhotoClientEvaluation - ${error}`,
+      );
     }
   }
 }

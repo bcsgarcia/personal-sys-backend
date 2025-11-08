@@ -1,16 +1,21 @@
 import {
+  BadRequestException,
+  Body,
   Controller,
   Get,
-  Post,
-  Body,
   Param,
-  Req,
-  BadRequestException,
+  Post,
   Put,
-  UseInterceptors,
+  Req,
   UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 
 import { CreateClientDto } from '../dto/create-client.dto';
 import { UpdateClientDto } from '../dto/update-client.dto';
@@ -19,8 +24,6 @@ import { ClientService } from '../service/client.service';
 import { ClientDto } from '../dto/client.dto';
 import { AccessTokenModel } from 'src/models/access-token-user.model';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { FtpService } from 'src/common-services/ftp-service.service';
-import { Public } from 'src/api/auth/jwt.decorator';
 
 @ApiTags('client')
 @Controller('client')
@@ -48,11 +51,13 @@ export class ClientController {
 
   @Get('all')
   @ApiBearerAuth()
-  findAll(@Req() request: Request): Promise<ClientDto[]> {
+  async findAll(@Req() request: Request): Promise<ClientDto[]> {
     try {
       const user = new AccessTokenModel(request['user']);
 
-      return this.clientService.findAll(user.clientIdCompany);
+      const retornoDto = await this.clientService.findAll(user.clientIdCompany);
+
+      return retornoDto;
     } catch (error) {
       throw error;
     }

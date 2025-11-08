@@ -4,6 +4,7 @@ import { DatabaseService } from 'src/database/database.service';
 import { WorkoutsheetRepository } from './respository/workoutsheet.repository';
 import { WorkoutModule } from '../workout/workout.module';
 import { WorkoutsheetService } from './service/workoutsheet.service';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 @Module({
   controllers: [WorkoutsheetController],
@@ -13,8 +14,9 @@ import { WorkoutsheetService } from './service/workoutsheet.service';
     WorkoutsheetService,
     {
       provide: WorkoutsheetRepository,
-      useFactory: (db: DatabaseService) => new WorkoutsheetRepository(db),
-      inject: [DatabaseService],
+      useFactory: (db: DatabaseService, supabase: SupabaseClient) =>
+        new WorkoutsheetRepository(db, supabase),
+      inject: [DatabaseService, 'SUPABASE_CLIENT'],
     },
   ],
 })

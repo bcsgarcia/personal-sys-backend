@@ -1,50 +1,113 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
 import { CreateGoalsDto } from '../dto/create-goals.dto';
+import { SupabaseClient } from '@supabase/supabase-js';
 
 @Injectable()
 export class ClientProfileRepository {
-  constructor(private databaseService: DatabaseService) {}
+  constructor(
+    private databaseService: DatabaseService,
+    @Inject('SUPABASE_CLIENT')
+    private readonly supabase: SupabaseClient,
+  ) {}
 
-  findGoalsByClientId(idClient: string, idCompany: string): Promise<any> {
-    return this.databaseService.execute(
-      `SELECT cg.id, cg.description
-        from clientGoal cg
-        where cg.idClient = ?
-          and cg.idCompany = ?
-          and cg.isActive = 1
-        order by cg.lastUpdate desc`,
-      [idClient, idCompany],
-    );
+  async findGoalsByClientId(idClient: string, idCompany: string): Promise<any> {
+    // return this.databaseService.execute(
+    //   `SELECT cg.id, cg.description
+    //    from clientGoal cg
+    //    where cg.idClient = ?
+    //      and cg.idCompany = ?
+    //      and cg.isActive = 1
+    //    order by cg.lastUpdate desc`,
+    //   [idClient, idCompany],
+    // );
+    const { data, error } = await this.supabase
+      .from('clientGoal')
+      .select('id, description')
+      .eq('idClient', idClient)
+      .eq('idCompany', idCompany)
+      .eq('isActive', true)
+      .order('lastUpdate', { ascending: false });
+
+    if (error) throw error;
+    return data;
   }
 
-  findFeedbacksByClientId(idClient: string, idCompany: string): Promise<any> {
-    return this.databaseService.execute(
-      `select wf.id, wf.feedback, wf.lastUpdate date, wc.title workoutTitle
-        from workoutFeedback wf
-          join workoutClient wc on wf.idWorkoutClient = wc.id and wc.isActive = 1
-          join workoutSheet ws on wc.idWorkoutSheet = ws.id and ws.isActive = 1
-        where ws.idClient = ?
-            and wf.idCompany = ?
-            and wf.isActive = 1
-        order by wf.lastUpdate desc`,
-      [idClient, idCompany],
-    );
+  async findFeedbacksByClientId(
+    idClient: string,
+    idCompany: string,
+  ): Promise<any> {
+    // return this.databaseService.execute(
+    //   `select wf.id, wf.feedback, wf.lastUpdate date, wc.title workoutTitle
+    //    from workoutFeedback wf
+    //        join workoutClient wc
+    //    on wf.idWorkoutClient = wc.id and wc.isActive = 1
+    //        join workoutSheet ws on wc.idWorkoutSheet = ws.id and ws.isActive = 1
+    //    where ws.idClient = ?
+    //      and wf.idCompany = ?
+    //      and wf.isActive = 1
+    //    order by wf.lastUpdate desc`,
+    //   [idClient, idCompany],
+    // );
+
+    const { data, error } = await this.supabase
+      .from('workoutFeedback')
+      .select(
+        `
+        id,
+        feedback,
+        lastUpdate,
+        workoutClient (
+          id,
+          title,
+          workoutSheet (
+            idClient
+          )
+        )
+      `,
+      )
+      .eq('idCompany', idCompany)
+      .eq('isActive', true)
+      .order('lastUpdate', { ascending: false });
+
+    if (error) throw error;
+
+    return (data || [])
+      .filter(
+        (fb: any) => fb.workoutClient?.[0]?.workoutSheet?.idClient === idClient,
+      )
+      .map((fb: any) => ({
+        id: fb.id,
+        feedback: fb.feedback,
+        date: fb.lastUpdate, // << alias aqui
+        workoutTitle: fb.workoutClient[0].title,
+      }));
   }
 
   async createClientGoals(clientGoalDto: CreateGoalsDto): Promise<void> {
     try {
-      // Construir a parte VALUES da query dinamicamente com base no número de goals
-      const valuesPlaceholder = clientGoalDto.goalList.map(() => '(?,?,?)').join(', ');
-      const createQuery = `INSERT INTO clientGoal (idClient, idCompany, description) VALUES ${valuesPlaceholder};`;
+      // // Construir a parte VALUES da query dinamicamente com base no número de goals
+      // const valuesPlaceholder = clientGoalDto.goalList.map(() => '(?,?,?)').join(', ');
+      // const createQuery = `INSERT INTO clientGoal (idClient, idCompany, description)
+      //                      VALUES ${valuesPlaceholder};`;
+      //
+      // // Achatar a lista de parâmetros para corresponder aos placeholders
+      // // Nota: Isso pressupõe que a propriedade "description" no DTO deve ser realmente "goalList"
+      // const queryParams = clientGoalDto.goalList.reduce((acc, goal) => {
+      //   return acc.concat([clientGoalDto.idClient, clientGoalDto.idCompany, goal]);
+      // }, []);
+      //
+      // await this.databaseService.execute(createQuery, queryParams);
 
-      // Achatar a lista de parâmetros para corresponder aos placeholders
-      // Nota: Isso pressupõe que a propriedade "description" no DTO deve ser realmente "goalList"
-      const queryParams = clientGoalDto.goalList.reduce((acc, goal) => {
-        return acc.concat([clientGoalDto.idClient, clientGoalDto.idCompany, goal]);
-      }, []);
+      const records = clientGoalDto.goalList.map((goal) => ({
+        idClient: clientGoalDto.idClient,
+        idCompany: clientGoalDto.idCompany,
+        description: goal,
+      }));
 
-      await this.databaseService.execute(createQuery, queryParams);
+      const { error } = await this.supabase.from('clientGoal').insert(records);
+
+      if (error) throw error;
     } catch (error) {
       throw error;
     }
@@ -52,203 +115,20 @@ export class ClientProfileRepository {
 
   async deleteClientGoals(idsToDelete: string[]): Promise<void> {
     try {
-      const placeholders = new Array(idsToDelete.length).fill('?').join(', ');
-      const deleteQuery = `DELETE FROM clientGoal WHERE id IN (${placeholders});`;
+      // const placeholders = new Array(idsToDelete.length).fill('?').join(', ');
+      // const deleteQuery = `DELETE
+      //                      FROM clientGoal
+      //                      WHERE id IN (${placeholders});`;
+      //
+      // await this.databaseService.execute(deleteQuery, idsToDelete);
+      const { error } = await this.supabase
+        .from('clientGoal')
+        .delete()
+        .in('id', idsToDelete);
 
-      await this.databaseService.execute(deleteQuery, idsToDelete);
+      if (error) throw error;
     } catch (error) {
       throw error;
     }
   }
-
-  //   async createClientEvaluation(clientEvaluation: CreateClientEvaluationDto): Promise<any> {
-  //     await this.databaseService.execute(
-  //       'INSERT INTO clientEvaluation (idClient, idCompany, date) VALUES (?, ?, now())',
-  //       [clientEvaluation.idClient, clientEvaluation.idCompany],
-  //     );
-
-  //     const row = await this.databaseService.execute(
-  //       'SELECT ce.id idClientEvaluation, ce.* FROM clientEvaluation ce WHERE ce.idClient = ? and ce.idCompany = ? order by ce.lastUpdate desc;',
-  //       [clientEvaluation.idClient, clientEvaluation.idCompany],
-  //     );
-
-  //     return row[0];
-  //   }
-
-  //   async createClientEvaluationPhoto(clientEvaluationPhoto: CreateClientEvaluationPhotoDto): Promise<void> {
-  //     try {
-  //       await this.databaseService.execute(
-  //         `INSERT INTO clientEvaluationPhoto
-  //           (idClientEvaluation, idCompany, date, url, fileName)
-  //           VALUES (?, ?, now(), ?, ?)`,
-  //         [
-  //           clientEvaluationPhoto.idClientEvaluation,
-  //           clientEvaluationPhoto.idCompany,
-  //           clientEvaluationPhoto.url,
-  //           clientEvaluationPhoto.fileName,
-  //         ],
-  //       );
-  //     } catch (error) {
-  //       throw new Error(`Erro ao inserir foto da avaliação do cliente: ${error}`);
-  //     }
-  //   }
-
-  //   async deleteClientEvaluationPhoto(clientEvaluationPhoto: ClientEvaluationPhotoDto): Promise<void> {
-  //     try {
-  //       await this.databaseService.execute(
-  //         `DELETE from clientEvaluationPhoto where id = ? and idCompany = ? and idClientEvaluation = ?`,
-  //         [clientEvaluationPhoto.id, clientEvaluationPhoto.idCompany, clientEvaluationPhoto.idClientEvaluation],
-  //       );
-  //     } catch (error) {
-  //       throw new Error(`Erro ao inserir foto da avaliação do cliente: ${error}`);
-  //     }
-  //   }
-
-  //   async createMusclePerimeter(
-  //     idClientEvaluation: string,
-  //     idCompany: string,
-  //     musclePerimeterDto: MusclePerimeterDto,
-  //   ): Promise<void> {
-  //     try {
-  //       const keys = Object.keys(musclePerimeterDto);
-  //       const values = Object.values(musclePerimeterDto);
-  //       const columns = keys.join(', ');
-  //       const placeholders = new Array(keys.length + 2).fill('?').join(', ');
-
-  //       const query = `
-  //         INSERT INTO musclePerimeter (
-  //           idClientEvaluation,
-  //           idCompany,
-  //           ${columns}
-  //         ) VALUES (${placeholders})
-  //       `;
-
-  //       await this.databaseService.execute(query, [idClientEvaluation, idCompany, ...values]);
-  //     } catch (error) {
-  //       throw new Error(`Erro createMusclePerimeter: ${error}`);
-  //     }
-  //   }
-
-  //   async updateMusclePerimeter(
-  //     idClientEvaluation: string,
-  //     idCompany: string,
-  //     musclePerimeterDto: MusclePerimeterDto,
-  //   ): Promise<void> {
-  //     try {
-  //       const keys = Object.keys(musclePerimeterDto).filter((key) => key !== 'id');
-  //       const values = Object.values(musclePerimeterDto).filter((key) => key !== musclePerimeterDto.id);
-
-  //       const columnsToUpdate = keys.map((key) => `${key} = ?`).join(', ');
-
-  //       const query = `
-  //       UPDATE musclePerimeter
-  //       SET ${columnsToUpdate}
-  //       WHERE id = ? AND idCompany = ?
-  //     `;
-
-  //       // Adiciona idClientEvaluation e idCompany ao final do array de valores
-  //       await this.databaseService.execute(query, [...values, musclePerimeterDto.id, idCompany]);
-  //     } catch (error) {
-  //       throw new Error(`Erro updateMusclePerimeter: ${error}`);
-  //     }
-  //   }
-
-  //   async createMuscoloskeletalChange(
-  //     idClientEvaluation: string,
-  //     idCompany: string,
-  //     muscoloskeletalChanges: MuscoloskeletalChangesDto,
-  //   ): Promise<void> {
-  //     try {
-  //       const keys = Object.keys(muscoloskeletalChanges);
-  //       const values = Object.values(muscoloskeletalChanges);
-
-  //       const columns = keys.join(', ');
-  //       const placeholders = new Array(keys.length + 2).fill('?').join(', ');
-
-  //       const query = `
-  //         INSERT INTO muscoloskeletalChange (
-  //           idClientEvaluation,
-  //           idCompany,
-  //           ${columns}
-  //         ) VALUES (${placeholders})
-  //       `;
-
-  //       await this.databaseService.execute(query, [idClientEvaluation, idCompany, ...values]);
-  //     } catch (error) {
-  //       throw new Error(`Erro createMuscoloskeletalChange: ${error}`);
-  //     }
-  //   }
-
-  //   async updateMuscoloskeletalChange(
-  //     idClientEvaluation: string,
-  //     idCompany: string,
-  //     muscoloskeletalChanges: MuscoloskeletalChangesDto,
-  //   ): Promise<void> {
-  //     try {
-  //       const keys = Object.keys(muscoloskeletalChanges).filter((key) => key !== 'id');
-  //       const values = Object.values(muscoloskeletalChanges).filter((key) => key !== muscoloskeletalChanges.id);
-
-  //       const columnsToUpdate = keys.map((key) => `${key} = ?`).join(', ');
-
-  //       const query = `
-  //         UPDATE muscoloskeletalChange
-  //         SET ${columnsToUpdate}
-  //         WHERE id = ? AND idCompany = ?
-  //       `;
-
-  //       // Adiciona idClientEvaluation e idCompany ao final do array de valores
-  //       await this.databaseService.execute(query, [...values, muscoloskeletalChanges.id, idCompany]);
-  //     } catch (error) {
-  //       throw new Error(`Erro updateMuscoloskeletalChange: ${error}`);
-  //     }
-  //   }
-
-  //   async findAllByClientAndCompany(idClient: string, idCompany: string): Promise<any> {
-  //     const rows = await this.databaseService.execute(
-  //       `SELECT ce.id idClientEvaluation,
-  //               ce.date,
-  //               ce.idClient,
-  //               ce.idCompany,
-  //               mp.id idMusclePerimeter,
-  //               mp.weight,
-  //               mp.height,
-  //               mp.neck,
-  //               mp.shoulder,
-  //               mp.rightForearm,
-  //               mp.leftForearm,
-  //               mp.chest,
-  //               mp.leftArm,
-  //               mp.rightArm,
-  //               mp.waist,
-  //               mp.abdome,
-  //               mp.hip,
-  //               mp.breeches,
-  //               mp.leftThigh,
-  //               mp.rightThigh,
-  //               mp.leftCalf,
-  //               mp.rightCalf,
-  //               mc.id idMucolosckeletalChanges,
-  //               mc.head,
-  //               mc.spine,
-  //               mc.sholderBlades,
-  //               mc.shoulders,
-  //               mc.pelvis,
-  //               mc.knees,
-  //               mc.shins,
-  //               mc.feet,
-  //               cep.id idClientEvaluationPhoto,
-  //               cep.url,
-  //               cep.fileName
-  //         from clientEvaluation ce
-  //                 inner join musclePerimeter mp on mp.idClientEvaluation = ce.id and mp.isActive = 1
-  //                 inner join muscoloskeletalChange mc on mc.idClientEvaluation = ce.id and mc.isActive = 1
-  //                 left join clientEvaluationPhoto cep on cep.idClientEvaluation = ce.id and cep.isActive = 1
-  //         where ce.idCompany = ?
-  //           and ce.idClient = ?
-  //           and ce.isActive = 1
-  //         order by ce.date desc`,
-  //       [idCompany, idClient],
-  //     );
-  //     return rows;
-  //   }
 }

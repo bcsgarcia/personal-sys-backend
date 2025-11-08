@@ -17,6 +17,8 @@ import { ImageService } from 'src/common-services/image-service.service';
 import { MediaRepository } from '../../../media/repository/media.repository';
 import { WorkoutService } from '../../../workout/service/workout.service';
 import { WorkoutRepository } from '../../../workout/repository/workout.repository';
+import { AuthSupabaseService } from '../../../auth/service/auth-supabase.service';
+import { AuthSupabaseRepository } from '../../../auth/repository/auth-supabase.repository';
 
 @Module({
   controllers: [AppHomeScreenController],
@@ -28,6 +30,8 @@ import { WorkoutRepository } from '../../../workout/repository/workout.repositor
     CompanyService,
     ClientService,
     AuthService,
+    AuthSupabaseService,
+    AuthSupabaseRepository,
     NotificationService,
     FtpService,
     ImageService,

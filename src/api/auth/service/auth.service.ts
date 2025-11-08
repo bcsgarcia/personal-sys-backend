@@ -1,14 +1,24 @@
-import { HttpException, HttpStatus, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { Auth } from 'src/models/auth.model';
 import { AuthDto } from '../dto/request/auth.dto';
 import { AuthRepository } from '../repository/auth.repository';
 import { AccessTokenDto } from '../dto/response/access-token-dto';
 import { AppAuthDto } from '../dto/request/app-auth.dto';
 import { JwtService } from '@nestjs/jwt';
+import { AuthSupabaseService } from './auth-supabase.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly authRepository: AuthRepository, private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly authRepository: AuthRepository,
+    private readonly jwtService: JwtService,
+    private readonly supabaseAuthService: AuthSupabaseService,
+  ) {}
 
   async create(authDto: AuthDto): Promise<Auth> {
     try {
@@ -40,7 +50,10 @@ export class AuthService {
 
   async emailAlreadyExists(email: string, idCompany: string): Promise<boolean> {
     try {
-      const rows = await this.authRepository.emailAlreadyExists(email, idCompany);
+      const rows = await this.authRepository.emailAlreadyExists(
+        email,
+        idCompany,
+      );
       return rows.length > 0;
     } catch (error) {
       throw error;
@@ -76,22 +89,22 @@ export class AuthService {
 
   async appAuth(auth: AppAuthDto): Promise<AccessTokenDto> {
     try {
-      const rows = await this.authRepository.appAuth(auth);
-
-      if (rows.length === 0) {
-        throw new HttpException(`user/pass not found`, HttpStatus.NOT_FOUND);
-      }
-
-      const payload = {
-        clientId: rows[0]['clientId'],
-        clientEmail: rows[0]['clientEmail'],
-        clientIdAuth: rows[0]['clientIdAuth'],
-        clientIdCompany: rows[0]['clientIdCompany'],
-        clientName: rows[0]['clientName'],
-        clientPhotoUrl: rows[0]['clientPhotoUrl'],
-      };
-
-      const accessToken = await this.jwtService.signAsync(payload);
+      // const rows = await this.authRepository.appAuth(auth);
+      // if (rows.length === 0) {
+      //   throw new HttpException(`user/pass not found`, HttpStatus.NOT_FOUND);
+      // }
+      //
+      // const payload = {
+      //   clientId: rows['clientId'],
+      //   clientEmail: rows['clientEmail'],
+      //   clientIdAuth: rows['clientIdAuth'],
+      //   clientIdCompany: rows['clientIdCompany'],
+      //   clientName: rows['clientName'],
+      //   clientPhotoUrl: rows['clientPhotoUrl'],
+      // };
+      //
+      // const accessToken = await this.jwtService.signAsync(payload);
+      const accessToken = await this.supabaseAuthService.appAuth(auth);
 
       return new AccessTokenDto(accessToken);
     } catch (error) {
@@ -103,12 +116,15 @@ export class AuthService {
     try {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: process.env.JWT_SECRET,
-        ignoreExpiration: true, // Add this to ignore token expiration when verifying
+        // Add this to ignore token expiration when verifying
+        ignoreExpiration: true,
       });
 
       delete payload.exp;
 
-      const accessToken = await this.jwtService.signAsync(payload, { expiresIn: '240m' });
+      const accessToken = await this.jwtService.signAsync(payload, {
+        expiresIn: '240m',
+      });
 
       return new AccessTokenDto(accessToken);
     } catch (error) {
@@ -118,26 +134,26 @@ export class AuthService {
 
   async adminAuth(auth: AppAuthDto): Promise<AccessTokenDto> {
     try {
-      const rows = await this.authRepository.adminAuth(auth);
+      // const rows = await this.authRepository.adminAuth(auth);
+      //
+      // if (rows === undefined) {
+      //   throw new HttpException(`user/pass not found`, HttpStatus.NOT_FOUND);
+      // }
+      //
+      // const payload = {
+      //   clientId: rows['clientId'],
+      //   clientEmail: rows['clientEmail'],
+      //   clientIdAuth: rows['clientIdAuth'],
+      //   clientIdCompany: rows['clientIdCompany'],
+      //   clientName: rows['clientName'],
+      //   clientPhotoUrl: rows['clientPhotoUrl'],
+      // };
+      //
+      // const accessToken = await this.jwtService.signAsync(payload);
 
-      if (rows.length === 0) {
-        throw new HttpException(`user/pass not found`, HttpStatus.NOT_FOUND);
-      }
+      const accessToken = await this.supabaseAuthService.appAuth(auth);
 
-      const payload = {
-        clientId: rows[0]['clientId'],
-        clientEmail: rows[0]['clientEmail'],
-        clientIdAuth: rows[0]['clientIdAuth'],
-        clientIdCompany: rows[0]['clientIdCompany'],
-        clientName: rows[0]['clientName'],
-        clientPhotoUrl: rows[0]['clientPhotoUrl'],
-      };
-
-      // const accessToken = await this.jwtService.signAsync(payload, {
-      //   expiresIn: '60s',
-      // });
-
-      const accessToken = await this.jwtService.signAsync(payload);
+      return new AccessTokenDto(accessToken);
 
       return new AccessTokenDto(accessToken);
     } catch (error) {
@@ -169,14 +185,22 @@ export class AuthService {
     }
   }
 
-  async updatePassByIdClient(idClient: string, oldpass: string, newpass: string): Promise<void> {
+  async updatePassByIdClient(
+    idClient: string,
+    oldpass: string,
+    newpass: string,
+  ): Promise<void> {
     try {
       const currentPass = await this.authRepository.validateOldPass(idClient);
 
-      if (oldpass == currentPass['pass']) {
-        return this.authRepository.updatePassByIdClient(idClient, newpass);
+      if (oldpass == currentPass) {
+        await this.authRepository.updatePassByIdClient(idClient, newpass);
+        await this.supabaseAuthService.updatePassword(idClient, newpass);
       } else {
-        throw new HttpException('Wrong current password', HttpStatus.BAD_REQUEST);
+        throw new HttpException(
+          'Wrong current password',
+          HttpStatus.BAD_REQUEST,
+        );
       }
     } catch (error) {
       throw error;

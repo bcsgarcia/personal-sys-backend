@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable, UploadedFile } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  UploadedFile,
+} from '@nestjs/common';
 import { Auth } from 'src/models/auth.model';
 import { AuthDto } from 'src/api/auth/dto/request/auth.dto';
 import { AuthService } from 'src/api/auth/service/auth.service';
@@ -9,6 +14,7 @@ import { ClientRepository } from '../repository/client.repository';
 import { FtpService } from 'src/common-services/ftp-service.service';
 import { DomainError } from 'src/api/utils/domain.error';
 import { ImageService } from 'src/common-services/image-service.service';
+import { AuthSupabaseService } from '../../auth/service/auth-supabase.service';
 
 @Injectable()
 export class ClientService {
@@ -17,17 +23,39 @@ export class ClientService {
     private readonly authService: AuthService,
     private readonly ftpService: FtpService,
     private readonly imageService: ImageService,
+    private readonly supabaseAuthService: AuthSupabaseService,
   ) {}
 
   async create(createClientDto: CreateClientDto) {
     try {
-      if (await this.authService.emailAlreadyExists(createClientDto.email, createClientDto.idCompany)) {
-        throw new HttpException(`SQL error: 'Email already exists'`, HttpStatus.BAD_REQUEST);
+      if (
+        await this.authService.emailAlreadyExists(
+          createClientDto.email,
+          createClientDto.idCompany,
+        )
+      ) {
+        throw new HttpException(
+          `SQL error: 'Email already exists'`,
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       const auth = await this.createAuth(createClientDto);
+      const client = await this.clientRepository.create(createClientDto, auth);
 
-      await this.clientRepository.create(createClientDto, auth);
+      await this.supabaseAuthService.createUser({
+        email: auth.email,
+        password: auth.pass,
+        emailConfirmed: true,
+        role: 'user',
+        appMetadata: { enabled: client.isActive },
+        userMetadata: {
+          clientId: client.id,
+          clientIdAuth: auth.id,
+          idCompany: client.idCompany,
+          clientName: client.name,
+        },
+      });
 
       return { status: 'success' };
     } catch (error) {
@@ -43,7 +71,9 @@ export class ClientService {
         return [];
       }
 
-      return rows.map((row) => new ClientDto(row));
+      const retornoDto = rows.map((row) => new ClientDto(row));
+
+      return retornoDto;
     } catch (error) {
       throw error;
     }
@@ -53,11 +83,11 @@ export class ClientService {
     try {
       const rows = await this.clientRepository.findById(id);
 
-      if (rows.length === 0) {
+      if (rows === undefined) {
         return null;
       }
 
-      return new ClientDto(rows[0]);
+      return new ClientDto(rows);
     } catch (error) {
       throw error;
     }
@@ -65,9 +95,50 @@ export class ClientService {
 
   async update(id: string, updateClientDto: UpdateClientDto) {
     try {
-      await this.clientRepository.update(id, updateClientDto);
+      const client = await this.clientRepository.findById(id);
 
+      if (client === undefined) {
+        throw new HttpException('Client not found', HttpStatus.NOT_FOUND);
+      }
+
+      const allSUpabaseAuth = await this.supabaseAuthService.findAllUsers();
+
+      const otherUserWithSameEmail = allSUpabaseAuth.find(
+        (user) =>
+          user.email === updateClientDto.email &&
+          user.id !== client.idSupabaseAuth,
+      );
+
+      if (otherUserWithSameEmail) {
+        throw new HttpException(
+          `SQL error: 'Email already exists to another client'`,
+          HttpStatus.BAD_REQUEST,
+        );
+      }
+
+      await this.clientRepository.update(id, updateClientDto);
       await this.authService.updateEmailByIdClient(id, updateClientDto.email);
+      await this.supabaseAuthService.updateUser({
+        email: updateClientDto.email,
+        emailConfirmed: true,
+        role: 'user',
+        appMetadata: { enabled: updateClientDto.isActive },
+        userMetadata: {
+          clientId: client.id,
+          clientIdAuth: client.idAuth,
+          idCompany: client.idCompany,
+          clientName: updateClientDto.name,
+        },
+        idSupabaseAuth: client.idSupabaseAuth,
+      });
+
+      if (updateClientDto.pass) {
+        await this.authService.updatePassByIdClient(
+          id,
+          client.pass,
+          updateClientDto.pass,
+        );
+      }
 
       return { status: 'success' };
     } catch (error) {
@@ -78,14 +149,21 @@ export class ClientService {
   async uploadPhoto(@UploadedFile() file, uuid: string) {
     try {
       if (!file.mimetype.includes('image') || file.mimetype.includes('heic')) {
-        throw new HttpException(DomainError.INTERNAL_SERVER_ERROR, HttpStatus.BAD_REQUEST);
+        throw new HttpException(
+          DomainError.INTERNAL_SERVER_ERROR,
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       const imageBuffer = file.mimetype.includes('png')
         ? file.buffer
         : await this.imageService.convertToPNG(file.buffer);
 
-      await this.ftpService.uploadPhoto(imageBuffer, `${uuid}.png`, process.env.FTP_CLIENT_IMAGE_PATH);
+      await this.ftpService.uploadPhoto(
+        imageBuffer,
+        `${uuid}.png`,
+        process.env.FTP_CLIENT_IMAGE_PATH,
+      );
 
       const user = await this.clientRepository.findById(uuid);
 

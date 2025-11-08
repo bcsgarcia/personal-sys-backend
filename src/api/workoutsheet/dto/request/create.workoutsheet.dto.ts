@@ -22,7 +22,11 @@ export class CreateWorkoutsheetDto {
   @IsString()
   idClient: string;
 
-  constructor(workoutsheetDefaultIdList: string[], idCompany: string, idClient: string) {
+  constructor(
+    workoutsheetDefaultIdList: string[],
+    idCompany: string,
+    idClient: string,
+  ) {
     this.workoutsheetDefaultIdList = workoutsheetDefaultIdList;
     this.idCompany = idCompany;
     this.idClient = idClient;

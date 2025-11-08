@@ -11,7 +11,9 @@ describe('ClientEvaluationController', () => {
       providers: [ClientEvaluationService],
     }).compile();
 
-    controller = module.get<ClientEvaluationController>(ClientEvaluationController);
+    controller = module.get<ClientEvaluationController>(
+      ClientEvaluationController,
+    );
   });
 
   it('should be defined', () => {

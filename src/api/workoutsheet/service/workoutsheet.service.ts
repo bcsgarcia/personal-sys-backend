@@ -26,28 +26,42 @@ export class WorkoutsheetService {
 
   async getAllWorkoutSheetByIdClient(idClient: string, idCompany: string) {
     try {
-      const workoutSheetRows = await this.workoutsheetRepository.getAllWorkoutsheetByIdClientAdmin(idClient, idCompany);
+      const workoutSheetRows =
+        await this.workoutsheetRepository.getAllWorkoutsheetByIdClientAdmin(
+          idClient,
+          idCompany,
+        );
 
       if (workoutSheetRows.length == 0) {
         return [];
       }
 
-      const idWorkoutsheetDefaultList = workoutSheetRows.map((item) => item.idWorkoutsheetDefault);
-
-      const workoutsheetDefaultList = await this.workoutsheetRepository.getWorkoutsheetDefaultByIdList(
-        idCompany,
-        idWorkoutsheetDefaultList,
+      const idWorkoutsheetDefaultList = workoutSheetRows.map(
+        (item) => item.idWorkoutsheetDefault,
       );
+
+      const workoutsheetDefaultList =
+        await this.workoutsheetRepository.getWorkoutsheetDefaultByIdList(
+          idCompany,
+          idWorkoutsheetDefaultList,
+        );
 
       const idWorkoutsheetList = workoutSheetRows.map((item) => item.id);
 
-      const workoutList = await this.workoutService.findWorkoutClientByWorkoutSheet(idWorkoutsheetList, idCompany);
+      const workoutList =
+        await this.workoutService.findWorkoutClientByWorkoutSheet(
+          idWorkoutsheetList,
+          idCompany,
+        );
 
       let mediaList = [];
       if (workoutList.length > 0) {
         const idWorkoutList = workoutList.map((w) => w.idWorkout);
 
-        mediaList = await this.workoutRepository.findManyMediaByIdWorkout(idWorkoutList, idCompany);
+        mediaList = await this.workoutRepository.findManyMediaByIdWorkout(
+          idWorkoutList,
+          idCompany,
+        );
       }
 
       // mapeando workout no workoutSheetDefaultWorkout
@@ -60,7 +74,8 @@ export class WorkoutsheetService {
           });
 
         item.workoutsheetDefault = workoutsheetDefaultList.find(
-          (workoutsheetDefault) => workoutsheetDefault.id == item.idWorkoutsheetDefault,
+          (workoutsheetDefault) =>
+            workoutsheetDefault.id == item.idWorkoutsheetDefault,
         );
 
         return item;
@@ -72,16 +87,25 @@ export class WorkoutsheetService {
     }
   }
 
-  async createWorkoutSheetDefault(createWorkoutsheetDefaultDto: CreateWorkoutsheetDefaultDto) {
+  async createWorkoutSheetDefault(
+    createWorkoutsheetDefaultDto: CreateWorkoutsheetDefaultDto,
+  ) {
     try {
       if (hasDuplicates(createWorkoutsheetDefaultDto.workoutList)) {
-        throw new HttpException(DomainError.DUPLICATE_ITEMS, HttpStatus.BAD_REQUEST);
+        throw new HttpException(
+          DomainError.DUPLICATE_ITEMS,
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
       const title = createWorkoutsheetDefaultDto.title;
       const idCompany = createWorkoutsheetDefaultDto.idCompany;
 
-      const idWorkoutSheetDefault = await this.workoutsheetRepository.createWorkoutSheetDefault(title, idCompany);
+      const idWorkoutSheetDefault =
+        await this.workoutsheetRepository.createWorkoutSheetDefault(
+          title,
+          idCompany,
+        );
 
       await this.workoutsheetRepository.createWorkoutSheetDefaultWorkout(
         idWorkoutSheetDefault,
@@ -98,23 +122,29 @@ export class WorkoutsheetService {
   async createWorkoutSheet(createWorkoutsheetDto: CreateWorkoutsheetDto) {
     try {
       if (hasDuplicates(createWorkoutsheetDto.workoutsheetDefaultIdList)) {
-        throw new HttpException(DomainError.DUPLICATE_ITEMS, HttpStatus.BAD_REQUEST);
+        throw new HttpException(
+          DomainError.DUPLICATE_ITEMS,
+          HttpStatus.BAD_REQUEST,
+        );
       }
 
-      const workoutsheetClientList = await this.workoutsheetRepository.getAllWorkoutsheetByIdClientAdmin(
-        createWorkoutsheetDto.idClient,
-        createWorkoutsheetDto.idCompany,
-      );
+      const workoutsheetClientList =
+        await this.workoutsheetRepository.getAllWorkoutsheetByIdClientAdmin(
+          createWorkoutsheetDto.idClient,
+          createWorkoutsheetDto.idCompany,
+        );
 
       let order =
         workoutsheetClientList.length == 0
           ? 0
-          : workoutsheetClientList[workoutsheetClientList.length - 1].workoutsheetOrder + 1;
+          : workoutsheetClientList[workoutsheetClientList.length - 1]
+              .workoutsheetOrder + 1;
 
-      const workoutsheetDefaultList = await this.workoutsheetRepository.getWorkoutsheetDefaultByIdList(
-        createWorkoutsheetDto.idCompany,
-        createWorkoutsheetDto.workoutsheetDefaultIdList,
-      );
+      const workoutsheetDefaultList =
+        await this.workoutsheetRepository.getWorkoutsheetDefaultByIdList(
+          createWorkoutsheetDto.idCompany,
+          createWorkoutsheetDto.workoutsheetDefaultIdList,
+        );
 
       const workoutsheetListToInsert: WorkoutsheetModel[] = [];
 
@@ -138,25 +168,34 @@ export class WorkoutsheetService {
       });
 
       if (workoutsheetListToInsert.length != 0) {
-        await this.workoutsheetRepository.createWorkoutSheet(workoutsheetListToInsert);
+        await this.workoutsheetRepository.createWorkoutSheet(
+          workoutsheetListToInsert,
+        );
       }
 
       // retrieving all Workoutsheet by this client
-      const _allWorkoutsheetClientList = await this.getAllWorkoutSheetByIdClient(
-        createWorkoutsheetDto.idClient,
-        createWorkoutsheetDto.idCompany,
-      );
+      const _allWorkoutsheetClientList =
+        await this.getAllWorkoutSheetByIdClient(
+          createWorkoutsheetDto.idClient,
+          createWorkoutsheetDto.idCompany,
+        );
 
       // filtering just inserted workoutsheet
-      const allInsertedWorkoutsheetClientList = _allWorkoutsheetClientList.filter((e) =>
-        createWorkoutsheetDto.workoutsheetDefaultIdList.includes(e.workoutsheetDefault.id),
-      );
+      const allInsertedWorkoutsheetClientList =
+        _allWorkoutsheetClientList.filter((e) =>
+          createWorkoutsheetDto.workoutsheetDefaultIdList.includes(
+            e.workoutsheetDefault.id,
+          ),
+        );
 
       // retrieving workout by workoutsheetDefault id
-      const workoutListByWorkoutsheetDefault = await this.workoutService.findManyWorkoutByIdWorkoutheetList(
-        allInsertedWorkoutsheetClientList.map((w) => w.workoutsheetDefault.id),
-        createWorkoutsheetDto.idCompany,
-      );
+      const workoutListByWorkoutsheetDefault =
+        await this.workoutService.findManyWorkoutByIdWorkoutheetList(
+          allInsertedWorkoutsheetClientList.map(
+            (w) => w.workoutsheetDefault.id,
+          ),
+          createWorkoutsheetDto.idCompany,
+        );
 
       const workoutClientToInsert: WorkoutClientModel[] = [];
 
@@ -182,7 +221,9 @@ export class WorkoutsheetService {
       });
 
       if (workoutClientToInsert.length > 0) {
-        await this.workoutsheetRepository.createWorkoutClient(workoutClientToInsert);
+        await this.workoutsheetRepository.createWorkoutClient(
+          workoutClientToInsert,
+        );
       }
 
       return { status: 'success' };
@@ -207,7 +248,9 @@ export class WorkoutsheetService {
     }
   }
 
-  async updateWorkoutSheetDefaultWorkout(updateWorkoutsheetDefaultDto: UpdateWorkoutsheetDefaultDto) {
+  async updateWorkoutSheetDefaultWorkout(
+    updateWorkoutsheetDefaultDto: UpdateWorkoutsheetDefaultDto,
+  ) {
     try {
       await this.workoutsheetRepository.updateWorkoutSheetDefault(
         updateWorkoutsheetDefaultDto.title,
@@ -232,24 +275,31 @@ export class WorkoutsheetService {
 
   async getAllWorkoutSheetDefaultByIdCompany(idCompany: string) {
     try {
-      const workoutSheetDefaultRows = await this.workoutsheetRepository.getAllWorkoutsheetDefaultByIdCompanyAdmin(
-        idCompany,
-      );
+      const workoutSheetDefaultRows =
+        await this.workoutsheetRepository.getAllWorkoutsheetDefaultByIdCompanyAdmin(
+          idCompany,
+        );
       const workoutSheetDefaultWorkoutRows =
-        await this.workoutsheetRepository.getAllWorkoutsheetDefaultWorkoutByIdCompanyAdmin(idCompany);
+        await this.workoutsheetRepository.getAllWorkoutsheetDefaultWorkoutByIdCompanyAdmin(
+          idCompany,
+        );
 
       const workoutList = await this.workoutService.findAll(idCompany);
 
       // mapeando workout no workoutSheetDefaultWorkout
-      const workoutSheetDefaultWorkoutRowsMapped = workoutSheetDefaultWorkoutRows.map((item) => {
-        item.workout = workoutList.find((workout) => workout.id == item.idWorkout);
-        return item;
-      });
+      const workoutSheetDefaultWorkoutRowsMapped =
+        workoutSheetDefaultWorkoutRows.map((item) => {
+          item.workout = workoutList.find(
+            (workout) => workout.id == item.idWorkout,
+          );
+          return item;
+        });
 
       const retorno = workoutSheetDefaultRows.map((workoutSheetDefault) => {
-        workoutSheetDefault.workoutList = workoutSheetDefaultWorkoutRowsMapped.filter(
-          (item) => item.idWorkoutSheetDefault == workoutSheetDefault.id,
-        );
+        workoutSheetDefault.workoutList =
+          workoutSheetDefaultWorkoutRowsMapped.filter(
+            (item) => item.idWorkoutSheetDefault == workoutSheetDefault.id,
+          );
 
         return workoutSheetDefault;
       });
@@ -297,27 +347,39 @@ export class WorkoutsheetService {
 
   async deleteWorkoutSheetDefault(idWorkoutSheetDefault: string) {
     try {
-      await this.workoutsheetRepository.deleteWorkoutSheetDefaultWorkout(idWorkoutSheetDefault);
+      await this.workoutsheetRepository.deleteWorkoutSheetDefaultWorkout(
+        idWorkoutSheetDefault,
+      );
 
       await this.workoutsheetRepository.deleteById(idWorkoutSheetDefault);
 
       return { status: 'success' };
     } catch (error) {
-      throw new HttpException(DomainError.INTERNAL_SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException(
+        DomainError.INTERNAL_SERVER_ERROR,
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
-  async getMyTrainingProgram(user: AccessTokenModel): Promise<WorkoutSheetResponseDto[]> {
+  async getMyTrainingProgram(
+    user: AccessTokenModel,
+  ): Promise<WorkoutSheetResponseDto[]> {
     const rows = await this.workoutsheetRepository.getMyTrainingProgram(user);
     return this._convertRowsToMyTrainingProgramResponseDto(rows);
   }
 
   async getAllMyCurrentWorkoutSheetsWithWorkouts(user: AccessTokenModel) {
-    const rows = await this.workoutsheetRepository.getAllMyCurrentWorkoutSheetsWithWorkouts(user);
+    const rows =
+      await this.workoutsheetRepository.getAllMyCurrentWorkoutSheetsWithWorkouts(
+        user,
+      );
     return this._convertRowsToWorkoutSheetResponseDto(rows);
   }
 
-  _convertRowsToMyTrainingProgramResponseDto(rows: any): WorkoutSheetResponseDto[] {
+  _convertRowsToMyTrainingProgramResponseDto(
+    rows: any,
+  ): WorkoutSheetResponseDto[] {
     // Group rows by workoutSheetId as there might be multiple workouts per sheet
     const workoutSheetsMap: Record<number, any> = {};
     for (const row of rows) {
@@ -341,8 +403,14 @@ export class WorkoutsheetService {
         thumbnailUrl: row.thumbnailUrl,
       });
 
-      if (!workoutSheetsMap[row.workoutSheedConclusionDate].workouts[row.workoutId]) {
-        workoutSheetsMap[row.workoutSheedConclusionDate].workouts[row.workoutId] = {
+      if (
+        !workoutSheetsMap[row.workoutSheedConclusionDate].workouts[
+          row.workoutId
+        ]
+      ) {
+        workoutSheetsMap[row.workoutSheedConclusionDate].workouts[
+          row.workoutId
+        ] = {
           id: row.workoutId,
           title: row.workoutTitle,
           subtitle: row.workoutSubtitle,
@@ -354,14 +422,20 @@ export class WorkoutsheetService {
         };
       }
 
-      workoutSheetsMap[row.workoutSheedConclusionDate].workouts[row.workoutId].media.push(workoutMediaDto);
+      workoutSheetsMap[row.workoutSheedConclusionDate].workouts[
+        row.workoutId
+      ].media.push(workoutMediaDto);
     }
 
     // Convert each grouped workout sheet object and its workouts to DTOs
-    const workoutSheetResponseDtos = Object.values(workoutSheetsMap).map((data) => {
-      data.workouts = Object.values(data.workouts).map((workoutData) => new WorkoutResponseDto(workoutData));
-      return new WorkoutSheetResponseDto(data);
-    });
+    const workoutSheetResponseDtos = Object.values(workoutSheetsMap).map(
+      (data) => {
+        data.workouts = Object.values(data.workouts).map(
+          (workoutData) => new WorkoutResponseDto(workoutData),
+        );
+        return new WorkoutSheetResponseDto(data);
+      },
+    );
 
     return workoutSheetResponseDtos;
   }
@@ -407,15 +481,21 @@ export class WorkoutsheetService {
       }
 
       if (workoutMediaDto != undefined) {
-        workoutSheetsMap[row.workoutSheetId].workouts[row.workoutId].media.push(workoutMediaDto);
+        workoutSheetsMap[row.workoutSheetId].workouts[row.workoutId].media.push(
+          workoutMediaDto,
+        );
       }
     }
 
     // Convert each grouped workout sheet object and its workouts to DTOs
-    const workoutSheetResponseDtos = Object.values(workoutSheetsMap).map((data) => {
-      data.workouts = Object.values(data.workouts).map((workoutData) => new WorkoutResponseDto(workoutData));
-      return new WorkoutSheetResponseDto(data);
-    });
+    const workoutSheetResponseDtos = Object.values(workoutSheetsMap).map(
+      (data) => {
+        data.workouts = Object.values(data.workouts).map(
+          (workoutData) => new WorkoutResponseDto(workoutData),
+        );
+        return new WorkoutSheetResponseDto(data);
+      },
+    );
 
     return workoutSheetResponseDtos;
   }
@@ -440,7 +520,12 @@ export class WorkoutsheetService {
       const allMidias = rows.map((media) => new MediaForSyncDto(media));
 
       const uniqueMedias: MediaForSyncDto[] = Array.from(
-        allMidias.reduce((map, obj) => map.set(obj.id, obj), new Map<string, MediaForSyncDto>()).values(),
+        allMidias
+          .reduce(
+            (map, obj) => map.set(obj.id, obj),
+            new Map<string, MediaForSyncDto>(),
+          )
+          .values(),
       );
 
       return uniqueMedias;
@@ -449,17 +534,29 @@ export class WorkoutsheetService {
     }
   }
 
-  async workoutSheetDone(idWorkoutsheet: string, user: AccessTokenModel): Promise<void> {
+  async workoutSheetDone(
+    idWorkoutsheet: string,
+    user: AccessTokenModel,
+  ): Promise<void> {
     try {
-      await this.workoutsheetRepository.workoutSheetDone(idWorkoutsheet, user.clientIdCompany);
+      await this.workoutsheetRepository.workoutSheetDone(
+        idWorkoutsheet,
+        user.clientIdCompany,
+      );
     } catch (error) {
       throw error;
     }
   }
 
-  async createWorkoutsheetFeedback(feedback: string, idWorkoutsheet: string): Promise<void> {
+  async createWorkoutsheetFeedback(
+    feedback: string,
+    idWorkoutsheet: string,
+  ): Promise<void> {
     try {
-      return await this.workoutsheetRepository.createWorkoutsheetFeedback(feedback, idWorkoutsheet);
+      return await this.workoutsheetRepository.createWorkoutsheetFeedback(
+        feedback,
+        idWorkoutsheet,
+      );
     } catch (error) {
       throw error;
     }

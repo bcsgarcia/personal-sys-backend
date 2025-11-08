@@ -1,6 +1,21 @@
-import { Body, Controller, Delete, HttpStatus, Param, Post, Req, UploadedFile, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  HttpStatus,
+  Param,
+  Post,
+  Req,
+  UploadedFile,
+  UseInterceptors,
+} from '@nestjs/common';
 import { UploadService } from '../service/upload.service';
-import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AccessTokenModel } from 'src/models/access-token-user.model';
 
@@ -17,7 +32,11 @@ export class UploadController {
   })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request.' })
   @UseInterceptors(FileInterceptor('file'))
-  async uploadFile(@UploadedFile() file, @Body('idMedia') idMedia: string, @Body('mediaType') mediaType: string) {
+  async uploadFile(
+    @UploadedFile() file,
+    @Body('idMedia') idMedia: string,
+    @Body('mediaType') mediaType: string,
+  ) {
     try {
       if (!this.uploadService.validateFile(file)) {
         return { status: 'error', message: 'Invalid file type' };
@@ -52,7 +71,11 @@ export class UploadController {
       }
 
       console.log(file);
-      await this.uploadService.uploadClientEvaluationPhoto(file, idClient, idClientEvaluation);
+      await this.uploadService.uploadClientEvaluationPhoto(
+        file,
+        idClient,
+        idClientEvaluation,
+      );
       console.log('success');
       return { status: 'success' };
     } catch (e) {
@@ -81,7 +104,11 @@ export class UploadController {
 
       const idCompany = user.clientIdCompany;
 
-      await this.uploadService.deleteClientEvaluationPhoto(fileName, idClient, idClientEvaluation);
+      await this.uploadService.deleteClientEvaluationPhoto(
+        fileName,
+        idClient,
+        idClientEvaluation,
+      );
       console.log('success');
       return { status: 'success' };
     } catch (e) {

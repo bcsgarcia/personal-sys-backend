@@ -1,7 +1,24 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, Req, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  HttpStatus,
+  Req,
+  Put,
+} from '@nestjs/common';
 import { ClientEvaluationService } from '../service/client-evaluation.service';
 import { CreateClientEvaluationDto } from '../dto/create-client-evaluation.dto';
-import { ApiBearerAuth, ApiBody, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiBody,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AccessTokenModel } from 'src/models/access-token-user.model';
 import { CreateClientEvaluationPhotoDto } from '../dto/create-client-evaluation-photo.dto';
 import { ClientEvaluationPhotoDto } from '../dto/client-evaluation-photo.dto';
@@ -10,7 +27,9 @@ import { ClientEvaluationDto } from '../dto/client-evaluation.dto';
 @ApiTags('client-evaluation')
 @Controller('client-evaluation')
 export class ClientEvaluationController {
-  constructor(private readonly clientEvaluationService: ClientEvaluationService) {}
+  constructor(
+    private readonly clientEvaluationService: ClientEvaluationService,
+  ) {}
 
   @Post()
   @ApiBearerAuth('Authorization')
@@ -20,7 +39,10 @@ export class ClientEvaluationController {
     status: HttpStatus.CREATED,
   })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request.' })
-  create(@Body() createClientEvaluationDto: CreateClientEvaluationDto, @Req() request: Request) {
+  create(
+    @Body() createClientEvaluationDto: CreateClientEvaluationDto,
+    @Req() request: Request,
+  ) {
     const user = new AccessTokenModel(request['user']);
 
     createClientEvaluationDto.idCompany = user.clientIdCompany;
@@ -52,7 +74,11 @@ export class ClientEvaluationController {
     status: HttpStatus.CREATED,
   })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request.' })
-  async update(@Param('id') id: string, @Body() clientEvaluationDto: ClientEvaluationDto, @Req() request: Request) {
+  async update(
+    @Param('id') id: string,
+    @Body() clientEvaluationDto: ClientEvaluationDto,
+    @Req() request: Request,
+  ) {
     const user = new AccessTokenModel(request['user']);
 
     clientEvaluationDto.idCompany = user.clientIdCompany;
@@ -68,9 +94,15 @@ export class ClientEvaluationController {
     status: HttpStatus.CREATED,
   })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Bad Request.' })
-  async remove(@Param('id') clientEvaluationId: string, @Req() request: Request) {
+  async remove(
+    @Param('id') clientEvaluationId: string,
+    @Req() request: Request,
+  ) {
     const user = new AccessTokenModel(request['user']);
-    await this.clientEvaluationService.remove(clientEvaluationId, user.clientIdCompany);
+    await this.clientEvaluationService.remove(
+      clientEvaluationId,
+      user.clientIdCompany,
+    );
     return { status: 'success' };
   }
 
@@ -93,7 +125,9 @@ export class ClientEvaluationController {
       clientEvaluationPhotoDto.idCompany = user.clientIdCompany;
       clientEvaluationPhotoDto.idClientEvaluation = clientEvaluationId;
 
-      return this.clientEvaluationService.addPhotoClientEvaluation(clientEvaluationPhotoDto);
+      return this.clientEvaluationService.addPhotoClientEvaluation(
+        clientEvaluationPhotoDto,
+      );
     } catch (error) {
       throw error;
     }
@@ -122,7 +156,9 @@ export class ClientEvaluationController {
         idClientEvaluationPhoto: clientEvaluationPhotoId,
       });
 
-      return this.clientEvaluationService.deletePhotoClientEvaluation(clientEvaluationPhotoDto);
+      return this.clientEvaluationService.deletePhotoClientEvaluation(
+        clientEvaluationPhotoDto,
+      );
     } catch (error) {
       throw error;
     }

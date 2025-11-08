@@ -1,20 +1,27 @@
 import {
-  Controller,
-  Get,
-  Post,
   Body,
-  Param,
+  Controller,
   Delete,
-  Req,
+  Get,
   HttpStatus,
-  UseInterceptors,
-  UploadedFile,
+  Param,
+  Post,
   Put,
+  Req,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { PartnershipService } from '../service/partnership.service';
 import { CreatePartnershipDto } from '../dto/create-partnership.dto';
 import { UpdatePartnershipDto } from '../dto/update-partnership.dto';
-import { ApiBadRequestResponse, ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiOperation,
+  ApiResponse,
+  ApiTags,
+} from '@nestjs/swagger';
+
 import { AccessTokenModel } from 'src/models/access-token-user.model';
 import { FileInterceptor } from '@nestjs/platform-express';
 
@@ -35,7 +42,10 @@ export class PartnershipController {
   @ApiBadRequestResponse({
     description: 'Bad request, unable to retrieve notifications.',
   })
-  create(@Body() createPartnerDto: CreatePartnershipDto, @Req() request: Request) {
+  create(
+    @Body() createPartnerDto: CreatePartnershipDto,
+    @Req() request: Request,
+  ) {
     const user = new AccessTokenModel(request['user']);
 
     createPartnerDto.idCompany = user.clientIdCompany;
@@ -55,7 +65,11 @@ export class PartnershipController {
   @ApiBadRequestResponse({
     description: 'Bad request, unable to retrieve notifications.',
   })
-  update(@Param('id') id: string, @Body() updatePartnerDto: UpdatePartnershipDto, @Req() request: Request) {
+  update(
+    @Param('id') id: string,
+    @Body() updatePartnerDto: UpdatePartnershipDto,
+    @Req() request: Request,
+  ) {
     const user = new AccessTokenModel(request['user']);
 
     updatePartnerDto.idCompany = user.clientIdCompany;
@@ -68,7 +82,8 @@ export class PartnershipController {
   @ApiBearerAuth()
   @ApiOperation({
     summary: 'Get all partners',
-    description: "This endpoint retrieves an array of partners to be displayed on the mobile app's partnership screen.",
+    description:
+      "This endpoint retrieves an array of partners to be displayed on the mobile app's partnership screen.",
   })
   @ApiResponse({
     status: 200,

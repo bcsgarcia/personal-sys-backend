@@ -17,10 +17,10 @@ export class AccessTokenModel {
   clientName: string;
 
   constructor(data: any) {
-    this.clientId = data.clientId;
-    this.clientEmail = data.clientEmail;
-    this.clientIdAuth = data.clientIdAuth;
-    this.clientIdCompany = data.clientIdCompany;
-    this.clientName = data.clientName;
+    this.clientId = data.user_metadata?.clientId;
+    this.clientEmail = data.email;
+    this.clientIdAuth = data.user_metadata?.clientIdAuth;
+    this.clientIdCompany = data.user_metadata?.idCompany;
+    this.clientName = data.user_metadata?.clientName;
   }
 }

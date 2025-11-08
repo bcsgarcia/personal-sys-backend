@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Param, Req, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Req,
+  Delete,
+} from '@nestjs/common';
 import { ClientProfileService } from '../service/client-profile.service';
 import { ApiBearerAuth, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AccessTokenModel } from 'src/models/access-token-user.model';
@@ -16,7 +24,11 @@ export class ClientProfileController {
     status: 201,
     description: 'Goal created.',
   })
-  addClientGoals(@Param('idClient') idClient: string, @Body() goalDto: CreateGoalsDto, @Req() request: Request) {
+  addClientGoals(
+    @Param('idClient') idClient: string,
+    @Body() goalDto: CreateGoalsDto,
+    @Req() request: Request,
+  ) {
     try {
       const user = new AccessTokenModel(request['user']);
 
@@ -36,7 +48,11 @@ export class ClientProfileController {
     status: 200,
     description: 'Goal Deleted.',
   })
-  deleteClientGoals(@Param('idClient') idClient: string, @Body() goalDto: DeleteGoalsDto, @Req() request: Request) {
+  deleteClientGoals(
+    @Param('idClient') idClient: string,
+    @Body() goalDto: DeleteGoalsDto,
+    @Req() request: Request,
+  ) {
     try {
       const user = new AccessTokenModel(request['user']);
 
@@ -56,10 +72,16 @@ export class ClientProfileController {
     status: 200,
     description: 'OK',
   })
-  findAll(@Param('idClient') idClient: string, @Req() request: Request): Promise<any> {
+  findAll(
+    @Param('idClient') idClient: string,
+    @Req() request: Request,
+  ): Promise<any> {
     try {
       const user = new AccessTokenModel(request['user']);
-      return this.clientProfileService.getProfileScreenInfo(idClient, user.clientIdCompany);
+      return this.clientProfileService.getProfileScreenInfo(
+        idClient,
+        user.clientIdCompany,
+      );
     } catch (error) {
       throw error;
     }
