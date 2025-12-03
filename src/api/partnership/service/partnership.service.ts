@@ -161,7 +161,7 @@ export class PartnershipService {
           idCompany,
         );
 
-        return createdCategory[0]['id'];
+        return createdCategory['id'];
       } else {
         return rows[0]['id'];
       }
