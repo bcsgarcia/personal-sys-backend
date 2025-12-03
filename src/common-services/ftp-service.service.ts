@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-// import * as ftp from 'ftp';
 import * as basicFtp from 'basic-ftp';
 import { Readable } from 'typeorm/platform/PlatformTools';
 import { rethrow } from '@nestjs/core/helpers/rethrow';
@@ -25,7 +24,7 @@ export class FtpService {
       });
 
       await client.ensureDir(
-        `${process.env.FTP_CLIENT_IMAGE_PATH}/${clientId}/${idClientEvaluation}/`,
+        `${process.env.FTP_BASE_PATH}${process.env.FTP_CLIENT_IMAGE_PATH}/${clientId}/${idClientEvaluation}/`,
       );
 
       console.log(
@@ -60,7 +59,9 @@ export class FtpService {
         password: process.env.FTP_PASSWORD,
       });
 
-      await client.ensureDir(`${process.env.FTP_PARTNERSHIP_LOGO_PATH}`);
+      await client.ensureDir(
+        `${process.env.FTP_BASE_PATH}${process.env.FTP_PARTNERSHIP_LOGO_PATH}`,
+      );
 
       console.log(
         `upload uploadPartnershipLogo - path: ${await client.pwd()} - filename: ${fileName}`,
@@ -95,13 +96,25 @@ export class FtpService {
         password: process.env.FTP_PASSWORD,
       });
 
-      await client.ensureDir(path);
+      await client.ensureDir(`${process.env.FTP_BASE_PATH}${path}`);
 
       console.log(
         `upload photo - path: ${await client.pwd()} - filename: ${fileName}`,
       );
 
       await client.uploadFrom(stream, fileName);
+
+      // Verificar se o arquivo existe
+      const fileList = await client.list();
+      const uploadedFile = fileList.find((file) => file.name === fileName);
+
+      if (uploadedFile) {
+        console.log(`✅ Upload confirmado: ${fileName}`);
+        console.log(`   Tamanho: ${uploadedFile.size} bytes`);
+        console.log(`   Data: ${uploadedFile.modifiedAt}`);
+      } else {
+        throw new Error(`Arquivo ${fileName} não encontrado após upload`);
+      }
 
       // return true; // Indica que o arquivo foi salvo com sucesso
     } catch (error) {
@@ -133,13 +146,19 @@ export class FtpService {
 
       switch (mediaType) {
         case 'image':
-          await client.cd(process.env.FTP_IMAGE_PATH);
+          await client.cd(
+            `${process.env.FTP_BASE_PATH}${process.env.FTP_IMAGE_PATH}`,
+          );
           break;
         case 'video':
-          await client.cd(process.env.FTP_VIDEO_PATH);
+          await client.cd(
+            `${process.env.FTP_BASE_PATH}${process.env.FTP_VIDEO_PATH}`,
+          );
           break;
         case 'thumbnail':
-          await client.cd(process.env.FTP_THUMBNAIL_PATH);
+          await client.cd(
+            `${process.env.FTP_BASE_PATH}${process.env.FTP_THUMBNAIL_PATH}`,
+          );
           break;
         default:
           return;
@@ -171,7 +190,7 @@ export class FtpService {
         password: process.env.FTP_PASSWORD,
       });
 
-      await client.cd(path);
+      await client.cd(`${process.env.FTP_BASE_PATH}${path}`);
 
       await client.remove(fileName);
     } catch (error) {
@@ -192,9 +211,9 @@ export class FtpService {
         password: process.env.FTP_PASSWORD,
       });
 
-      console.log(`removeDir - path: ${path}`);
+      console.log(`removeDir - path: ${process.env.FTP_BASE_PATH}${path}`);
 
-      await client.removeDir(path);
+      await client.removeDir(`${process.env.FTP_BASE_PATH}${path}`);
     } catch (error) {
       console.error('removePhoto - Erro ao remover foto:', error);
       rethrow;
@@ -215,13 +234,19 @@ export class FtpService {
 
       switch (mediaType) {
         case 'image':
-          await client.cd(process.env.FTP_IMAGE_PATH);
+          await client.cd(
+            `${process.env.FTP_BASE_PATH}${process.env.FTP_IMAGE_PATH}`,
+          );
           break;
         case 'video':
-          await client.cd(process.env.FTP_VIDEO_PATH);
+          await client.cd(
+            `${process.env.FTP_BASE_PATH}${process.env.FTP_VIDEO_PATH}`,
+          );
           break;
         case 'thumbnail':
-          await client.cd(process.env.FTP_THUMBNAIL_PATH);
+          await client.cd(
+            `${process.env.FTP_BASE_PATH}${process.env.FTP_THUMBNAIL_PATH}`,
+          );
           break;
         default:
           return;
