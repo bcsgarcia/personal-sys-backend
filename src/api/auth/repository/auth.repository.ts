@@ -21,7 +21,15 @@ export class AuthRepository {
         .eq('id', id)
         .single();
 
-      if (error) throw error;
+      // PGRST116 = não encontrou nenhum resultado
+      // Não é um erro real, apenas significa que o registro não existe
+      if (error) {
+        if (error.code === 'PGRST116') {
+          return null; // ou undefined, ou lance uma NotFoundException
+        }
+        // Qualquer outro erro é um problema real
+        throw error;
+      }
       return data;
     } catch (error) {
       throw error;
@@ -121,8 +129,15 @@ export class AuthRepository {
         .eq('isAdmin', false)
         .single();
 
-      if (error) throw error;
-
+      // PGRST116 = não encontrou nenhum resultado
+      // Não é um erro real, apenas significa que o registro não existe
+      if (error) {
+        if (error.code === 'PGRST116') {
+          return null; // ou undefined, ou lance uma NotFoundException
+        }
+        // Qualquer outro erro é um problema real
+        throw error;
+      }
       // agora fazemos o “alias” em JS:
       const raw = data as any;
       return {
@@ -171,8 +186,15 @@ export class AuthRepository {
         .eq('isAdmin', true)
         .single();
 
-      if (error) throw error;
-
+      // PGRST116 = não encontrou nenhum resultado
+      // Não é um erro real, apenas significa que o registro não existe
+      if (error) {
+        if (error.code === 'PGRST116') {
+          return null; // ou undefined, ou lance uma NotFoundException
+        }
+        // Qualquer outro erro é um problema real
+        throw error;
+      }
       // força o TS a tratar `data` como any
       const raw = data as any;
       return {
@@ -223,8 +245,15 @@ export class AuthRepository {
         .eq('isAdmin', true)
         .single();
 
-      if (error) throw error;
-
+      // PGRST116 = não encontrou nenhum resultado
+      // Não é um erro real, apenas significa que o registro não existe
+      if (error) {
+        if (error.code === 'PGRST116') {
+          return null; // ou undefined, ou lance uma NotFoundException
+        }
+        // Qualquer outro erro é um problema real
+        throw error;
+      }
       // cast para any para acessar client sem erro de TS
       const auth = data as any;
       return {

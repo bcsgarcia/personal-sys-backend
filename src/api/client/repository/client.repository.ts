@@ -29,7 +29,15 @@ export class ClientRepository {
         .eq('id', id)
         .single();
 
-      if (error) throw error;
+      // PGRST116 = não encontrou nenhum resultado
+      // Não é um erro real, apenas significa que o registro não existe
+      if (error) {
+        if (error.code === 'PGRST116') {
+          return null; // ou undefined, ou lance uma NotFoundException
+        }
+        // Qualquer outro erro é um problema real
+        throw error;
+      }
       // “auth” vem como um objeto { email }, trazemos para o mesmo nível:
       return {
         ...data,

@@ -253,12 +253,27 @@ export class PartnershipRepository {
       //                    )`;
       //
       // return await this.databaseService.execute(query);
-      const { data, error } = await this.supabase
+
+      // Regex simples para validar UUID
+      const uuidRegex =
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+      const isUuid = uuidRegex.test(idCategoryOrName);
+
+      let query = this.supabase
         .from('partnershipCategory')
         .select('*')
         .eq('idCompany', idCompany)
-        .eq('isActive', true)
-        .or(`id.eq.${idCategoryOrName},name.ilike.${idCategoryOrName}`);
+        .eq('isActive', true);
+
+      if (isUuid) {
+        // Se for UUID, busca por ID
+        query = query.eq('id', idCategoryOrName);
+      } else {
+        // Se não for UUID, busca por nome (case insensitive)
+        query = query.ilike('name', idCategoryOrName);
+      }
+
+      const { data, error } = await query;
 
       if (error) throw error;
       return data;
