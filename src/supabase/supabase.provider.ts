@@ -4,14 +4,12 @@ import { Provider } from '@nestjs/common';
 
 export const SupabaseClientProvider: Provider = {
   provide: 'SUPABASE_CLIENT',
-  useFactory: (
-    config: ConfigService,
-  ): SupabaseClient<any, 'personal_sys', any> => {
+  useFactory: (config: ConfigService): SupabaseClient<any, string, any> => {
     const url = config.get<string>('SUPABASE_URL');
     const key = config.get<string>('SUPABASE_KEY');
     const client = createClient(url, key, {
       db: {
-        schema: 'personal_sys',
+        schema: process.env.SUPABASE_SCHEMA,
       },
     });
 
